@@ -1,0 +1,286 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App;
+use App\Helpers\TrainingStatus;
+use App\Models\PilotRating;
+use App\Models\PilotTraining;
+use App\Models\PilotTrainingReport;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class PilotTrainingController extends Controller
+{
+
+    /**
+     * A list of possible statuses 
+     */
+    public static $statuses = [
+        -4 => ['text' => 'Closed by system', 'color' => 'danger', 'icon' => 'fa fa-ban', 'assignableByStaff' => false],
+        -3 => ['text' => 'Closed by student', 'color' => 'danger', 'icon' => 'fa fa-ban', 'assignableByStaff' => false],
+        -2 => ['text' => 'Closed by staff', 'color' => 'danger', 'icon' => 'fas fa-ban', 'assignableByStaff' => true],
+        -1 => ['text' => 'Completed', 'color' => 'success', 'icon' => 'fas fa-check', 'assignableByStaff' => true],
+        0 => ['text' => 'In queue', 'color' => 'warning', 'icon' => 'fas fa-hourglass', 'assignableByStaff' => true],
+        1 => ['text' => 'Pre-training', 'color' => 'info', 'icon' => 'fas fa-book-open', 'assignableByStaff' => true],
+        2 => ['text' => 'Active training', 'color' => 'success', 'icon' => 'fas fa-book-open', 'assignableByStaff' => true],
+        3 => ['text' => 'Awaiting exam', 'color' => 'warning', 'icon' => 'fas fa-graduation-cap', 'assignableByStaff' => true],
+    ];
+    /**
+     * A list of possible experiences
+     */
+    public static $experiences = [
+        1 => ['text' => 'New to VATSIM'],
+        2 => ['text' => 'Experienced on VATSIM'],
+        3 => ['text' => 'Real world pilot'],
+    ];
+
+    public function index()
+    {
+        $this->authorize('viewActiveRequests', PilotTraining::class);
+        $openTrainings = Auth::user()->viewableModels(\App\Models\PilotTraining::class, [['status', '>=', 0]], ['user', 'user.groups', 'pilotRatings', 'instructors'])->sort(function($a, $b){
+            if ($a->status == $b->status) {
+                return $a->created_at->timestamp - $b->created_at->timestamp;
+            }
+
+            return $b->status - $a->status;
+        });
+
+        $statuses = PilotTrainingController::$statuses;
+        return view('pilot.training.index', compact('openTrainings', 'statuses'));
+    }
+
+    public function apply()
+    {
+        $user = Auth::user();
+        $userRating = $user->pilotrating;
+        $payload = [];
+
+        // Fetch user's ATC hours
+        $vatsimStats = [];
+        $client = new \GuzzleHttp\Client();
+        if (App::environment('production')) {
+            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/' . $user->id . '/rating_times/');
+        } else {
+            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/819096/rating_times/');
+        }
+
+        if ($res->getStatusCode() == 200) {
+            $vatsimStats = json_decode($res->getBody(), true);
+        } else {
+            return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
+        }
+
+        foreach (PilotRating::all() as $rating) {
+            $payload[] = [
+                'id' => $rating->id,
+                'name' => $rating->name,
+            ];
+        }
+
+        return view('pilot.training.apply', [
+            'payload' => $payload,
+            'pilot_hours' => $vatsimStats,
+            'motivation_required' => ($userRating <= 2) ? 1 : 0,
+        ]);
+    }
+
+
+
+    public function store(Request $request)
+    {
+        //dd($request->all());
+        $data = $this->validateUpdateDetails();
+        $this->authorize('store', [PilotTraining::class, $data]);
+
+        if (isset($data['user_id']) && User::find($data['user_id']) == null) {
+            return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
+        }
+
+        if( isset($data['training_level']) ) {
+            $ratings = PilotRating::find(explode('+', $data['training_level']));
+        }
+
+        dd($data);
+        $pilot_training = PilotTraining::create([
+            'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
+            'created_by' => \Auth::id(),
+            'experience' => isset($data['experience']) ? $data['experience'] : null,
+            'comment' => isset($data['comment']) ? $data['comment'] : null,
+            'english_only_training' => array_key_exists('englishOnly', $data) ? true : false,
+        ]);
+
+        if ($ratings->count() > 1) {
+            $pilot_training->pilotRatings()->saveMany($ratings);
+        } else {
+            $pilot_training->pilotRatings()->save($ratings->first());
+        }
+
+        if ($request->expectsJson()) {
+            return $training;
+        }
+        return redirect()->intended(route('dashboard'));
+    }
+
+    public function show(PilotTraining $training)
+    {
+        $this->authorize('view', $training);
+
+        $reports = PilotTrainingReport::where('pilot_training_id', $training->id)->get();
+
+        $instructors = \Auth::user()->allWithGroup(4);
+        $statuses = PilotTrainingController::$statuses;
+        $experiences = PilotTrainingController::$experiences;
+        $activities = $training->activities->sortByDesc('created_at');
+
+
+        return view('pilot.training.show', compact('training', 'instructors', 'statuses', 'experiences', 'activities', 'reports'));
+    }
+
+    public function edit(PilotTraining $training)
+    {
+        $this->authorize('edit', [PilotTraining::class, $training]);
+
+        $pilotRatings = PilotRating::all();
+
+        return view('pilot.training.edit', compact('training', 'pilotRatings'));
+    }
+
+    public function updateDetails(PilotTraining $training)
+    {
+        $this->authorize('update', $training);
+        $oldStatus = $training->fresh()->status;
+
+        $attributes = $this->validateUpdateDetails();
+        if (array_key_exists('status', $attributes)) {
+            $training->updateStatus($attributes['status']);
+            
+            if($attributes['status'] != $oldStatus) {
+                if ($attributes['status'] == -2 || $attributes['status'] == -4) {
+                    PilotTrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id, $attributes['closed_reason']);
+                } else {
+                    PilotTrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id);
+                }
+            }
+        }
+
+        $notifyOfNewInstructor = false;
+        if (array_key_exists('instructors', $attributes)) {
+            foreach((array) $attributes['instructors'] as $instructor) {
+                if (! $training->instructors->contains($instructor) && User::find($instructor) != null && User::find($instructor)->isInstructor()) {
+                    $training->instructors()->attach($instructor, ['expire_at' => now()->addMonths(12)]);
+                    $notifyOfNewInstructor = true;
+
+                    PilotTrainingActivity::create($training->id, 'INSTRUCTOR', $instructor, null, Auth::user()->id);
+                }
+            }
+
+            foreach($training->instructors as $instructor) {
+                if (! in_array($instructor->id, (array) $attributes['instructors'])) {
+                    $training->instructors()->detach($instructor);
+                    PilotTrainingActivityController::create($training->id, 'INSTRUCTOR', null, $instructor->id, Auth::user()->id);
+
+                }
+            }
+            if ($notifyOfNewInstructor) {
+                // Notification
+            }
+            unset($attributes['instructors']);
+        } else {
+            foreach ($training->instructors as $instructor) {
+                PilotTrainingActivityController::create($training->id, 'INSTRUCTOR', null, $mentor->id, Auth::user()->id);
+
+            }
+
+            $training->instructors()->detach();
+        }
+
+        if (isset($attributes['paused_at'])) {
+            if (! isset($training->paused_at)) {
+                $attributes['paused_at'] = Carbon::now();
+                PilotTrainingActivityController::create($training->id, 'PAUSE', 1, null, Auth::user()->id);
+            } else {
+                $attributes['paused_at'] = $training->paused_at;
+            }
+        } else {
+            if (isset($training->paused_at)) {
+                $training->paused_length = $training->paused_length + Carbon::create($training->paused_at)->diffInSeconds(Carbon::now());
+                $training->update(['paused_length' => $training->paused_length]);
+                PilotTrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
+            }
+            $attributes['paused_at'] = null;
+        }
+
+        if ((int) $training->status != $oldStatus) {
+            if ((int) $training->status < TrainingStatus::IN_QUEUE->value) {
+                $attributes['paused_at'] = null;
+                if (isset($training->paused_at)) {
+                    PilotTrainingActivityController::create($training->id, 'PAUSE', 0, null, Auth::user()->id);
+                }
+            }
+        }
+
+        // Update the training
+        $training->update($attributes);
+
+        // Add notifications
+
+        if ($notifyOfNewInstructor) {
+            return redirect($training->path())->withSuccess('Training successfully updated. E-mail notification of instructor assigned sent to the student');
+        }
+
+        return redirect($training->path())->withSuccess('Training successfully updated');
+    }
+
+    public function updateRequest(PilotTraining $training)
+    {
+        $this->authorize('update', $training);
+        $attributes = $this->validateUpdateEdit();
+
+        $preChangeRatings = $training->pilotRatings;
+        
+        $training->pilotRatings()->detach();
+        if (isset($attributes['pilotRatings'])) {
+            $pilotRatings = PilotRating::find($attributes['pilotRatings']);
+        } else {
+            return redirect()->back()->withErrors('One or more ratings need to be selected to update training request.');
+        }
+
+        if ($pilotRatings->count() > 1) {
+            $training->pilotRatings()->saveMany($pilotRatings);
+        } else {
+            $training->pilotRatings()->save($pilotRatings->first());
+        }
+
+        $training->english_only_training = array_key_exists('englishOnly', $attributes) ? true : false;
+
+        $training->save();
+        
+        return redirect($training->path())->withSuccess('Pilot training successfully updated');
+
+    }
+
+    protected function validateUpdateDetails()
+    {
+        return request()->validate([
+            'experience' => 'sometimes|required|integer|min:1|max:3',
+            'englishOnly' => 'nullable',
+            'user_id' => 'sometimes|required|integer',
+            'comment' => 'nullable',
+            'training_level' => 'sometimes|required',
+            'status' => 'sometimes|required|integer',
+            'instructors' => 'sometimes',
+            'closed_reason' => 'sometimes|max:65',
+        ]);
+    }
+
+    protected function validateUpdateEdit()
+    {
+        return request()->validate([
+            'pilotRatings' => 'sometimes|required',
+            'englishOnly' => 'nullable',
+        ]);
+    }
+}
+

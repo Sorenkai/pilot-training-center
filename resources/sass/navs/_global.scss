@@ -1,0 +1,26 @@
+// Login front landing page
+a.version-front{
+    display: block;
+    
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.625rem;
+    color: #8da0ab;
+
+    &:hover{
+        text-decoration: underline;
+    }
+
+}
+
+// Navigation triggered fixed body when responsive menu is open
+.fixed-body{
+    position: initial;
+    @include media-breakpoint-down(lg) { 
+        position: fixed;
+    }
+}
+
+#newreqrow, #newmentorrow, #pretrainingrow{
+    display: none;
+}

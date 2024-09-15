@@ -1,0 +1,373 @@
+// Global component styles
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+p {
+    a {
+        text-decoration: underline;
+    }
+}
+
+.page-title{
+
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    h3{
+        margin-bottom: 1.5rem;
+    }
+
+    @include media-breakpoint-down(sm) {
+
+        h3{
+            margin-bottom: 0.5rem;
+            margin-right: 1.5rem;
+        }
+
+        div{
+            margin-bottom: 1.5rem;
+        }
+    }
+}
+
+form {
+    input, select {
+        border-color: $gray-400 !important;
+    }
+}
+
+.accordion button{
+    text-decoration: none;
+}
+
+#markdown-content ul li a, #markdown-improve ul li a {
+    text-decoration: underline;
+}
+
+dl dd.separator{
+    border-bottom: 1px solid $primary;
+}
+
+dl.copyable{
+
+    a {
+        text-decoration: none;
+        &:hover{
+            text-decoration: underline;
+        }
+    }
+
+    dd button, dd a.link-btn, dt a{
+        background: transparent;
+        border: none;
+        visibility: hidden;
+    }
+
+    dd:hover button, dd:hover a.link-btn, dt:hover a{
+
+        visibility: visible;
+        color: $gray-400;
+
+        &:hover{
+            color: $gray-500;
+        }
+
+        &:active{
+            color: $success;
+        }
+    }
+}
+
+
+// Main page wrapper
+#wrapper {
+    display: flex;
+    #content-wrapper {
+        background-color: $gray-100;
+        width: 100%;
+        overflow-x: hidden;
+        #content {
+            flex: 1 0 auto;
+        }
+    }
+}
+
+// Set container padding to match gutter width instead of default 15px
+.container,
+.container-fluid {
+    padding-left: $grid-gutter-width;
+    padding-right: $grid-gutter-width;
+}
+
+// Custom extras
+.front-cover {
+    width: 100%;
+    height: 100vh;
+
+    background: url("../images/front.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+
+    .content {
+        width: fit-content;
+        margin: auto;
+        text-align: center;
+
+        padding-top: 200px;
+
+        @include media-breakpoint-down(md) {
+            width: 90%;
+        }
+
+        &-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 3rem;
+            color: white;
+
+            img {
+                height: 3rem;
+            }
+
+            @include media-breakpoint-down(sm) {
+                flex-direction: column;
+                gap: 0.5rem;
+                font-size: 2rem;
+            }
+        }
+
+        &-description {
+            font-size: 1.375rem;
+            color: white;
+
+            @include media-breakpoint-down(sm) {
+                margin-top: 0.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        a {
+            margin-top: 1.25rem;
+            padding-top: 0.375;
+            width: 100%;
+        }
+    }
+
+    .logo {
+        position: absolute;
+        bottom: 1.25rem;
+        left: calc(50vw - (14.5rem / 2));
+
+        img {
+            width: 14.5rem;
+        }
+    }
+}
+
+.table {
+    &-leftpadded {
+        thead,
+        tbody {
+            th:first-child,
+            td:first-child {
+                padding-left: 1rem;
+            }
+        }
+    }
+
+    .table-dark,
+    .tbody-dark {
+        th {
+            border-color: $blue;
+            background-color: $blue;
+        }
+    }
+
+    .table-light {
+        th {
+            color: $gray-800;
+            background: $gray-200;
+        }
+    }
+
+    tr {
+        color: $gray-800;
+    }
+
+    td {
+        color: $gray-900;
+    }
+}
+
+// Lets tweak a bit the style of bootstrap-table plugin
+table[data-toggle="table"] {
+    th {
+        &:first-child {
+            padding-left: 0.5rem !important;
+        }
+
+        &:last-child {
+            padding-right: 0.5rem !important;
+        }
+    }
+
+    .filter-control {
+        input {
+            height: calc(1.25em + 0.5rem + 2px);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        select {
+            height: calc(1.25em + 0.5rem + 2px);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+    }
+}
+
+table{
+
+    a {
+        text-decoration: none;
+
+        &.dotted-underline{
+            text-decoration: dotted underline;
+        }
+
+        &:hover:not([role="button"]){
+            text-decoration: underline;
+        }
+    }
+
+    .table-card{
+
+        width: 100%;
+
+        th,td{
+            vertical-align: baseline;
+        }
+
+        th{
+            width: 10ch;
+        }
+
+        tr.spacing > td{
+            padding-bottom: 1rem;
+        }
+        tr.spacing > th{
+            padding-bottom: 1rem;
+        }
+    }
+}
+
+// Tweaks to the pagination of bootstrap-table plugin, fixes padding issues and more
+.fixed-table-pagination {
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    // Forcefully changing the rows for each page dropdown, as we can't change the html afaik
+    div.float-left.pagination-detail > span.page-list > span > button {
+        color: $gray-900;
+        background-color: $gray-100 !important;
+        border-color: $gray-200 !important;
+
+        height: calc(1.5em + 0.5rem + 2px);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+}
+
+.link-tooltip{
+    text-decoration: none;
+    background-image: linear-gradient(90deg,#294661 33%,#fff 0);
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-size: 3px 1px;
+}
+
+.tooltip-inner {
+    text-align: left;
+    white-space: pre-line;
+    max-width: 50vw !important;
+}
+
+.endorsement-card{
+    width: 18rem;
+    @include media-breakpoint-down(md) {
+        width: 100%;
+    }
+}
+
+.timeline{
+
+    max-height: 75vh;
+    overflow-y: auto;
+
+    .sessions{
+        margin-top: 2rem;
+        border-radius: 12px;
+        position: relative;
+        width: calc(100% - 20px);
+    }
+
+    ul, li{
+        list-style: none;
+        padding: 0;
+    }
+
+    li{
+        padding-bottom: 1.5rem;
+        border-left: 1px solid $primary;
+        position: relative;
+        padding-left: 1.25rem;
+        margin-left: 1.5rem;
+
+        &:last-child{
+            border: 0px;
+            padding-bottom: 0;
+        }
+
+        &:before{
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: white;
+            border: 1px solid $primary;
+            border-radius: 50%;
+            position: absolute;
+            left: -0.5rem;
+            top: 0rem;
+        }
+    }
+
+    .time{
+        color: $gray-600;
+        font-size: 0.8rem;
+    }
+
+    p{
+        line-height: 1.5;
+        margin-top:0.4rem;
+    }
+}
+
+.submit-spinner {
+    display: none;
+    margin-left: 8px;
+    margin-bottom: 3px;
+    vertical-align: middle;
+}

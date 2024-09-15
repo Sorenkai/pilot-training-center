@@ -1,0 +1,222 @@
+// Topbar
+.topbar {
+
+    height: $topbar-base-height;
+
+    &-justify{
+        &-moderator{
+            justify-content: space-between;
+        }
+
+        &-user{
+            justify-content: flex-end;
+
+            @include media-breakpoint-down(lg) {
+                justify-content: space-between;
+            }
+        }
+    }
+
+    &-divider {
+        width: 0;
+        border-right: 1px solid $border-color;
+        height: calc(#{$topbar-base-height} - 2rem);
+        margin: auto 1rem;
+    }
+
+    .navbar-search {
+        input {
+            font-size: 1rem;
+        }
+    }
+
+    .nav-item {
+        &:focus {
+            outline: none;
+        }
+
+        .nav-link {
+            height: $topbar-base-height;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            &:focus {
+                outline: none;
+            }
+        }
+    }
+
+    .dropdown { 
+        position: static;
+    }
+
+    .dropdown-list {
+        padding: 0;
+        border: none;
+        overflow: hidden;
+        .dropdown-header {
+            background-color: $primary;
+            border: 1px solid $primary;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            color: $white;
+        }
+        .dropdown-item {
+            white-space: normal;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-left: 1px solid $border-color;
+            border-right: 1px solid $border-color;
+            border-bottom: 1px solid $border-color;
+            line-height: 1.3rem;
+
+            .dropdown-list-image {
+                position: relative;
+                height: 2.5rem;
+                width: 2.5rem;
+                img {
+                    height: 2.5rem;
+                    width: 2.5rem;
+                }
+                .status-indicator {
+                    background-color: $gray-200;
+                    height: 0.75rem;
+                    width: 0.75rem;
+                    border-radius: 100%;
+                    position: absolute;
+                    bottom: 0;
+                    right: 0;
+                    border: 0.125rem solid $white;
+                }
+            }
+
+            .text-truncate {
+                max-width: 10rem;
+            }
+
+            &:active {
+                background-color: $gray-200;
+                color: $gray-900;
+            }
+        }
+    }
+
+    @include media-breakpoint-up(sm) {
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-list {
+            width: 20rem !important;
+            .dropdown-item {
+                .text-truncate {
+                    max-width: 13.375rem;
+                }
+            }
+        }
+
+    }
+}
+
+.search{
+    &.input-group{
+        width: 300px;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom 350ms;
+
+        &:focus-within{
+            border-bottom: 1px solid $darkblue;
+        }
+
+        @include media-breakpoint-down(md) {
+            width: 50vw;
+            border-bottom: 1px solid $darkblue;
+        }
+        
+    }
+
+    &-input{
+        &:focus{
+            box-shadow: none;
+            outline: 0 none;
+        }
+    }
+
+    &-icon{
+        width: 40px;
+
+        color: $darkblue;
+
+        i{
+            padding-top: 1.125rem;
+            padding-left: 1rem;
+        }   
+    }
+
+    &-spinner{
+        color: darkgrey;
+        position: relative;
+        left: -30px;
+        top: 8px;
+        z-index: 10;
+        visibility: hidden;
+        border-radius: 50% !important;
+
+        &-visible{
+            visibility: visible;
+        }
+
+        @include media-breakpoint-down(md) {
+            position: inherit;
+            margin: auto;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+
+            display: none;
+
+            &-visible{
+                display: block;
+            }
+        }
+    }
+
+    &-results{
+
+        padding: 15px 0;
+        width: 300px;
+
+        border-top: 1px solid $darkblue;
+
+        position: absolute;
+        top: 35px;
+
+        display: none;
+        z-index: 10;
+
+        background-color: white;
+
+        @include media-breakpoint-down(md) {
+            position: static;
+            width: 100%;
+
+            font-size: 1rem;
+            border-top: 0;
+        }
+
+        a {
+            color: $darkblue;
+            display: block;
+            min-height: 25px;
+            line-height: 1.5rem;
+            padding: 0 1rem;
+            text-decoration: none;
+        }
+
+        a:hover{
+            background-color: $gray-300;
+            text-decoration: none;
+        }
+
+    }
+}
