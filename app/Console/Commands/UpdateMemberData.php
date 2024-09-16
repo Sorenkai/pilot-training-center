@@ -91,6 +91,9 @@ class UpdateMemberData extends Command
                 $user->rating = OAuthController::getOAuthProperty(config('oauth.mapping_rating'), $response);
                 $user->rating_short = OAuthController::getOAuthProperty(config('oauth.mapping_rating_short'), $response);
                 $user->rating_long = OAuthController::getOAuthProperty(config('oauth.mapping_rating_long'), $response);
+                $user->pilotrating = OAuthController::getOAuthProperty(config('oauth.mapping_pilotrating'), $response);
+                $user->pilotrating_short = OAuthController::getOAuthProperty(config('oauth.mapping_pilotrating_short'), $response);
+                $user->pilotrating_long = OAuthController::getOAuthProperty(config('oauth.mapping_pilotrating_long'), $response);
                 $user->region = OAuthController::getOAuthProperty(config('oauth.mapping_region'), $response);
                 $user->division = OAuthController::getOAuthProperty(config('oauth.mapping_division'), $response);
                 $user->subdivision = OAuthController::getOAuthProperty(config('oauth.mapping_subdivision'), $response);

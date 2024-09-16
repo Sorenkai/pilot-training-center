@@ -62,6 +62,11 @@ class PilotTraining extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function reports()
+    {
+        return $this->hasMany(PilotTrainingReport::class);
+    }
+
     public function pilotRatings()
     {
         return $this->belongsToMany(PilotRating::class, 'pilot_rating_pilot_training', 'pilot_training_id', 'pilot_rating_id');

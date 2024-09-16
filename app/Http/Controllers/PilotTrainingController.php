@@ -51,10 +51,21 @@ class PilotTrainingController extends Controller
         return view('pilot.training.index', compact('openTrainings', 'statuses'));
     }
 
+    public function history()
+    {
+        $this->authorize('viewHistoricRequests', PilotTraining::class);
+
+        $closedTrainings = Auth::user()->viewableModels(\App\Models\PilotTraining::class, [['status', '<', 0]], [ 'reports', 'pilotRatings', 'activities', 'instructors', 'user', 'user.groups', 'user.groups'])->sortByDesc('closed_at');
+
+        $statuses = PilotTrainingController::$statuses;
+
+        return view('pilot.training.history', compact('closedTrainings', 'statuses'));
+    }
+
     public function apply()
     {
         $user = Auth::user();
-        $userRating = $user->pilotrating;
+        $userPilotRating = $user->pilotrating;
         $payload = [];
 
         // Fetch user's ATC hours
@@ -72,17 +83,26 @@ class PilotTrainingController extends Controller
             return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
         }
 
-        foreach (PilotRating::all() as $rating) {
-            $payload[] = [
-                'id' => $rating->id,
-                'name' => $rating->name,
-            ];
+        // Get available trainings (PPL, IR, CMEL, ATPL)
+        $pilotRatings = PilotRating::whereNotIn('vatsim_rating', [0,31,63])->get();
+
+        if ($userPilotRating < 15) {
+
+            foreach($pilotRatings as $pilotRating) {
+                if ($pilotRating->vatsim_rating > $userPilotRating) {
+                    $payload[] = [
+                        'id' => $pilotRating->id,
+                        'name' => $pilotRating->name,
+                    ];
+                    break;
+                }
+            }
         }
 
         return view('pilot.training.apply', [
             'payload' => $payload,
             'pilot_hours' => $vatsimStats,
-            'motivation_required' => ($userRating <= 2) ? 1 : 0,
+            'motivation_required' => ($userPilotRating <= 2) ? 1 : 0,
         ]);
     }
 
@@ -102,7 +122,7 @@ class PilotTrainingController extends Controller
             $ratings = PilotRating::find(explode('+', $data['training_level']));
         }
 
-        dd($data);
+        //dd($data);
         $pilot_training = PilotTraining::create([
             'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
             'created_by' => \Auth::id(),
@@ -121,6 +141,16 @@ class PilotTrainingController extends Controller
             return $training;
         }
         return redirect()->intended(route('dashboard'));
+    }
+
+    public function create(Request $request, $prefillUserId = null)
+    {
+        $this->authorize('create', PilotTraining::class);
+
+        $students = User::all();
+        $pilotRatings = PilotRating::all();
+
+        return view('pilot.training.create', compact('students', 'pilotRatings', 'prefillUserId'));
     }
 
     public function show(PilotTraining $training)

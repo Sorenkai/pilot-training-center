@@ -36,6 +36,10 @@ return [
     'mapping_rating_short' => env('OAUTH_MAPPING_RATING_SHORT', 'data-vatsim-rating-short'),
     'mapping_rating_long' => env('OAUTH_MAPPING_RATING_LONG', 'data-vatsim-rating-long'),
 
+    'mapping_pilotrating' => env('OAUTH_MAPPING_PILOTRATING', 'data-vatsim-pilotrating-id'),
+    'mapping_pilotrating_short' => env('OAUTH_MAPPING_PILOTRATING_SHORT', 'data-vatsim-pilotrating-short'),
+    'mapping_pilotrating_long' => env('OAUTH_MAPPING_PILOTRATING_LONG', 'data-vatsim-pilotrating-long'),
+
     'mapping_region' => env('OAUTH_MAPPING_REGION', 'data-vatsim-region-id'),
     'mapping_division' => env('OAUTH_MAPPING_DIVISION', 'data-vatsim-division-id'),
     'mapping_subdivision' => env('OAUTH_MAPPING_SUBDIVISION', 'data-vatsim-subdivision-id'),

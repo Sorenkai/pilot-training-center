@@ -59,6 +59,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/trainings', [TrainingController::class, 'index'])->name('requests');
     Route::get('/trainings/history', [TrainingController::class, 'history'])->name('requests.history');
     Route::get('/pilot/trainings', [PilotTrainingController::class, 'index'])->name('pilot.requests');
+    Route::get('/pilot/trainings/history', [PilotTrainingController::class, 'history'])->name('pilot.requests.history');
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::get('/users/other', [UserController::class, 'indexOther'])->name('users.other');
 
@@ -122,7 +123,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/training/{training}/action/pretraining', 'togglePreTrainingCompleted')->name('training.action.pretraining');
         Route::patch('/training/{training}', 'updateDetails')->name('training.update.details');
         Route::get('/training/{training}', 'show')->name('training.show');
-
         Route::get('/training/{training}/confirm/{key}', 'confirmInterest')->name('training.confirm.interest');
     });
 
@@ -163,6 +163,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
 
     Route::controller(PilotTrainingController::class)->group(function () {
         Route::get('/pilot/training/apply', 'apply')->name('pilot.training.apply');
+        Route::get('/pilot/training/create', 'create')->name('pilot.training.create');
         Route::post('/pilot/training/store', 'store')->name('pilot.training.store');
         Route::get('/pilot/training/{training}', 'show')->name('pilot.training.show');
         Route::patch('/pilot/training/{training}', 'updateDetails')->name('pilot.training.update.details');

@@ -3,11 +3,10 @@
 @section('title', 'Pilot Training Requests')
 @section('title-flex')
     <div>
-        @if (\Auth::user()->isModeratorOrAbove())
-            {{--
+        @if (\Auth::user()->isInstructorOrAbove())
+            
             <a href="{{ route('pilot.training.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new request</a>
-            --}}
-             <a href="#" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new request</a>
+            
         @endif
     </div>
 @endSection
@@ -42,6 +41,7 @@
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
                                 <th data-field="name" data-sortable="true" data-filter-control="input">Name</th>
                                 <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="false">Level</th>                                
+                                <th data-fiels="callsign" data-sortable="true" data-filter-control="input">Callsign</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>                                
                                 <th data-field="applied" data-sortable="true" data-sorter="tableSortDates" data-filter-control="input">Applied</th>
                                 <th data-field="instructor" data-sortable="true" data-filter-control="input">Instructor</th>
@@ -67,6 +67,7 @@
                                     <td><a href="{{ route('user.show', $training->user->id)}}">{{ $training->user->id}} </a></td>
                                     <td><a href="{{ route('user.show', $training->user->id)}}">{{ $training->user->name}} </a></td>
                                     <td>{{ $training->pilotRatings[0]->name}}</td>
+                                    <td> SPTXXX </td>
                                     <td>
                                         @if ($training->started_at == null & $training->closed_at == null)
                                             Training not started

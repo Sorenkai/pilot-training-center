@@ -171,7 +171,6 @@
                     return validated
                 },
                 submit(event) {
-                    console.log(Array.from(document.getElementById('ratingSelect').options).find(option => option.selected && !option.disabled)?.value);
                     event.preventDefault();
 
                     // Reset errors

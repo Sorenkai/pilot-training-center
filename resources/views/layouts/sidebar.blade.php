@@ -51,7 +51,8 @@
                 <span>Moodle</span></a>
             </li>
         @endif
-
+        
+        <!--    USE SETTING LATER TO CHECK IF ATC OR PILOT
         @if (\Auth::user()->isMentorOrAbove())
 
             {{-- Divider --}}
@@ -92,25 +93,26 @@
             </div>
             </li>
 
-        @endif
+        @endif  -->
+
+        
+
+        {{-- Divider --}}
+        <div class="sidebar-divider"></div>
+
+        {{-- Heading --}}
+        <div class="sidebar-heading">
+        Pilot Training
+        </div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('pilot.training.apply') }}">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Request Pilot Training</span>
+            </a>
+        </li>
 
         @if (\Auth::user()->isInstructor())
-
-            {{-- Divider --}}
-            <div class="sidebar-divider"></div>
-
-            {{-- Heading --}}
-            <div class="sidebar-heading">
-            Pilot Training
-            </div>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('pilot.training.apply') }}">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Request Pilot Training</span>
-                </a>
-            </li>
-
             {{-- Nav Item - Pages Collapse Menu --}}
             <li class="nav-item {{ Route::is('pilot.requests') || Route::is('pilot.requests.history') ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePilotReq" aria-expanded="true" aria-controls="collapsePilotReq">
@@ -121,10 +123,9 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                 
                 <a class="collapse-item" href="{{ route('pilot.requests') }}">Open Requests</a>
-                {{--
+                
                 <a class="collapse-item" href="{{ route('pilot.requests.history') }}">Closed Requests</a> 
-                --}}
-                <a class="collapse-item" href="#">Closed Requests</a>
+                
                 </div>
             </div>
             </li>

@@ -17,14 +17,19 @@ class PilotTrainingPolicy
             $user->is($pilotTraining->user);
     }
 
-    public function edit(User $user, PilotTraining $pilotTraining)
+    public function edit(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->isInstructorOrAbove();
     }
 
-    public function update(User $user, PilotTraining $pilotTraining)
+    public function create(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->isInstructorOrAbove();
+    }
+
+    public function update(User $user)
+    {
+        return $user->isInstructorOrAbove();
     }
     
 
@@ -39,6 +44,12 @@ class PilotTrainingPolicy
 
     public function viewActiveRequests(User $user)
     {
-        return $user->isInstructor();
+        return $user->isInstructorOrAbove();
     }
+    public function viewHistoricRequests(User $user)
+    {
+        return $user->isInstructorOrAbove();
+    }
+
+
 }
