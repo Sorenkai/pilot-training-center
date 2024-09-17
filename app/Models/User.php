@@ -114,7 +114,7 @@ class User extends Authenticatable
 
     public function pilotTrainings()
     {
-        return $this->hasMany(pilotTrainings::class);
+        return $this->hasMany(PilotTraining::class);
     }
 
     public function teaches()
@@ -141,6 +141,11 @@ class User extends Authenticatable
     public function pilotRatings()
     {
         return $this->belongsToMany(PilotRating::class);
+    }
+
+    public function callsigns()
+    {
+        return $this->hasMany(Callsign::class);
     }
 
     public function bookings()
@@ -317,6 +322,15 @@ class User extends Authenticatable
         return $trainings;
     }
 
+    public function instructingTrainings()
+    {
+        $trainings = PilotTraining::where('status', '>=', 1)->whereHas('instructors', function($query) {
+            $query->where('user_id', $this->id);
+        })->with('pilotRatings', 'reports', 'user')->orderBy('id')->get();
+
+        return $trainings;
+    }
+
     /**
      * Get a inline string of ratings associated areas for mentoring.
      *
@@ -359,6 +373,15 @@ class User extends Authenticatable
             }
 
             return count($this->trainings()->where('area_id', $area->id)->whereIn('status', [1, 2, 3])->get()) > 0;
+        }
+    }
+
+    public function hasActivePilotTraining(bool $includeWaiting)
+    {
+        if ($includeWaiting) {
+            return count($this->pilotTrainings()->whereIn('status', [0,1,2,3])->get()) > 0;
+        } else {
+            return count($this->pilotTrainings()->whereIn('status', [1,2,3])->get()) > 0;
         }
     }
 

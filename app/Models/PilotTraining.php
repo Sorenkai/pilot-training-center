@@ -81,4 +81,9 @@ class PilotTraining extends Model
     {
         return $this->hasMany(PilotTrainingActivity::class);
     }
+
+    public function callsign()
+    {
+        return $this->belongsTo(Callsign::class);
+    }
 }

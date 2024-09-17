@@ -24,4 +24,9 @@ class PilotTrainingReport extends PilotTrainingObject
     {
         return $this->belongsTo(User::class, 'written_by_id');
     }
+
+    public function lesson()
+    {
+        return $this->belongsTo(Lesson::class);
+    }
 }

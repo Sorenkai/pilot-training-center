@@ -36,7 +36,7 @@
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
                                 <th data-field="name" data-sortable="true" data-filter-control="input">Name</th>
                                 <th data-field="level" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Level</th>
-                                <th data-fiels="callsign" data-sortable="true" data-filter-control="select">SPTXXX</th>
+                                <th data-fiels="callsign" data-sortable="true" data-filter-control="select">Callsign</th>
                                 <th data-field="period" data-sortable="true" data-filter-control="input">Period</th>
                                 <th data-field="applied" data-sortable="true" data-filter-control="input" data-sorter="tableSortDates">Applied</th>
                                 <th data-field="closed" data-sortable="true" data-filter-control="input" data-sorter="tableSortDates">Closed</th>
@@ -47,7 +47,7 @@
                             @foreach($closedTrainings as $training)
                             <tr>
                                 <td>
-                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a> {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                    <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/pilot/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a> {{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>
                                 <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->id }}</a></td>
                                 <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
@@ -64,7 +64,7 @@
                                         {{ $ratings["name"] }}
                                     @endif
                                 </td>
-                                <td>SPTXXX</td>
+                                <td>{{$training->callsign->callsign}}</td>
                                 <td>
                                     @if ($training->started_at == null && $training->closed_at == null)
                                         Training never started

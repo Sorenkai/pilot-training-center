@@ -67,7 +67,7 @@
                                     <td><a href="{{ route('user.show', $training->user->id)}}">{{ $training->user->id}} </a></td>
                                     <td><a href="{{ route('user.show', $training->user->id)}}">{{ $training->user->name}} </a></td>
                                     <td>{{ $training->pilotRatings[0]->name}}</td>
-                                    <td> SPTXXX </td>
+                                    <td> {{$training->callsign->callsign}} </td>
                                     <td>
                                         @if ($training->started_at == null & $training->closed_at == null)
                                             Training not started

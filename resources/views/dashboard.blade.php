@@ -6,11 +6,6 @@
 {{-- Success message fed via JS for TR  --}}
 <div class="alert alert-success d-none" id="success-message"></div>
 
-@if($dueInterestRequest)
-<div class="alert alert-warning" role="alert">
-    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Please confirm your continued training interest by <a href="{{ route('training.confirm.interest', ['training' => $dueInterestRequest->training->id, 'key' => $dueInterestRequest->key] ) }}">clicking here</a>, within the deadline at {{ $dueInterestRequest->deadline->toEuropeanDate() }}. Your training will be otherwise be closed.
-</div>
-@endif
 
 @if($atcInactiveMessage)
 <div class="alert alert-warning" role="alert">
@@ -160,7 +155,7 @@
                                 <td><a href="{{ $training->path() }}">{{ $training->user->name }}</a></td>
                                 <td>
                                     <i class="{{ $types[$training->type]["icon"] }} text-primary"></i>
-                                    @foreach($training->ratings as $rating)
+                                    @foreach($training->pilotRatings as $rating)
                                     @if ($loop->last)
                                     {{ $rating->name }}
                                     @else
@@ -204,6 +199,7 @@
         </div>
         @endif
         
+        
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -220,7 +216,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Level</th>
-                                <th>Area</th>
+                                <th>Callsign</th>
                                 <th>Period</th>
                                 <th>State</th>
                             </tr>
@@ -230,7 +226,7 @@
                             <tr>
                                 <td>
                                     <a href="{{ $training->path() }}">
-                                        @foreach($training->ratings as $rating)
+                                        @foreach($training->pilotRatings as $rating)
                                         @if ($loop->last)
                                         {{ $rating->name }}
                                         @else
@@ -239,7 +235,7 @@
                                         @endforeach
                                     </a>
                                 </td>
-                                <td>{{ $training->area->name }}</td>
+                                <td>{{$training->callsign->callsign}}</td>
                                 <td>
                                     @if ($training->started_at == null && $training->closed_at == null)
                                     Training not started
@@ -264,6 +260,7 @@
         </div>
     </div>
     
+    
     <div class="col-xl-4 col-lg-5">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
@@ -277,7 +274,7 @@
                 </div>
                 <p>Are you interested in becoming an Air Traffic Controller? Wish to receive training for a higher rating? Request training below and you will be notified when a space is available.</p>
                 
-                @can('apply', \App\Models\Training::class)
+                @can('apply', \App\Models\PilotTraining::class)
                 <div class="d-grid">
                     <a href="{{ route('training.apply') }}" class="btn btn-success">
                         Request training
@@ -291,7 +288,7 @@
                     @else
                     <i class="fas fa-exclamation-triangle"></i>
                     @endif
-                    {{ Gate::inspect('apply', \App\Models\Training::class)->message() }}
+                    {{ Gate::inspect('apply', \App\Models\PilotTraining::class)->message() }}
                 </div>
                 
                 @if(Setting::get('trainingEnabled'))

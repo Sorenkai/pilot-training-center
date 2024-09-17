@@ -6,6 +6,7 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Models\TrainingInterest;
 use App\Models\TrainingReport;
+use App\Models\PilotTrainingReport;
 use App\Models\User;
 use App\Models\Vote;
 use Carbon\Carbon;
@@ -35,7 +36,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $report = TrainingReport::whereIn('training_id', $user->trainings->pluck('id'))->orderBy('created_at')->get()->last();
+        $report = PilotTrainingReport::whereIn('pilot_training_id', $user->trainings->pluck('id'))->orderBy('created_at')->get()->last();
 
         $subdivision = $user->subdivision;
         if (empty($subdivision)) {
@@ -45,16 +46,18 @@ class DashboardController extends Controller
         $data = [
             'rating' => $user->rating_long,
             'rating_short' => $user->rating_short,
+            'pilotrating' => $user->pilotrating_long,
+            'pilotrating_short' => $user->pilotrating_short,
             'division' => $user->division,
             'subdivision' => $subdivision,
             'report' => $report,
         ];
 
-        $trainings = $user->trainings;
-        $statuses = TrainingController::$statuses;
+        $trainings = $user->pilotTrainings;
+        $statuses = PilotTrainingController::$statuses;
         $types = TrainingController::$types;
 
-        $dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', false)->get()->first();
+        //$dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', false)->get()->first();
 
         // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
@@ -68,13 +71,13 @@ class DashboardController extends Controller
 
         $atcHours = ($user->atcActivity->count()) ? $user->atcActivity->sum('hours') : null;
 
-        $studentTrainings = \Auth::user()->mentoringTrainings();
+        $studentTrainings = \Auth::user()->instructingTrainings();
 
         $cronJobError = (($user->isAdmin() && App::environment('production')) && (\Carbon\Carbon::parse(Setting::get('_lastCronRun', '2000-01-01')) <= \Carbon\Carbon::now()->subMinutes(5)));
 
         $oudatedVersionWarning = $user->isAdmin() && Setting::get('_updateAvailable');
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'dueInterestRequest', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
     }
 
     /**

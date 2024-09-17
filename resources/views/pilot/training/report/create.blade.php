@@ -16,6 +16,38 @@
                     @csrf
 
                     <div class="mb-3">
+                        <label class="form-label" for="lesson">Lesson</label>
+                        
+                        <!-- Input to display the lesson name -->
+                        <input
+                            id="lesson_name"
+                            class="form-control @error('lesson_id') is-invalid @enderror"
+                            type="text"
+                            name="lesson_name"
+                            list="lessons"
+                            value="{{ old('lesson_name') }}"
+                            required>
+                        
+                        <!-- Hidden input to store and submit lesson_id -->
+                        <input
+                            type="hidden"
+                            name="lesson_id"
+                            id="lesson_id"
+                            value="{{ old('lesson_id') }}">
+                    
+                        <!-- Datalist for lessons (only lesson names are displayed in the dropdown) -->
+                        <datalist id="lessons">
+                            @foreach ($lessons as $lesson)
+                                <option value="{{ $lesson->name }}" data-id="{{ $lesson->id }}"></option>
+                            @endforeach
+                        </datalist>
+                    
+                        @error('lesson_id')
+                            <span class="text-danger">{{ $errors->first('lesson_name') }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label" for="date">Date</label>
                         <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ old('report_date') }}" required>
                         @error('report_date')
@@ -109,5 +141,28 @@
         });
     })
 </script>
+<script>
+    document.getElementById('lesson_name').addEventListener('input', function() {
+        // Get the entered lesson name
+        var lessonName = this.value;
+
+        // Find the matching option in the datalist
+        var options = document.querySelectorAll('#lessons option');
+        var lessonId = '';
+
+        options.forEach(function(option) {
+            if (option.value === lessonName) {
+                // Set the corresponding lesson_id
+                lessonId = option.getAttribute('data-id');
+            }
+        });
+
+        // Update the hidden input with the lesson_id
+        document.getElementById('lesson_id').value = lessonId;
+
+        console.log('Selected lesson_id:', lessonId);
+    });
+</script>
+
 
 @endsection

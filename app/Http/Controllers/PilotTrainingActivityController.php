@@ -8,8 +8,17 @@ use Illuminate\Http\Request;
 
 class PilotTrainingActivityController extends Controller
 {
+    public static $activityTypes = ['STATUS' => true, 'INSTRUCTOR' => true, 'PAUSE' => true, 'COMMENT' => true, 'PRETRAINING' => true];
+
     public static function create(int $trainingId, string $type, ?int $new_data = null, ?int $old_data = null, ?int $userId = null, ?string $comment = null)
     {
+
+        try {
+            PilotTrainingActivityController::$activityTypes[$type];
+        } catch (\Exception $e) {
+            throw new \App\Exceptions\InvalidTrainingActivityType('The type ' . $type . ' is not supported.');
+        }
+
         $activity = new PilotTrainingActivity();
         $activity->pilot_training_id = $trainingId;
         $activity->type = $type;

@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App;
 use App\Helpers\TrainingStatus;
+use App\Models\Callsign;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class PilotTrainingController extends Controller
 {
@@ -64,6 +67,7 @@ class PilotTrainingController extends Controller
 
     public function apply()
     {
+        $this->authorize('apply', PilotTraining::class);
         $user = Auth::user();
         $userPilotRating = $user->pilotrating;
         $payload = [];
@@ -110,7 +114,6 @@ class PilotTrainingController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->all());
         $data = $this->validateUpdateDetails();
         $this->authorize('store', [PilotTraining::class, $data]);
 
@@ -122,7 +125,6 @@ class PilotTrainingController extends Controller
             $ratings = PilotRating::find(explode('+', $data['training_level']));
         }
 
-        //dd($data);
         $pilot_training = PilotTraining::create([
             'user_id' => isset($data['user_id']) ? $data['user_id'] : \Auth::id(),
             'created_by' => \Auth::id(),
@@ -137,10 +139,52 @@ class PilotTrainingController extends Controller
             $pilot_training->pilotRatings()->save($ratings->first());
         }
 
+        // Create and assign callsign to pilot training
+        $this->assignCallsign($pilot_training);
+
         if ($request->expectsJson()) {
-            return $training;
+            return $pilot_training;
         }
         return redirect()->intended(route('dashboard'));
+    }
+
+    public function assignCallsign(PilotTraining $pilotTraining)
+    {
+
+        $baseNumber = 000;
+
+        // level = rating id - 1 cause ratings start at P0
+        $level = $pilotTraining->pilotRatings()->first()->id - 1;
+    
+        $lastCallsign = DB::table('callsigns')
+            ->where('callsign', 'LIKE', "SPT{$level}%")
+            ->orderBy('callsign', 'desc')
+            ->first();
+        
+        if ($lastCallsign) {
+            // Extract the number part from the last callsign and increment it
+            $lastNumber = intval(substr($lastCallsign->callsign, strlen("SPT{$level}")));
+            $nextNumber = $lastNumber + 1;
+        } else {
+            // Start at the base number + 1 if no callsign exists for this level
+            $nextNumber = $baseNumber + 1;
+        }
+
+        $newCallsign = "SPT" . $level . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        
+        
+        $callsign = Callsign::create([
+            'callsign' => $newCallsign,
+            'training_level' => $level,
+            'pilot_training_id' => $pilotTraining->id,
+            'user_id' => $pilotTraining->user_id,
+        ]);
+
+        $pilotTraining->callsign_id = $callsign->id;
+        $pilotTraining->save();
+
+        
+        return $callsign;
     }
 
     public function create(Request $request, $prefillUserId = null)
@@ -157,7 +201,7 @@ class PilotTrainingController extends Controller
     {
         $this->authorize('view', $training);
 
-        $reports = PilotTrainingReport::where('pilot_training_id', $training->id)->get();
+        $reports = PilotTrainingReport::where('pilot_training_id', $training->id)->with('lesson')->get();
 
         $instructors = \Auth::user()->allWithGroup(4);
         $statuses = PilotTrainingController::$statuses;
@@ -202,7 +246,7 @@ class PilotTrainingController extends Controller
                     $training->instructors()->attach($instructor, ['expire_at' => now()->addMonths(12)]);
                     $notifyOfNewInstructor = true;
 
-                    PilotTrainingActivity::create($training->id, 'INSTRUCTOR', $instructor, null, Auth::user()->id);
+                    PilotTrainingActivityController::create($training->id, 'INSTRUCTOR', $instructor, null, Auth::user()->id);
                 }
             }
 
@@ -219,7 +263,7 @@ class PilotTrainingController extends Controller
             unset($attributes['instructors']);
         } else {
             foreach ($training->instructors as $instructor) {
-                PilotTrainingActivityController::create($training->id, 'INSTRUCTOR', null, $mentor->id, Auth::user()->id);
+                PilotTrainingActivityController::create($training->id, 'INSTRUCTOR', null, $instructor->id, Auth::user()->id);
 
             }
 

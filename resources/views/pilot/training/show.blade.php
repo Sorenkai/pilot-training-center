@@ -23,8 +23,13 @@
                     <dd><i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}</dd>
 
                     <dt>Level</dt>
-                    <dd class="separator pb-3">
+                    <dd>
                         {{ $training->pilotRatings[0]->name }}
+                    </dd>
+
+                    <dt>Callsign</dt>
+                    <dd class="separator pb-3">
+                        {{ $training->callsign->callsign }}
                     </dd>
 
                     <dt class="pt-2">Vatsim ID</dt>
@@ -197,11 +202,11 @@
                                     @elseif($activity->type == "TYPE")
                                         Training type changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
                                         to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
-                                    @elseif($activity->type == "MENTOR")
+                                    @elseif($activity->type == "INSTRUCTOR")
                                         @if($activity->new_data)
-                                            <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
+                                            <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as instructor
                                         @elseif($activity->old_data)
-                                        <span class="badge text-bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
+                                        <span class="badge text-bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as instructor
                                         @endif
                                     @elseif($activity->type == "PAUSE")
                                         @if($activity->new_data)
@@ -285,8 +290,6 @@
                         @isset($training->experience)
                             <i class="fas fa-book"></i>&nbsp;&nbsp;{{ $experiences[$training->experience]["text"] }}
                         @endisset
-
-                        <h6>add application </h6>
                     </div>
                 </div>
             </div>
@@ -367,10 +370,10 @@
                                             <div id="{{ $uuid }}" class="collapse" data-bs-parent="#reportAccordion">
                                                 <div class="card-body">
                                                     <small class="text-muted">
-                                                        @if (isset($report->position))
-                                                            <i class="fas fa-map-marker-alt"></i> {{ $report->position}}&emsp;
+                                                        <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($report->written_by_id)->name) ? \App\Models\User::find($report->written_by_id)->name : "Unknown"}}&emsp;
+                                                        @if (isset($report->lesson_id))
+                                                            <i class="fas fa-scroll"></i> {{ $report->lesson->name}}
                                                         @endif
-                                                        <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($report->written_by_id)->name) ? \App\Models\User::find($report->written_by_id)->name : "Unknown"}}
                                                         @can('update', $report)
                                                             <a href="{{ route('pilot.training.report.edit', $report->id)}}" class="float-end"><i class="fa fa-pen-square"></i> Edit</a>
                                                         @endcan
