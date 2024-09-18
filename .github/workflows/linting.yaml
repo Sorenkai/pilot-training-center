@@ -1,49 +1,33 @@
-name: Lint and Format
+name: lint
 
-# Trigger the workflow on every push or pull request
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+on: [push]
+ 
 jobs:
-  lint-and-format:
+  lint:
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.3]
+ 
     steps:
-    # Step 1: Check out the code
-    - name: Check out code
-      uses: actions/checkout@v3
-
-    # Step 2: Set up PHP
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'  # Adjust based on your PHP version
-
-    # Step 3: Install dependencies
-    - name: Install Composer dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
-
-    # Step 4: Run PHP_CodeSniffer for linting
-    - name: Run PHP_CodeSniffer
-      run: vendor/bin/phpcs --standard=PSR12 app/  # Adjust path as needed
-      continue-on-error: true  # Allow the job to continue even if linting fails
-
-    # Step 5: Run PHP-CS-Fixer for formatting
-    - name: Run PHP-CS-Fixer
-      run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
-      continue-on-error: true  # Allow the job to continue even if formatting fails
-
-    # Step 6: Fail the job if there are lint or format issues
-    - name: Check for lint or format errors
-      run: |
-        if vendor/bin/phpcs --standard=PSR12 app/ || vendor/bin/php-cs-fixer fix --dry-run --diff --verbose; then
-          echo "Code is clean!";
-        else
-          echo "Linting or formatting errors found!";
-          exit 1;
-        fi
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, dom, curl, libxml, mbstring
+          coverage: none
+ 
+      - name: Install Pint
+        run: composer global require laravel/pint
+ 
+      - name: Run Pint
+        run: pint
+ 
+      - name: Commit linted files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Fixes coding style"

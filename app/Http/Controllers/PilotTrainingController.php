@@ -12,13 +12,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class PilotTrainingController extends Controller
 {
-
     /**
-     * A list of possible statuses 
+     * A list of possible statuses
      */
     public static $statuses = [
         -4 => ['text' => 'Closed by system', 'color' => 'danger', 'icon' => 'fa fa-ban', 'assignableByStaff' => false],
@@ -30,6 +28,7 @@ class PilotTrainingController extends Controller
         2 => ['text' => 'Active training', 'color' => 'success', 'icon' => 'fas fa-book-open', 'assignableByStaff' => true],
         3 => ['text' => 'Awaiting exam', 'color' => 'warning', 'icon' => 'fas fa-graduation-cap', 'assignableByStaff' => true],
     ];
+
     /**
      * A list of possible experiences
      */
@@ -42,7 +41,7 @@ class PilotTrainingController extends Controller
     public function index()
     {
         $this->authorize('viewActiveRequests', PilotTraining::class);
-        $openTrainings = Auth::user()->viewableModels(\App\Models\PilotTraining::class, [['status', '>=', 0]], ['user', 'user.groups', 'pilotRatings', 'instructors'])->sort(function($a, $b){
+        $openTrainings = Auth::user()->viewableModels(\App\Models\PilotTraining::class, [['status', '>=', 0]], ['user', 'user.groups', 'pilotRatings', 'instructors'])->sort(function ($a, $b) {
             if ($a->status == $b->status) {
                 return $a->created_at->timestamp - $b->created_at->timestamp;
             }
@@ -51,6 +50,7 @@ class PilotTrainingController extends Controller
         });
 
         $statuses = PilotTrainingController::$statuses;
+
         return view('pilot.training.index', compact('openTrainings', 'statuses'));
     }
 
@@ -58,7 +58,7 @@ class PilotTrainingController extends Controller
     {
         $this->authorize('viewHistoricRequests', PilotTraining::class);
 
-        $closedTrainings = Auth::user()->viewableModels(\App\Models\PilotTraining::class, [['status', '<', 0]], [ 'reports', 'pilotRatings', 'activities', 'instructors', 'user', 'user.groups', 'user.groups'])->sortByDesc('closed_at');
+        $closedTrainings = Auth::user()->viewableModels(\App\Models\PilotTraining::class, [['status', '<', 0]], ['reports', 'pilotRatings', 'activities', 'instructors', 'user', 'user.groups', 'user.groups'])->sortByDesc('closed_at');
 
         $statuses = PilotTrainingController::$statuses;
 
@@ -88,11 +88,11 @@ class PilotTrainingController extends Controller
         }
 
         // Get available trainings (PPL, IR, CMEL, ATPL)
-        $pilotRatings = PilotRating::whereNotIn('vatsim_rating', [0,31,63])->get();
+        $pilotRatings = PilotRating::whereNotIn('vatsim_rating', [0, 31, 63])->get();
 
         if ($userPilotRating < 15) {
 
-            foreach($pilotRatings as $pilotRating) {
+            foreach ($pilotRatings as $pilotRating) {
                 if ($pilotRating->vatsim_rating > $userPilotRating) {
                     $payload[] = [
                         'id' => $pilotRating->id,
@@ -110,8 +110,6 @@ class PilotTrainingController extends Controller
         ]);
     }
 
-
-
     public function store(Request $request)
     {
         $data = $this->validateUpdateDetails();
@@ -121,7 +119,7 @@ class PilotTrainingController extends Controller
             return response(['message' => 'The given CID cannot be found in the application database. Please check the user has logged in before.'], 400);
         }
 
-        if( isset($data['training_level']) ) {
+        if (isset($data['training_level'])) {
             $ratings = PilotRating::find(explode('+', $data['training_level']));
         }
 
@@ -145,6 +143,7 @@ class PilotTrainingController extends Controller
         if ($request->expectsJson()) {
             return $pilot_training;
         }
+
         return redirect()->intended(route('dashboard'));
     }
 
@@ -155,12 +154,12 @@ class PilotTrainingController extends Controller
 
         // level = rating id - 1 cause ratings start at P0
         $level = $pilotTraining->pilotRatings()->first()->id - 1;
-    
+
         $lastCallsign = DB::table('callsigns')
             ->where('callsign', 'LIKE', "SPT{$level}%")
             ->orderBy('callsign', 'desc')
             ->first();
-        
+
         if ($lastCallsign) {
             // Extract the number part from the last callsign and increment it
             $lastNumber = intval(substr($lastCallsign->callsign, strlen("SPT{$level}")));
@@ -170,9 +169,8 @@ class PilotTrainingController extends Controller
             $nextNumber = $baseNumber + 1;
         }
 
-        $newCallsign = "SPT" . $level . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-        
-        
+        $newCallsign = 'SPT' . $level . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
         $callsign = Callsign::create([
             'callsign' => $newCallsign,
             'training_level' => $level,
@@ -183,7 +181,6 @@ class PilotTrainingController extends Controller
         $pilotTraining->callsign_id = $callsign->id;
         $pilotTraining->save();
 
-        
         return $callsign;
     }
 
@@ -208,7 +205,6 @@ class PilotTrainingController extends Controller
         $experiences = PilotTrainingController::$experiences;
         $activities = $training->activities->sortByDesc('created_at');
 
-
         return view('pilot.training.show', compact('training', 'instructors', 'statuses', 'experiences', 'activities', 'reports'));
     }
 
@@ -229,8 +225,8 @@ class PilotTrainingController extends Controller
         $attributes = $this->validateUpdateDetails();
         if (array_key_exists('status', $attributes)) {
             $training->updateStatus($attributes['status']);
-            
-            if($attributes['status'] != $oldStatus) {
+
+            if ($attributes['status'] != $oldStatus) {
                 if ($attributes['status'] == -2 || $attributes['status'] == -4) {
                     PilotTrainingActivityController::create($training->id, 'STATUS', $attributes['status'], $oldStatus, Auth::user()->id, $attributes['closed_reason']);
                 } else {
@@ -241,7 +237,7 @@ class PilotTrainingController extends Controller
 
         $notifyOfNewInstructor = false;
         if (array_key_exists('instructors', $attributes)) {
-            foreach((array) $attributes['instructors'] as $instructor) {
+            foreach ((array) $attributes['instructors'] as $instructor) {
                 if (! $training->instructors->contains($instructor) && User::find($instructor) != null && User::find($instructor)->isInstructor()) {
                     $training->instructors()->attach($instructor, ['expire_at' => now()->addMonths(12)]);
                     $notifyOfNewInstructor = true;
@@ -250,7 +246,7 @@ class PilotTrainingController extends Controller
                 }
             }
 
-            foreach($training->instructors as $instructor) {
+            foreach ($training->instructors as $instructor) {
                 if (! in_array($instructor->id, (array) $attributes['instructors'])) {
                     $training->instructors()->detach($instructor);
                     PilotTrainingActivityController::create($training->id, 'INSTRUCTOR', null, $instructor->id, Auth::user()->id);
@@ -313,7 +309,7 @@ class PilotTrainingController extends Controller
         $attributes = $this->validateUpdateEdit();
 
         $preChangeRatings = $training->pilotRatings;
-        
+
         $training->pilotRatings()->detach();
         if (isset($attributes['pilotRatings'])) {
             $pilotRatings = PilotRating::find($attributes['pilotRatings']);
@@ -330,7 +326,7 @@ class PilotTrainingController extends Controller
         $training->english_only_training = array_key_exists('englishOnly', $attributes) ? true : false;
 
         $training->save();
-        
+
         return redirect($training->path())->withSuccess('Pilot training successfully updated');
 
     }
@@ -357,4 +353,3 @@ class PilotTrainingController extends Controller
         ]);
     }
 }
-
