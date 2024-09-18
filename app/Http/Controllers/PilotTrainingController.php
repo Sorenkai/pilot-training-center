@@ -144,6 +144,8 @@ class PilotTrainingController extends Controller
             return $pilot_training;
         }
 
+        ActivityLogController::info('TRAINING', 'Created pilot training request '. $pilot_training->id . ' for CID ' . $pilot_training->user->id . ' - Rating: ' . $ratings->pluck('name'));
+
         return redirect()->intended(route('dashboard'));
     }
 
@@ -294,7 +296,10 @@ class PilotTrainingController extends Controller
         // Update the training
         $training->update($attributes);
 
-        // Add notifications
+        ActivityLogController::warning('TRAINING', 'Updated pilot training details ' . $training->id .
+        ' - Old Status: ' . PilotTrainingController::$statuses[$oldStatus]['text'] .
+        ' - New Status: ' . PilotTrainingController::$statuses[$training->status]['text'] .
+        ' - Instructor: ' . $training->instructors->pluck('name'));
 
         if ($notifyOfNewInstructor) {
             return redirect($training->path())->withSuccess('Training successfully updated. E-mail notification of instructor assigned sent to the student');
@@ -326,6 +331,11 @@ class PilotTrainingController extends Controller
         $training->english_only_training = array_key_exists('englishOnly', $attributes) ? true : false;
 
         $training->save();
+
+        ActivityLogController::warning('TRAINING', 'Updated pilot training request ' . $training->id . 
+        ' - Old Rating: ' . $preChangeRatings->pluck('name') .
+        ' - New Rating: ' . $pilotRatings->pluck('name') .
+        ' - English only: '. ($training->english_only_training ? 'true' : 'false'));
 
         return redirect($training->path())->withSuccess('Pilot training successfully updated');
 
