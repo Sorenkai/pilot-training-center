@@ -11,6 +11,7 @@ use App\Models\AtcActivity;
 use App\Models\Group;
 use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
+use App\Models\PilotTrainingReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -119,10 +120,10 @@ class UserController extends Controller
             return abort(404);
         }
 
-        $trainings = $user->trainings;
-        $statuses = TrainingController::$statuses;
+        $trainings = $user->pilotTrainings;
+        $statuses = PilotTrainingController::$statuses;
         $types = TrainingController::$types;
-        $endorsements = $user->endorsements->whereIn('type', ['EXAMINER', 'FACILITY', 'SOLO', 'VISITING'])->sortBy([['expired', 'asc'], ['revoked', 'asc']]);
+        //$endorsements = $user->endorsements->whereIn('type', ['EXAMINER', 'FACILITY', 'SOLO', 'VISITING'])->sortBy([['expired', 'asc'], ['revoked', 'asc']]);
 
         // Get hours and grace per area
         $atcActivityHours = [];
@@ -170,7 +171,7 @@ class UserController extends Controller
             $divisionExams = $divisionExams->sortByDesc('created_at');
         }
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'types', 'endorsements', 'areas', 'divisionExams', 'atcActivityHours', 'totalHours'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'divisionExams', 'totalHours'));
     }
 
     /**
@@ -402,13 +403,13 @@ class UserController extends Controller
         $this->authorize('viewReports', $user);
 
         $examinations = TrainingExamination::where('examiner_id', $user->id)->get();
-        $reports = TrainingReport::where('written_by_id', $user->id)->get();
+        $reports = PilotTrainingReport::where('written_by_id', $user->id)->get();
 
         $reportsAndExams = collect($reports)->merge($examinations);
         $reportsAndExams = $reportsAndExams->sort(function ($a, $b) {
             // Define the correct date to sort by model type is report or exam
-            is_a($a, '\App\Models\TrainingReport') ? $aSort = Carbon::parse($a->report_date) : $aSort = Carbon::parse($a->examination_date);
-            is_a($b, '\App\Models\TrainingReport') ? $bSort = Carbon::parse($b->report_date) : $bSort = Carbon::parse($b->examination_date);
+            is_a($a, '\App\Models\PilotTrainingReport') ? $aSort = Carbon::parse($a->report_date) : $aSort = Carbon::parse($a->examination_date);
+            is_a($b, '\App\Models\PilotTrainingReport') ? $bSort = Carbon::parse($b->report_date) : $bSort = Carbon::parse($b->examination_date);
 
             // Sorting algorithm
             if ($aSort == $bSort) {
@@ -418,7 +419,7 @@ class UserController extends Controller
             return ($aSort > $bSort) ? -1 : 1;
         });
 
-        return view('user.reports', compact('user', 'reportsAndExams'));
+        return view('user.reports', compact('user', 'reports'));
     }
 
     /**

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('pilot_training_id');
             $table->unsignedBigInteger('written_by_id')->nullable();
-            $table->unsignedBitInteger('lesson_id')->nullable();
+            $table->unsignedBigInteger('lesson_id')->nullable();
             $table->date('report_date');
             $table->text('content');
             $table->text('contentimprove')->nullable();

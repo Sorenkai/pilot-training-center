@@ -52,21 +52,6 @@
                     </dd>
 
                     <dt>ATC Hours</dt>
-                    @foreach($areas as $area)
-                        <dd class="mb-0">
-
-                            @if(!Setting::get('atcActivityBasedOnTotalHours'))
-                                @if($atcActivityHours[$area->id]["active"])
-                                    <i class="far fa-circle-check text-success"></i>
-                                @else
-                                    <i class="far fa-circle-xmark text-danger"></i>
-                                @endif
-                            @endif
-
-                            {{ $area->name }}: {{ round($atcActivityHours[$area->id]["hours"]) }}h
-                            {!! ($atcActivityHours[$area->id]["graced"]) ? '<i class="fas fa-person-praying" data-bs-toggle="tooltip" data-bs-placement="right" title="This controller is in grace period for '.Setting::get('atcActivityGracePeriod', 12).' months after completing their training"></i>' : '' !!}
-                        </dd>
-                    @endforeach
 
                     <div id="vatsim-data">
                         <dt class="pt-2">VATSIM Stats&nbsp;<a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank"><i class="fas fa-link"></i></a></dt>
@@ -100,28 +85,28 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Mentoring
+                    Instructing
                 </h6>
                 <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-file"></i> See reports</a>
             </div>
-            <div class="card-body {{ $user->teaches->count() == 0 ? '' : 'p-0' }}">
+            <div class="card-body {{ $user->instructs->count() == 0 ? '' : 'p-0' }}">
 
-                @if($user->teaches->count() == 0)
+                @if($user->instructs->count() == 0)
                     <p class="mb-0">No registered students</p>
                 @else
                     <div class="table-responsive">
                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
                             <thead class="table-light">
                                 <tr>
-                                    <th data-sortable="true" data-filter-control="select">Teaches</th>
+                                    <th data-sortable="true" data-filter-control="select">Instructs</th>
                                     <th data-sortable="true" data-filter-control="input">Expires</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($user->teaches as $training)
+                                @foreach($user->instructs as $training)
                                 <tr>
                                     <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
-                                    <td>{{ Carbon\Carbon::parse($user->teaches->find($training->id)->pivot->expire_at)->toEuropeanDate() }}</td>
+                                    <td>{{ Carbon\Carbon::parse($user->instructs->find($training->id)->pivot->expire_at)->toEuropeanDate() }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -156,8 +141,7 @@
                                         <tr>
                                             <th>State</th>
                                             <th>Level</th>
-                                            <th>Area</th>
-                                            <th>Type</th>
+                                            <th>Callsign</th>
                                             <th>Applied</th>
                                             <th>Ended</th>
                                         </tr>
@@ -169,7 +153,7 @@
                                                 <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                             </td>
                                             <td>
-                                                @if ( is_iterable($ratings = $training->ratings->toArray()) )
+                                                @if ( is_iterable($ratings = $training->pilotRatings->toArray()) )
                                                     @for( $i = 0; $i < sizeof($ratings); $i++ )
                                                         @if ( $i == (sizeof($ratings) - 1) )
                                                             {{ $ratings[$i]["name"] }}
@@ -182,10 +166,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                {{ $training->area->name }}
-                                            </td>
-                                            <td>
-                                                <i class="{{ $types[$training->type]["icon"] }}"></i>&ensp;{{ $types[$training->type]["text"] }}
+                                                {{ $training->callsign->callsign }}
                                             </td>
                                             <td>
                                                 {{ $training->created_at->toEuropeanDate() }}
@@ -267,161 +248,6 @@
             </div>
         </div>
 
-        <div class="col-xl-12 col-lg-12 col-md-12 p-0">
-            <div class="card shadow mb-4">
-                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 fw-bold text-white">
-                        Endorsements
-                    </h6>
-                    @can('create', \App\Models\Endorsement::class)
-                        <a href="{{ route('endorsements.create.id', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add new endorsement</a>
-                    @endcan
-                </div>
-                <div class="card-body d-flex flex-wrap gap-3">
-
-                    @if($endorsements->count() == 0)
-                        <p class="mb-0">No registered endorsements</p>
-                    @endif
-
-                    @foreach($endorsements as $endorsement)
-                        <div class="card bg-light mb-3 endorsement-card" data-endorsement-id="{{ $endorsement['id'] }}">
-                            <div class="card-header fw-bold">
-
-                                @if($endorsement->revoked)
-                                    <i class="fas fa-circle-xmark text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoked"></i>
-                                @elseif($endorsement->expired)
-                                    <i class="fas fa-circle-minus text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Expired"></i>
-                                @else
-                                    <i class="fas fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Active"></i>
-                                @endif
-
-                                {{ ucfirst(strtolower($endorsement->type)) }} Endorsement
-
-                                @can('delete', [\App\Models\Endorsement::class, $endorsement])
-                                    <a href="{{ route('endorsements.delete', $endorsement->id) }}" class="text-muted float-end hover-red" data-bs-toggle="tooltip" data-bs-placement="top" title="Revoke" onclick="return confirm('Are you sure you want to revoke this endorsement?')"><i class="fas fa-trash"></i></a>
-                                @endcan
-
-                                @if($endorsement->type == 'SOLO' && isset($endorsement->valid_to))
-                                    @can('shorten', [\App\Models\Endorsement::class, $endorsement])
-                                        <span class="flatpickr">
-                                            <input type="text" style="width: 1px; height: 1px; visibility: hidden;" data-endorsement-id="{{ $endorsement['id'] }}" data-date="{{ $endorsement->valid_to->format('Y-m-d') }}" data-input>
-                                            <a role="button" class="input-button text-muted float-end hover-red text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="top" title="Shorten expire date" data-toggle>
-                                                <i class="fas fa-calendar-minus"></i>&nbsp;
-                                            </a>
-                                        </span>
-                                    @endcan
-                                @endif
-                            </div>
-                            <div class="card-body">
-                                <table class="table-card">
-                                    @if($endorsement->type == "FACILITY")
-                                        <tr class="spacing">
-                                            <th>Position</th>
-                                            <td>{{ $endorsement->ratings->first()->endorsement_type }} {{ $endorsement->ratings->first()->name }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Issued</th>
-                                            <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
-                                        </tr>
-                                        <tr class="spacing">
-                                            <th>Expire</th>
-                                            <td>{{ isset($endorsement->valid_to) ? $endorsement->valid_to->toEuropeanDateTime() : 'Never' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Issued by</th>
-                                            <td>{{ isset($endorsement->issued_by) ? \App\Models\User::find($endorsement->issued_by)->name : 'System' }}</td>
-                                        </tr>
-                                        @if($endorsement->revoked)
-                                            <tr>
-                                                <th>Revoked by</th>
-                                                <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
-                                            </tr>
-                                        @endif                    
-                                    @elseif($endorsement->type == 'SOLO')
-                                        <tr class="spacing">
-                                            <th>Rating</th>
-                                            <td>{{ implode(', ', $endorsement->positions->pluck('callsign')->toArray()) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Issued</th>
-                                            <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
-                                        </tr>
-                                        <tr class="spacing">
-                                            <th>Expire</th>
-                                            <td>{{ isset($endorsement->valid_to) ? $endorsement->valid_to->toEuropeanDateTime() : 'Never' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Issued by</th>
-                                            <td>{{ isset($endorsement->issued_by) ? \App\Models\User::find($endorsement->issued_by)->name : 'System' }}</td>
-                                        </tr>
-                                        @if($endorsement->revoked)
-                                            <tr>
-                                                <th>Revoked by</th>
-                                                <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
-                                            </tr>
-                                        @endif
-                                    @elseif($endorsement->type == "VISITING")
-                                        <tr>
-                                            <th>Rating</th>
-                                            <td>{{ $endorsement->ratings->first()->name }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Areas</th>
-                                            <td>{{ implode(', ', $endorsement->areas->pluck('name')->toArray()) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Issued</th>
-                                            <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
-                                        </tr>
-                                        <tr class="spacing">
-                                            <th>Expire</th>
-                                            <td>{{ isset($endorsement->valid_to) ? $endorsement->valid_to->toEuropeanDateTime() : 'Never' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Issued by</th>
-                                            <td>{{ isset($endorsement->issued_by) ? \App\Models\User::find($endorsement->issued_by)->name : 'System' }}</td>
-                                        </tr>
-                                        @if($endorsement->revoked)
-                                            <tr>
-                                                <th>Revoked by</th>
-                                                <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
-                                            </tr>
-                                        @endif
-                                    @elseif($endorsement->type == "EXAMINER")
-                                        <tr>
-                                            <th>Examining</th>
-                                            <td>{{ $endorsement->ratings->first()->name }}</td>
-                                        </tr>
-                                        <tr class="spacing">
-                                            <th>Areas</th>
-                                            <td>{{ implode(', ', $endorsement->areas->pluck('name')->toArray()) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Issued</th>
-                                            <td>{{ $endorsement->valid_from->toEuropeanDate() }}</td>
-                                        </tr>
-                                        <tr class="spacing">
-                                            <th>Expire</th>
-                                            <td>{{ isset($endorsement->valid_to) ? $endorsement->valid_to->toEuropeanDateTime() : 'Never' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Issued by</th>
-                                            <td>{{ isset($endorsement->issued_by) ? \App\Models\User::find($endorsement->issued_by)->name : 'System' }}</td>
-                                        </tr>
-                                        @if($endorsement->revoked)
-                                            <tr>
-                                                <th>Revoked by</th>
-                                                <td>{{ isset($endorsement->revoked_by) ? \App\Models\User::find($endorsement->revoked_by)->name : 'System' }}</td>
-                                            </tr>
-                                        @endif
-                                    @endif
-                                </table>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
         @if (\Illuminate\Support\Facades\Gate::inspect('viewAccess', $user)->allowed())
             <div class="col-xl-12 col-lg-12 col-md-12 mb-12 p-0">
                 <div class="card shadow mb-4">

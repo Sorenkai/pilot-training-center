@@ -24,7 +24,7 @@
  
                     <div class="mb-3">
                         <label class="form-label my-1 me-2" for="ratingSelect">Training level <span class="badge bg-secondary">Ctrl/Cmd+Click</span> to select multiple</label>
-                        <select multiple id="ratingSelect" name="pilotRatings[]" class="form-select @error('pilotRatings') is-invalid @enderror" size="5">
+                        <select id="ratingSelect" name="pilotRatings[]" class="form-select @error('pilotRatings') is-invalid @enderror">
                             @foreach($pilotRatings as $rating)
                                 @if($training->pilotRatings->where('id', $rating->id)->count())
                                     <option value="{{ $rating->id }}" selected>{{ $rating->name }}</option>

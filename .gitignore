@@ -3,6 +3,7 @@
 .htaccess
 .idea/
 .vscode/
+.github.old/
 TODO.txt
 /_ide_helper.php
 /.phpstorm.meta.php

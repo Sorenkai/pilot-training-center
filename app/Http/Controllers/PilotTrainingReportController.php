@@ -53,6 +53,38 @@ class PilotTrainingReportController extends Controller
 
     }
 
+    public function edit(PilotTrainingReport $report)
+    {
+        $this->authorize('update', $report);
+
+        $lessons = Lesson::all();
+
+        return view('pilot.training.report.edit', compact('report', 'lessons'));
+    }
+
+    public function update(Request $request, PilotTrainingReport $report)
+    {
+        $this->authorize('update', $report);
+        $oldDraftStatus = $report->fresh()->draft;
+
+        $data = $this->validateRequest();
+
+        if (isset($data['report_date'])) {
+            $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
+        }
+
+        (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
+
+        $report->update($data);
+
+        // Notify student of new training request if it's not a draft anymore
+        if ($oldDraftStatus == true && $report->draft == false && $report->pilotTraining->user->setting_notify_newreport) {
+            //$report->training->user->notify(new TrainingReportNotification($report->training, $report));
+        }
+
+        return redirect()->intended(route('pilot.training.show', $report->pilotTraining->id))->withSuccess('Training report successfully updated');
+    }
+
     protected function validateRequest()
     {
         return request()->validate([

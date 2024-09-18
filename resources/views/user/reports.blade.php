@@ -13,14 +13,14 @@
             </div>
             <div class="card-body p-0">
                 <div class="accordion" id="reportAccordion">
-                    @if ($reportsAndExams->count() == 0)
+                    @if ($reports->count() == 0)
                         <div class="card-text text-primary p-3">
                             No training reports yet.
                         </div>
                     @else
 
-                        @foreach($reportsAndExams as $reportModel)
-                            @if(is_a($reportModel, '\App\Models\TrainingReport'))
+                        @foreach($reports as $reportModel)
+                            @if(is_a($reportModel, '\App\Models\PilotTrainingReport'))
 
                                 @if(!$reportModel->draft || $reportModel->draft && \Auth::user()->isMentorOrAbove())
 
@@ -34,8 +34,8 @@
                                                 <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid }}" aria-expanded="true">
                                                     <i class="fas fa-fw fa-chevron-right me-2"></i>
                                                     {{ $reportModel->report_date->toEuropeanDate() }}
-                                                    | {{ isset(\App\Models\User::find($reportModel->training->user->id)->first_name) ? \App\Models\User::find($reportModel->training->user->id)->first_name : "Unknown"  }}'s
-                                                    @foreach($reportModel->training->ratings as $rating)
+                                                    | {{ isset(\App\Models\User::find($reportModel->pilotTraining->user->id)->first_name) ? \App\Models\User::find($reportModel->pilotTraining->user->id)->first_name : "Unknown"  }}'s
+                                                    @foreach($reportModel->pilotTraining->pilotRatings as $rating)
                                                         @if ($loop->last)
                                                             {{ $rating->name }}
                                                         @else
@@ -58,8 +58,8 @@
                                                         <i class="fas fa-map-marker-alt"></i> {{ $reportModel->position }}&emsp;
                                                     @endif
                                                     <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->written_by_id)->name) ? \App\Models\User::find($reportModel->written_by_id)->name : "Unknown"  }}
-                                                    @can('view', [\App\Models\Training::class, $reportModel->training])
-                                                        <a class="float-end" href="{{ route('training.show', $reportModel->training->id) }}"><i class="fa fa-eye"></i> View training</a>
+                                                    @can('view', [\App\Models\PilotTraining::class, $reportModel->pilotTraining])
+                                                        <a class="float-end" href="{{ route('pilot.training.show', $reportModel->pilotTraining->id) }}"><i class="fa fa-eye"></i> View training</a>
                                                     @endcan
                                                 </small>
 
@@ -81,7 +81,7 @@
                                                     <hr>
                                                     @foreach($reportModel->attachments as $attachment)
                                                         <div>
-                                                            <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                            <a href="{{ route('pilot.training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                                                 <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
                                                             </a>
                                                         </div>
@@ -108,8 +108,8 @@
                                             <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid }}" aria-expanded="true">
                                                 <i class="fas fa-fw fa-chevron-right me-2"></i>
                                                 {{ $reportModel->examination_date->toEuropeanDate() }}
-                                                | {{ isset(\App\Models\User::find($reportModel->training->user->id)->first_name) ? \App\Models\User::find($reportModel->training->user->id)->first_name : "Unknown"  }}'s
-                                                @foreach($reportModel->training->ratings as $rating)
+                                                | {{ isset(\App\Models\User::find($reportModel->pilotTraining->user->id)->first_name) ? \App\Models\User::find($reportModel->pilotTraining->user->id)->first_name : "Unknown"  }}'s
+                                                @foreach($reportModel->pilotTraining->pilotRatings as $rating)
                                                     @if ($loop->last)
                                                         {{ $rating->name }}
                                                     @else
@@ -129,8 +129,8 @@
                                                     <i class="fas fa-map-marker-alt"></i> {{ \App\Models\Position::find($reportModel->position_id)->callsign }}&emsp;
                                                 @endif
                                                 <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->examiner_id)->name) ? \App\Models\User::find($reportModel->examiner_id)->name : "Unknown" }}
-                                                @can('view', [\App\Models\Training::class, $reportModel->training])
-                                                    <a class="float-end" href="{{ route('training.show', $reportModel->training->id) }}"><i class="fa fa-eye"></i> View training</a>
+                                                @can('view', [\App\Models\PilotTraining::class, $reportModel->pilotTraining])
+                                                    <a class="float-end" href="{{ route('pilot.training.show', $reportModel->pilotTraining->id) }}"><i class="fa fa-eye"></i> View training</a>
                                                 @endcan
                                             </small>
 
@@ -149,7 +149,7 @@
                                             @if($reportModel->attachments->count() > 0)
                                                 @foreach($reportModel->attachments as $attachment)
                                                     <div>
-                                                        <a href="{{ route('training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
+                                                        <a href="{{ route('pilot.training.object.attachment.show', ['attachment' => $attachment]) }}" target="_blank">
                                                             <i class="fa fa-file"></i>&nbsp;{{ $attachment->file->name }}
                                                         </a>
                                                     </div>

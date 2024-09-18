@@ -126,7 +126,7 @@
     <!-- Area Chart -->
     <div class="col-xl-8 col-lg-7 ">
         
-        @if(\Auth::user()->isMentor())
+        @if(\Auth::user()->isInstructor())
         <div class="card shadow mb-4 d-none d-xl-block d-lg-block d-md-block">
             <!-- Card Header - Dropdown -->
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -144,7 +144,7 @@
                             <tr>
                                 <th>Student</th>
                                 <th>Level</th>
-                                <th>Area</th>
+                                <th>Callsign</th>
                                 <th>State</th>
                                 <th>Last Training</th>
                             </tr>
@@ -154,16 +154,9 @@
                             <tr>
                                 <td><a href="{{ $training->path() }}">{{ $training->user->name }}</a></td>
                                 <td>
-                                    <i class="{{ $types[$training->type]["icon"] }} text-primary"></i>
-                                    @foreach($training->pilotRatings as $rating)
-                                    @if ($loop->last)
-                                    {{ $rating->name }}
-                                    @else
-                                    {{ $rating->name . " + " }}
-                                    @endif
-                                    @endforeach
+                                    {{ $training->pilotRatings[0]->name }}
                                 </td>
-                                <td>{{ $training->area->name }}</td>
+                                <td>{{ $training->callsign->callsign }}</td>
                                 <td>
                                     <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;{{ $statuses[$training->status]["text"] }}{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                 </td>

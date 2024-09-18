@@ -17,7 +17,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(0)->comment('-4: Closed by system, -3: Closed on student’s request, -2: Closed on TA request, -1: Completed, 0: In queue, 1: Pre-training, 2: Active training, 3: Awaiting exam');
             $table->boolean('english_only_training');
             $table->tinyInteger('experience')->nullable();
-            $table->text('comment')->nummable();
+            $table->text('comment')->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->timestamp('paused_at')->nullable();
             $table->unsignedInteger('paused_length')->default(0);

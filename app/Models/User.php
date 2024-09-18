@@ -122,6 +122,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Training::class, 'training_mentor')->withPivot('expire_at');
     }
 
+    public function instructs()
+    {
+        return $this->belongsToMany(PilotTraining::class, 'pilot_training_instructor')->withPivot('expire_at');
+    }
+
     /**
      * Check is this user is teaching the queried user
      *

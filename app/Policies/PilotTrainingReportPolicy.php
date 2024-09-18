@@ -24,4 +24,18 @@ class PilotTrainingReportPolicy
     {
         return $user->isAdmin() || $user->isInstructor();
     }
+
+    public function update(User $user, PilotTrainingReport $trainingReport)
+    {
+        return $trainingReport->pilotTraining->instructors->contains($user) ||
+                $user->isAdmin() ||
+                $user->isInstructor();
+    }
+
+    public function delete(User $user, PilotTrainingReport $trainingReport)
+    {
+        return ($user->isAdmin() || $user->isInstructor())
+            ? Response::allow()
+            : Response::deny('Only instructors can delete training reports.');
+    }
 }
