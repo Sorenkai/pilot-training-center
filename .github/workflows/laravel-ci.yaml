@@ -19,7 +19,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: laravel
-          MYSQL_USER: root
+          MYSQL_USER: laravel-user
           MYSQL_PASSWORD: password
         ports:
           - 3306:3306
@@ -61,7 +61,7 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: laravel
-          DB_USERNAME: root
+          DB_USERNAME: laravel-user
           DB_PASSWORD: password
         run: php artisan migrate --force
 
@@ -72,6 +72,6 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: laravel
-          DB_USERNAME: root
+          DB_USERNAME: laravel-user
           DB_PASSWORD: password
         run: php artisan test
