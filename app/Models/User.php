@@ -329,7 +329,7 @@ class User extends Authenticatable
 
     public function instructingTrainings()
     {
-        $trainings = PilotTraining::where('status', '>=', 1)->whereHas('instructors', function($query) {
+        $trainings = PilotTraining::where('status', '>=', 1)->whereHas('instructors', function ($query) {
             $query->where('user_id', $this->id);
         })->with('pilotRatings', 'reports', 'user')->orderBy('id')->get();
 
@@ -352,9 +352,10 @@ class User extends Authenticatable
 
     public function getInstructors()
     {
-        $instructors = User::whereHas('permissions', function($query){
+        $instructors = User::whereHas('permissions', function ($query) {
             $query->where('group_id', 4);
         })->get();
+
         return $instructors;
     }
 
@@ -384,9 +385,9 @@ class User extends Authenticatable
     public function hasActivePilotTraining(bool $includeWaiting)
     {
         if ($includeWaiting) {
-            return count($this->pilotTrainings()->whereIn('status', [0,1,2,3])->get()) > 0;
+            return count($this->pilotTrainings()->whereIn('status', [0, 1, 2, 3])->get()) > 0;
         } else {
-            return count($this->pilotTrainings()->whereIn('status', [1,2,3])->get()) > 0;
+            return count($this->pilotTrainings()->whereIn('status', [1, 2, 3])->get()) > 0;
         }
     }
 
@@ -508,14 +509,14 @@ class User extends Authenticatable
 
         return false;
     }
-    
+
     /**
      * Return if user is a instructor
-     * 
+     *
      * @return bool
      */
-
-    public function isInstructor(){
+    public function isInstructor()
+    {
         return $this->groups->where('id', 4)->isNotEmpty();
     }
 

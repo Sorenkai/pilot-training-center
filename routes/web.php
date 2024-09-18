@@ -11,8 +11,8 @@ use App\Http\Controllers\GlobalSettingController;
 use App\Http\Controllers\MentorController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OneTimeLinkController;
-use App\Http\Controllers\PilotTrainingController;
 use App\Http\Controllers\PilotTrainingActivityController;
+use App\Http\Controllers\PilotTrainingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RosterController;
 use App\Http\Controllers\SweatbookController;
@@ -175,18 +175,18 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
 
     Route::controller(PilotTrainingReportController::class)->group(function () {
         Route::get('/pilot//training/report/{report}', 'edit')->name('pilot.training.report.edit');
-        Route::get('/pilot/training/{training}/report/create', 'create')->name('pilot.training.report.create'); 
+        Route::get('/pilot/training/{training}/report/create', 'create')->name('pilot.training.report.create');
         Route::post('/pilot/training/{training}/report', 'store')->name('pilot.training.report.store');
         Route::patch('/pilot/training/report/{report}', 'update')->name('pilot.training.report.update');
         Route::get('/pilot/training/report/{report}/delete', 'destroy')->name('pilot.training.report.delete');
     });
 
-    Route::controller(PilotTrainingObjectAttachmentController::class)->group(function(){
+    Route::controller(PilotTrainingObjectAttachmentController::class)->group(function () {
         Route::get('/pilot/training/attachment/{attachment}', 'show')->name('pilot.training.object.attachment.show');
         Route::post('/pilot/training/{trainingObjectType}/{trainingObject}/attachment', 'store')->name('pilot.training.object.attachment.store');
         Route::delete('/pilot/training/attachment/{attachment}', 'destroy')->name('pilot.training.object.attachment.delete');
     });
-    
+
     Route::controller(FileController::class)->group(function () {
         Route::get('/files/{file}', 'get')->name('file.get');
         Route::post('/files', 'store')->name('file.store');

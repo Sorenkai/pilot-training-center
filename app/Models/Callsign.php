@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\PilotTraining;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Callsign extends Model

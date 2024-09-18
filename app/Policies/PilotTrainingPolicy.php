@@ -3,15 +3,15 @@
 namespace App\Policies;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Models\User;
 use App\Models\PilotTraining;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
 class PilotTrainingPolicy
 {
     use HandlesAuthorization;
-    
+
     public function view(User $user, PilotTraining $pilotTraining)
     {
         return $pilotTraining->instructors->contains($user) ||
@@ -33,7 +33,6 @@ class PilotTrainingPolicy
     {
         return $user->isInstructorOrAbove();
     }
-    
 
     public function store(User $user, $data)
     {
@@ -48,6 +47,7 @@ class PilotTrainingPolicy
     {
         return $user->isInstructorOrAbove();
     }
+
     public function viewHistoricRequests(User $user)
     {
         return $user->isInstructorOrAbove();

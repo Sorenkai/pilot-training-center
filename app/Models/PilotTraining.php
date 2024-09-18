@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PilotTraining extends Model
@@ -56,7 +55,7 @@ class PilotTraining extends Model
     {
         return $this->instructors->pluck('name')->implode(' & ');
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -76,7 +75,7 @@ class PilotTraining extends Model
     {
         return $this->belongsToMany(User::class, 'pilot_training_instructor')->withPivot('expire_at');
     }
-    
+
     public function activities()
     {
         return $this->hasMany(PilotTrainingActivity::class);
