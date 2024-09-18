@@ -6,6 +6,7 @@ use App\Helpers\TrainingStatus;
 use App\Models\Lesson;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
+use App\Notifications\PilotTrainingReportNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,8 +48,11 @@ class PilotTrainingReportController extends Controller
 
         PilotTrainingObjectAttachmentController::saveAttachments($request, $report);
 
-        return redirect(route('pilot.training.show', $training->id))->withSuccess('Report successfully created');
+        if ($report->draft != true && $training->user->setting_notify_newreport) {
+            $training->user->notify(new PilotTrainingReportNotification($training, $report));
+        }
 
+        return redirect(route('pilot.training.show', $training->id))->withSuccess('Report successfully created');
     }
 
     public function edit(PilotTrainingReport $report)
@@ -77,7 +81,7 @@ class PilotTrainingReportController extends Controller
 
         // Notify student of new training request if it's not a draft anymore
         if ($oldDraftStatus == true && $report->draft == false && $report->pilotTraining->user->setting_notify_newreport) {
-            //$report->training->user->notify(new TrainingReportNotification($report->training, $report));
+            $report->training->user->notify(new PilotTrainingReportNotification($report->training, $report));
         }
 
         return redirect()->intended(route('pilot.training.show', $report->pilotTraining->id))->withSuccess('Training report successfully updated');

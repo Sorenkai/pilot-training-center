@@ -8,6 +8,10 @@ use App\Models\Callsign;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
+use App\Notifications\PilotTrainingCreatedNotification;
+use App\Notifications\PilotTrainingInstructorNotification;
+use App\Notifications\PilotTrainingPreStatusNotification;
+use App\Notifications\PilotTrainingClosedNotification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -146,6 +150,12 @@ class PilotTrainingController extends Controller
 
         ActivityLogController::info('TRAINING', 'Created pilot training request '. $pilot_training->id . ' for CID ' . $pilot_training->user->id . ' - Rating: ' . $ratings->pluck('name'));
 
+        $pilot_training->user->notify(new PilotTrainingCreatedNotification($pilot_training));
+        
+        if ($request->expectsJson()) {
+            return $pilot_training;
+        }
+        
         return redirect()->intended(route('dashboard'));
     }
 
@@ -226,6 +236,14 @@ class PilotTrainingController extends Controller
 
         $attributes = $this->validateUpdateDetails();
         if (array_key_exists('status', $attributes)) {
+
+            // Dont allow to reopen a training if student already has a training
+            if ($attributes['status'] >= 0 && $oldStatus < 0 && $training->user->hasActivePilotTraining(true)) {
+                if ($training->user->hasActivePilotTrainings(true)) {
+                    return redirect($training->path())->withErrors('Training can not be reopened. The student already has an active training request.');
+                }
+            }
+
             $training->updateStatus($attributes['status']);
 
             if ($attributes['status'] != $oldStatus) {
@@ -256,7 +274,7 @@ class PilotTrainingController extends Controller
                 }
             }
             if ($notifyOfNewInstructor) {
-                // Notification
+                $training->user->notify(new PilotTrainingInstructorNotification($training));
             }
             unset($attributes['instructors']);
         } else {
@@ -300,6 +318,23 @@ class PilotTrainingController extends Controller
         ' - Old Status: ' . PilotTrainingController::$statuses[$oldStatus]['text'] .
         ' - New Status: ' . PilotTrainingController::$statuses[$training->status]['text'] .
         ' - Instructor: ' . $training->instructors->pluck('name'));
+
+        if ((int) $training->status != $oldStatus) {
+            if((int) $training->status < TrainingStatus::IN_QUEUE->value) {
+                $training->instructors()->detach();
+
+                
+                $training->user->notify(new PilotTrainingClosedNotification($training, (int) $training->status, $training->closed_reason));
+
+                return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation of pre-training sent to the student.');
+            }
+
+            if ((int) $training->status == TrainingStatus::PRE_TRAINING->value) {
+                $training->user->notify(new PilotTrainingPreStatusNotification($training));
+
+                return redirect($training->path())->withSuccess('Training successfully updated. E-mail confirmation of pre-training sent to the student.');
+            }
+        }
 
         if ($notifyOfNewInstructor) {
             return redirect($training->path())->withSuccess('Training successfully updated. E-mail notification of instructor assigned sent to the student');
