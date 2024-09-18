@@ -59,7 +59,7 @@ class OAuthController extends GenericProvider
             'rating_short' => OAuthController::getOAuthProperty(config('oauth.mapping_rating_short'), $response),
             'rating_long' => OAuthController::getOAuthProperty(config('oauth.mapping_rating_long'), $response),
             'pilotrating' => OAuthController::getOAuthProperty(config('oauth.mapping_pilotrating'), $response),
-            'pilotrating_short' => OAuthController::getOAuthProperty(config('oauth.mapping_pilotrating_short'), $response), 
+            'pilotrating_short' => OAuthController::getOAuthProperty(config('oauth.mapping_pilotrating_short'), $response),
             'pilotrating_long' => OAuthController::getOAuthProperty(config('oauth.mapping_pilotrating_long'), $response),
             'region' => OAuthController::getOAuthProperty(config('oauth.mapping_region'), $response),
             'division' => OAuthController::getOAuthProperty(config('oauth.mapping_division'), $response),

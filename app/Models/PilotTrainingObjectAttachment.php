@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PilotTrainingObjectAttachment extends Model
 {
     use HasUuids;
-    
+
     protected $guarded = [];
 
     protected $casts = [

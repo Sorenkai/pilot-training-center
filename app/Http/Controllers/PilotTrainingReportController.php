@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Helpers\TrainingStatus;
 use App\Models\Lesson;
-use App\Models\Position;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
 use Carbon\Carbon;
@@ -33,7 +31,7 @@ class PilotTrainingReportController extends Controller
         $this->authorize('create', [PilotTrainingReport::class, $training]);
 
         $data = $this->validateRequest();
-        
+
         $data['written_by_id'] = Auth::id();
         $data['pilot_training_id'] = $training->id;
 

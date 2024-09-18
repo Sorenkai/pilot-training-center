@@ -9,9 +9,8 @@ use App\Helpers\VatsimRating;
 use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
-use App\Models\TrainingExamination;
-use App\Models\TrainingReport;
 use App\Models\PilotTrainingReport;
+use App\Models\TrainingExamination;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -273,18 +272,17 @@ class UserController extends Controller
             }
         }
         $permissions = array_combine(
-            array_map(fn($key) => str_replace(' ', '_', $key), array_keys($permissions)),
+            array_map(fn ($key) => str_replace(' ', '_', $key), array_keys($permissions)),
             $permissions
         );
-        
 
         // Valiate and allow these fields, then loop through permissions to set the final data set
         $data = $request->validate($permissions);
-        
+
         foreach ($permissions as $key => $value) {
             isset($data[$key]) ? $permissions[$key] = true : $permissions[$key] = false;
         }
-        
+
         // Check and update the permissions
         foreach ($permissions as $key => $value) {
             $str = explode('_', $key, 2);
