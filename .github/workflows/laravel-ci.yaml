@@ -38,7 +38,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'  # Use the PHP version your Laravel project requires
+          php-version: '8.3'  # Use the PHP version your Laravel project requires
           extensions: mbstring, bcmath, pdo, pdo_mysql
           coverage: none
 
