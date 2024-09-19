@@ -366,7 +366,7 @@ class PilotTrainingController extends Controller
         $training->english_only_training = array_key_exists('englishOnly', $attributes) ? true : false;
 
         $training->save();
-        
+
         $this->assignCallsign($training);
 
         ActivityLogController::warning('TRAINING', 'Updated pilot training request ' . $training->id .
