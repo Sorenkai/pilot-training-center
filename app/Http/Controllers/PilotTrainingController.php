@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Helpers\TrainingStatus;
 use App\Models\Callsign;
@@ -164,24 +165,26 @@ class PilotTrainingController extends Controller
 
         $baseNumber = 000;
 
+
         // level = rating id - 1 cause ratings start at P0
         $level = $pilotTraining->pilotRatings()->first()->id - 1;
+        $callsignPrefix = Setting::get('ptdCallsign');
 
         $lastCallsign = DB::table('callsigns')
-            ->where('callsign', 'LIKE', "SPT{$level}%")
+            ->where('callsign', 'LIKE', "{$callsignPrefix}{$level}%")
             ->orderBy('callsign', 'desc')
             ->first();
 
         if ($lastCallsign) {
             // Extract the number part from the last callsign and increment it
-            $lastNumber = intval(substr($lastCallsign->callsign, strlen("SPT{$level}")));
+            $lastNumber = intval(substr($lastCallsign->callsign, strlen("{$callsignPrefix}{$level}")));
             $nextNumber = $lastNumber + 1;
         } else {
             // Start at the base number + 1 if no callsign exists for this level
             $nextNumber = $baseNumber + 1;
         }
 
-        $newCallsign = 'SPT' . $level . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        $newCallsign = $callsignPrefix . $level . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         $callsign = Callsign::create([
             'callsign' => $newCallsign,

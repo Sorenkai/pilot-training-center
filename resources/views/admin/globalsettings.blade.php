@@ -126,6 +126,12 @@
                                 <span class="text-danger">{{ $errors->first('trainingSoloRequirement') }}</span>
                             @enderror
 
+                            <div class="mb-4">
+                                <label for="ptdCallsign" class="form-label">Pilot Training Department Callsign</label>
+                                <input type="text" class="form-control" id="ptdCallsign" maxlength="3" name="ptdCallsign" required value="{{Setting::get("ptdCallsign")}}">
+                                <smal class="form-text">The prefix to be used for assigning callsigns.</smal>
+                            </div>
+
                         </div>
                     </div>
                 </div>

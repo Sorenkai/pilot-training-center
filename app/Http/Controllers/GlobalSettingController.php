@@ -63,6 +63,7 @@ class GlobalSettingController extends Controller
             'feedbackEnabled' => '',
             'feedbackForwardEmail' => 'nullable|email',
             'telemetryEnabled' => '',
+            'ptdCallsign' => 'required|max:3',
         ]);
 
         isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
@@ -104,6 +105,7 @@ class GlobalSettingController extends Controller
         Setting::set('feedbackEnabled', $feedbackEnabled);
         Setting::set('feedbackForwardEmail', $feedbackForwardEmail);
         Setting::set('telemetryEnabled', $telemetryEnabled);
+        Setting::set('ptdCallsign', $data['ptdCallsign']);
         Setting::save();
 
         ActivityLogController::danger('OTHER', 'Global Settings Updated');
