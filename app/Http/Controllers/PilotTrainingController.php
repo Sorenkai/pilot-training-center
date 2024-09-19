@@ -162,9 +162,7 @@ class PilotTrainingController extends Controller
 
     public function assignCallsign(PilotTraining $pilotTraining)
     {
-
         $baseNumber = 000;
-
 
         // level = rating id - 1 cause ratings start at P0
         $level = $pilotTraining->pilotRatings()->first()->id - 1;
@@ -368,6 +366,8 @@ class PilotTrainingController extends Controller
         $training->english_only_training = array_key_exists('englishOnly', $attributes) ? true : false;
 
         $training->save();
+        
+        $this->assignCallsign($training);
 
         ActivityLogController::warning('TRAINING', 'Updated pilot training request ' . $training->id .
         ' - Old Rating: ' . $preChangeRatings->pluck('name') .
