@@ -12,13 +12,21 @@ class PilotTrainingMail extends Mailable
     use Queueable, SerializesModels;
 
     private $training;
+
     private $mailSubject;
+
     private $textLines;
+
     private $contactMail;
+
     private $actionURL;
+
     private $actionText;
+
     private $actionColor;
+
     private $url1;
+
     private $url2;
 
     /**
@@ -39,7 +47,7 @@ class PilotTrainingMail extends Mailable
         $this->url1 = $url1;
         $this->url2 = $url2;
     }
-    
+
     public function build()
     {
         return $this->subject($this->mailSubject)->markdown('mail.pilot.training', [

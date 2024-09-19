@@ -2,15 +2,12 @@
 
 namespace App\Notifications;
 
-use anlutro\LaravelSettings\Facade as Setting;
-use App\Mail\PilotTrainingMail;
-use App\Models\User;
-use App\Models\PilotTraining;
 use App\Helpers\TrainingStatus;
 use App\Http\Controllers\PilotTrainingController;
+use App\Mail\PilotTrainingMail;
+use App\Models\PilotTraining;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class PilotTrainingClosedNotification extends Notification implements ShouldQueue
@@ -18,8 +15,11 @@ class PilotTrainingClosedNotification extends Notification implements ShouldQueu
     use Queueable;
 
     private $training;
+
     private $trainingStatus;
+
     private $closedBy;
+
     private $reason;
 
     /**
@@ -50,7 +50,7 @@ class PilotTrainingClosedNotification extends Notification implements ShouldQueu
     {
         $textLines[] = 'We would like to inform you that your training request for ' . $this->training->getInlineRatings() . ' has been *' . $this->closedBy . '*.';
         if (isset($this->reason)) {
-            $textLines[] = "**Reason for closure:** " . $this->reason;
+            $textLines[] = '**Reason for closure:** ' . $this->reason;
         }
 
         if ($this->trainingStatus == TrainingStatus::COMPLETED->value) {

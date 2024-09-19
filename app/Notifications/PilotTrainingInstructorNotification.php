@@ -4,11 +4,9 @@ namespace App\Notifications;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\PilotTrainingMail;
-use App\Models\User;
 use App\Models\PilotTraining;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class PilotTrainingInstructorNotification extends Notification implements ShouldQueue
@@ -44,7 +42,7 @@ class PilotTrainingInstructorNotification extends Notification implements Should
     {
         $textLines = [
             "Get ready! You've been assigned an instructor for your training: " . $this->training->getInlineRatings() . '.',
-            'Your instructor is: **' . $this->training->getInlineInstructors() .'**. You can contact them on [Discord](' . Setting::get('linkDiscord') . ').',
+            'Your instructor is: **' . $this->training->getInlineInstructors() . '**. You can contact them on [Discord](' . Setting::get('linkDiscord') . ').',
             'Your instructor will then give you more information on the next steps.',
         ];
 
