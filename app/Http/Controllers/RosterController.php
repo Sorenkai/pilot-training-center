@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
-use App\Models\Rating;
+use App\Models\PilotRating;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -12,9 +11,9 @@ class RosterController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($areaId)
+    public function index()
     {
-
+        /*
         $area = Area::find($areaId);
         $users = User::allActiveInArea($area);
 
@@ -30,7 +29,12 @@ class RosterController extends Controller
         $ratings = Rating::whereHas('areas', function (Builder $query) use ($areaId) {
             $query->where('area_id', $areaId);
         })->whereNull('vatsim_rating')->get()->sortBy('name');
+        */
 
-        return view('roster', compact('users', 'ratings', 'area'));
+        $users = User::allWithGroup(4);
+        $ratings = PilotRating::whereIn('vatsim_rating', [1, 3, 7, 15])->get();
+
+
+        return view('roster', compact('users', 'ratings'));
     }
 }
