@@ -17,7 +17,7 @@ class EndorsementPolicy
      */
     public function view(User $user)
     {
-        return $user == Auth::user() || $user->isModeratorOrAbove();
+        return $user == Auth::user() || $user->isInstructorOrAbove();
     }
 
     /**
@@ -31,7 +31,7 @@ class EndorsementPolicy
             return $user->isAdmin();
         }
 
-        return $user->isModeratorOrAbove();
+        return $user->isAdmin();
     }
 
     /**
@@ -41,17 +41,13 @@ class EndorsementPolicy
      */
     public function delete(User $user, Endorsement $endorsement)
     {
-        // Check if the item is eligible for deletion
-        if ($endorsement->revoked || $endorsement->expired) {
-            return false;
-        }
 
         // Check if user got correct permissions
         if ($endorsement->type == 'VISITING' || $endorsement->type == 'EXAMINER') {
             return $user->isAdmin();
         }
 
-        return $user->isModeratorOrAbove();
+        return $user->isAdmin();
     }
 
     /**

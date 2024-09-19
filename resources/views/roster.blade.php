@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'ATC Roster '.$area->name)
-
+@section('title', 'Instructor Roster')
+@section('title-flex')
+    <div>
+        @if (\Auth::user()->isAdmin())
+            <a href="{{ route('endorsements.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new endorsement</a>
+        @endif
+    </div>
+@endsection
 @section('header')
     @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
 @endsection
@@ -13,7 +19,7 @@
 
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">Active controllers</h6> 
+                <h6 class="m-0 fw-bold text-white">Instructors</h6> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -28,10 +34,8 @@
                         <thead class="table-light">
                             <tr>
                                 <th data-field="member" class="w-50" data-sortable="true" data-filter-control="input">Member</th>
-                                <th data-field="rating" data-sortable="true" data-filter-control="select">Rating</th>
-                                <th data-field="active" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">ATC Active</th>
                                 @foreach($ratings as $r)
-                                    <th data-field="{{ $r->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">{{ $r->name }}</th>
+                                    <th data-field="{{ $r->id }}" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">{{ $r->description }}</th>
                                 @endforeach
                             </tr>
                         </thead>
@@ -45,31 +49,15 @@
                                             {{ $u->name }} ({{ $u->id }})
                                         @endcan
                                     </td>
-                                    <td>{{ $u->rating_short }} {{ $u->rating_long }}</td>
-                                    <td class="text-center text-white {{ $u->isAtcActive() || $u->isVisiting() ? 'bg-success' : 'bg-danger' }}">
-                                        @if($u->isAtcActive())
-                                            <i class="fas fa-check-circle"></i><span class="d-none">Yes</span>
-                                        @elseif($u->isVisiting())
-                                            <i class="far fa-check-circle"></i>
-                                            Visiting
+                                    @foreach($ratings as $rating)
+                                        @php
+                                            $hasEndorsement = $u->instructorendorsements->contains('pilot_rating_id', $rating->id);
+                                        @endphp
+                                        @if ($hasEndorsement)
+                                            <td class="text-center bg-success text-white">
+                                                <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
+                                            </td>
                                         @else
-                                            <i class="fas fa-times-circle"></i><span class="d-none">Inactive</span>
-                                        @endif
-                                    </td>
-
-                                    @foreach($ratings as $r)
-                                        @php $found = false; @endphp
-                                        @foreach($u->endorsements->where('type', 'FACILITY')->where('expired', false)->where('revoked', false) as $e)
-                                            @if($e->ratings->first()->id == $r->id)
-                                                <td class="text-center bg-success text-white">
-                                                    <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
-                                                </td>
-                                                @php $found = true; @endphp
-                                                @break
-                                            @endif
-                                        @endforeach
-
-                                        @if(!$found)
                                             <td></td>
                                         @endif
                                     @endforeach

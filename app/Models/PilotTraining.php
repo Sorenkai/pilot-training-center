@@ -56,6 +56,16 @@ class PilotTraining extends Model
         return $this->instructors->pluck('name')->implode(' & ');
     }
 
+    public function getInlineRatings(bool $vatsimRatingOnly = false)
+    {
+
+        if ($vatsimRatingOnly) {
+            return $this->pilotRatings()->where('vatsim_rating', true)->pluck('name')->implode(' + ');
+        }
+
+        return $this->pilotRatings()->pluck('name')->implode(' + ');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

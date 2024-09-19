@@ -62,6 +62,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/pilot/trainings/history', [PilotTrainingController::class, 'history'])->name('pilot.requests.history');
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::get('/users/other', [UserController::class, 'indexOther'])->name('users.other');
+    Route::get('/roster', [RosterController::class, 'index'])->name('roster');
 
     // Endorsements
     Route::controller(EndorsementController::class)->group(function () {
@@ -74,9 +75,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/endorsements/{id}/delete', 'destroy')->name('endorsements.delete');
         Route::get('/endorsements/shorten/{id}/{date}', 'shorten')->name('endorsements.shorten');
     });
-
-    // ATC Roster
-    Route::get('/roster/{area}', [RosterController::class, 'index'])->name('roster');
 
     // Users
     Route::controller(UserController::class)->group(function () {
