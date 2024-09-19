@@ -24,9 +24,6 @@
                         {{ $user->id }}
                         <button type="button" onclick="navigator.clipboard.writeText('{{ $user->id }}')"><i class="fas fa-copy"></i></button>
                         <a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank" title="VATSIM Stats" class="link-btn me-1"><i class="fas fa-chart-simple"></i></button></a>
-                        @if($user->division == 'EUD' && Auth::user()->isModeratorOrAbove())
-                            <a href="https://core.vateud.net/manage/controller/{{ $user->id }}/view" target="_blank" title="VATEUD Core Profile" class="link-btn"><i class="fa-solid fa-earth-europe"></i></button></a>
-                        @endif
                     </dd>
 
                     <dt>Name</dt>
@@ -35,23 +32,11 @@
                     <dt>Email</dt>
                     <dd class="separator pb-3">{{ $user->notificationEmail }}<button type="button" onclick="navigator.clipboard.writeText('{{ $user->notificationEmail }}')"><i class="fas fa-copy"></i></button></dd>
 
-                    <dt class="pt-2">ATC Rating</dt>
-                    <dd>{{ $user->rating_short }}</dd>
+                    <dt class="pt-2">Pilot Rating</dt>
+                    <dd>{{ $user->pilotrating_long }}</dd>
 
                     <dt>Sub/Division</dt>
                     <dd class="separator pb-3">{{ $user->subdivision }} / {{ $user->division }}</dd>
-
-                    <dt class="pt-2">ATC Active</dt>
-                    <dd>
-                        @if($user->isVisiting())
-                            <i class="far fa-circle-check text-success"></i>
-                            Visiting
-                        @else
-                            <i class="fas fa-circle-{{ $user->isAtcActive() ? 'check' : 'xmark' }} text-{{ $user->isAtcActive() ? 'success' : 'danger' }}"></i> {{ round($totalHours) }} hours
-                        @endif
-                    </dd>
-
-                    <dt>ATC Hours</dt>
 
                     <div id="vatsim-data">
                         <dt class="pt-2">VATSIM Stats&nbsp;<a href="https://stats.vatsim.net/stats/{{ $user->id }}" target="_blank"><i class="fas fa-link"></i></a></dt>
@@ -70,52 +55,6 @@
                 </dl>
             </div>
         </div>
-
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">
-                    Activity
-                </h6>
-            </div>
-            <div class="card-body">
-                <canvas id="activityChart"></canvas>
-            </div>
-        </div>
-
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 fw-bold text-white">
-                    Instructing
-                </h6>
-                <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-file"></i> See reports</a>
-            </div>
-            <div class="card-body {{ $user->instructs->count() == 0 ? '' : 'p-0' }}">
-
-                @if($user->instructs->count() == 0)
-                    <p class="mb-0">No registered students</p>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th data-sortable="true" data-filter-control="select">Instructs</th>
-                                    <th data-sortable="true" data-filter-control="input">Expires</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($user->instructs as $training)
-                                <tr>
-                                    <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
-                                    <td>{{ Carbon\Carbon::parse($user->instructs->find($training->id)->pivot->expire_at)->toEuropeanDate() }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-            </div>
-        </div>
     </div>
 
     <div class="col-xl-9 col-md-8 col-sm-12 mb-12">
@@ -126,8 +65,8 @@
                         <h6 class="m-0 fw-bold text-white">
                             Trainings
                         </h6>
-                        @can('create', \App\Models\Training::class)
-                            <a href="{{ route('training.create.id', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add new training</a>
+                        @can('create', \App\Models\PilotTraining::class)
+                            <a href="{{ route('pilot.training.create.id', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add new training</a>
                         @endcan
                     </div>
                     <div class="card-body {{ $trainings->count() == 0 ? '' : 'p-0' }}">
@@ -150,7 +89,7 @@
                                         @foreach($trainings as $training)
                                         <tr>
                                             <td>
-                                                <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
+                                                <i class="{{ $statuses[$training->status]["icon"] }} text-{{ $statuses[$training->status]["color"] }}"></i>&ensp;<a href="/pilot/training/{{ $training->id }}">{{ $statuses[$training->status]["text"] }}</a>{{ isset($training->paused_at) ? ' (PAUSED)' : '' }}
                                             </td>
                                             <td>
                                                 @if ( is_iterable($ratings = $training->pilotRatings->toArray()) )
@@ -237,6 +176,41 @@
                                                     @endif
                                                 </td>
                                             </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+        
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 fw-bold text-white">
+                            Instructing
+                        </h6>
+                        <a href="{{ route('user.reports', $user->id) }}" class="btn btn-icon btn-light"><i class="fas fa-file"></i> See reports</a>
+                    </div>
+                    <div class="card-body {{ $user->instructs->count() == 0 ? '' : 'p-0' }}">
+        
+                        @if($user->instructs->count() == 0)
+                            <p class="mb-0">No registered students</p>
+                        @else
+                            <div class="table-responsive">
+                                <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th data-sortable="true" data-filter-control="select">Instructs</th>
+                                            <th data-sortable="true" data-filter-control="input">Expires</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($user->instructs as $training)
+                                        <tr>
+                                            <td><a href="{{ route('user.show', $training->user->id) }}">{{ $training->user->name }}</a></td>
+                                            <td>{{ Carbon\Carbon::parse($user->instructs->find($training->id)->pivot->expire_at)->toEuropeanDate() }}</td>
+                                        </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -345,7 +319,7 @@
             .then(response => response.json())
             .then(data => {
                 var vatsimHours = document.getElementById("vatsim-data");
-    
+                console.log(data.data)
                 if (data.data) {
                     for (let key in data.data) {
                         if (key === "pilot") {
@@ -362,69 +336,6 @@
                 console.error(error);
                 alert('An error occurred while fetching VATSIM hours data.');
             });
-    </script>    
-
-    <!-- Activity chart -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            // Fetch activity data
-            fetch("https://statsim.net/atc/vatsimid/?vatsimid={{ $user->id }}&period=custom&from={{ now()->subMonths(11)->toDateString() }}+00%3A00&to={{ now()->toDateString() }}+22%3A00&json=true")
-                .then(response => response.json())
-                .then(data => {
-                    if(data && data.length > 0) {
-
-                        // Process each connection and calculate hours
-                        data.forEach(function (connection) {
-                            connection.logontime = new Date(connection.logontime * 1000)
-                            connection.logofftime = new Date(connection.logofftime * 1000)
-                            connection.hours = parseFloat(((connection.logofftime - connection.logontime) / 1000 / 60 / 60).toFixed(1))
-                            connection.callsignSuffix = connection.callsign.split('_').pop()
-                        })
-
-                        // Create chart labels based on the last 11 months
-                        var activity = []
-
-                        for (var i = 11; i >= 0; i--) {
-                            activity[new Date(new Date().setMonth(new Date().getMonth() - i)).toLocaleString('default', { month: 'short' })] = 0
-                        }
-
-                        data.forEach(function (connection) {
-                            var month = connection.logontime.toLocaleString('default', { month: 'short' })
-                            activity[month] += connection.hours
-                        })
-
-                        // Define labels and chart data
-                        var chartLabels = Object.keys(activity)
-                        var chartData = Object.values(activity)
-                    
-                        // Create the chart
-                        var chart = new Chart(
-                            document.getElementById('activityChart'),
-                            {
-                                type: 'bar',
-                                data: {
-                                    labels: chartLabels,
-                                    datasets: [{
-                                        label: 'Hours online',
-                                        data: chartData,
-                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                        borderColor: 'rgb(54, 162, 235)',
-                                        borderWidth: 1
-                                    }]
-                                },
-                            }
-                        );
-                        
-                    } else {
-                        document.getElementById('activityChart').parentElement.innerHTML = '<p class="mb-0">No data available</p>'
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    alert('An error occurred while fetching STATSIM hours data.');
-                });
-        });
-    </script>
+    </script>   
 
 @endsection
