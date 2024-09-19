@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('title', 'Instructor Roster')
-
+@section('title-flex')
+    <div>
+        @if (\Auth::user()->isAdmin())
+            <a href="{{ route('endorsements.create') }}" class="btn btn-outline-success"><i class="fas fa-plus"></i> Add new endorsement</a>
+        @endif
+    </div>
+@endsection
 @section('header')
     @vite(['resources/sass/bootstrap-table.scss', 'resources/js/bootstrap-table.js'])
 @endsection
@@ -43,12 +49,16 @@
                                             {{ $u->name }} ({{ $u->id }})
                                         @endcan
                                     </td>
-
-                                    @foreach($ratings as $r)
-                                        @if ($u->pilotrating >= $r->vatsim_rating)
+                                    @foreach($ratings as $rating)
+                                        @php
+                                            $hasEndorsement = $u->instructorendorsements->contains('pilot_rating_id', $rating->id);
+                                        @endphp
+                                        @if ($hasEndorsement)
                                             <td class="text-center bg-success text-white">
                                                 <i class="fas fa-check-circle"></i><span class="d-none">Approved</span>
                                             </td>
+                                        @else
+                                            <td></td>
                                         @endif
                                     @endforeach
                                     
