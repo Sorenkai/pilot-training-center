@@ -2,16 +2,11 @@
 
 namespace App\Notifications;
 
-use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\PilotTrainingMail;
-use App\Models\User;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
-use App\Helpers\TrainingStatus;
-use App\Http\Controllers\PilotTrainingController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class PilotTrainingReportNotification extends Notification implements ShouldQueue
@@ -19,6 +14,7 @@ class PilotTrainingReportNotification extends Notification implements ShouldQueu
     use Queueable;
 
     private $training;
+
     private $report;
 
     /**

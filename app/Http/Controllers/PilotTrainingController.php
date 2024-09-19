@@ -8,11 +8,11 @@ use App\Models\Callsign;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
+use App\Models\User;
+use App\Notifications\PilotTrainingClosedNotification;
 use App\Notifications\PilotTrainingCreatedNotification;
 use App\Notifications\PilotTrainingInstructorNotification;
 use App\Notifications\PilotTrainingPreStatusNotification;
-use App\Notifications\PilotTrainingClosedNotification;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -148,14 +148,14 @@ class PilotTrainingController extends Controller
             return $pilot_training;
         }
 
-        ActivityLogController::info('TRAINING', 'Created pilot training request '. $pilot_training->id . ' for CID ' . $pilot_training->user->id . ' - Rating: ' . $ratings->pluck('name'));
+        ActivityLogController::info('TRAINING', 'Created pilot training request ' . $pilot_training->id . ' for CID ' . $pilot_training->user->id . ' - Rating: ' . $ratings->pluck('name'));
 
         $pilot_training->user->notify(new PilotTrainingCreatedNotification($pilot_training));
-        
+
         if ($request->expectsJson()) {
             return $pilot_training;
         }
-        
+
         return redirect()->intended(route('dashboard'));
     }
 
@@ -320,10 +320,9 @@ class PilotTrainingController extends Controller
         ' - Instructor: ' . $training->instructors->pluck('name'));
 
         if ((int) $training->status != $oldStatus) {
-            if((int) $training->status < TrainingStatus::IN_QUEUE->value) {
+            if ((int) $training->status < TrainingStatus::IN_QUEUE->value) {
                 $training->instructors()->detach();
 
-                
                 $training->user->notify(new PilotTrainingClosedNotification($training, (int) $training->status, $training->closed_reason));
 
                 return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation of pre-training sent to the student.');
@@ -367,10 +366,10 @@ class PilotTrainingController extends Controller
 
         $training->save();
 
-        ActivityLogController::warning('TRAINING', 'Updated pilot training request ' . $training->id . 
+        ActivityLogController::warning('TRAINING', 'Updated pilot training request ' . $training->id .
         ' - Old Rating: ' . $preChangeRatings->pluck('name') .
         ' - New Rating: ' . $pilotRatings->pluck('name') .
-        ' - English only: '. ($training->english_only_training ? 'true' : 'false'));
+        ' - English only: ' . ($training->english_only_training ? 'true' : 'false'));
 
         return redirect($training->path())->withSuccess('Pilot training successfully updated');
 
