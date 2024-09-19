@@ -76,7 +76,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/endorsements/shorten/{id}/{date}', 'shorten')->name('endorsements.shorten');
     });
 
-
     // Users
     Route::controller(UserController::class)->group(function () {
         Route::get('/user/{user}', 'show')->name('user.show');

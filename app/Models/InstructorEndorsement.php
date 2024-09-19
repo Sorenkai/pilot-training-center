@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class InstructorEndorsement extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'instructor_endorsements';
 
     public function pilotRatings()

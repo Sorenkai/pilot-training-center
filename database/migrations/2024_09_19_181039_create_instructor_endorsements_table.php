@@ -23,7 +23,7 @@ return new class extends Migration
                 ->on('users')
                 ->onUpdate('CASCADE')
                 ->onDelete('SET NULL');
-            
+
             $table->foreign('pilot_rating_id')
                 ->references('id')
                 ->on('pilot_ratings')

@@ -3,15 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Facades\DivisionApi;
-use App\Helpers\TrainingStatus;
 use App\Models\Area;
-use App\Models\InstructorEndorsement;
 use App\Models\Endorsement;
-use App\Models\Position;
-use App\Models\Rating;
+use App\Models\InstructorEndorsement;
 use App\Models\PilotRating;
 use App\Models\User;
-use App\Notifications\EndorsementCreatedNotification;
 use App\Notifications\EndorsementModifiedNotification;
 use App\Notifications\EndorsementRevokedNotification;
 use Carbon\Carbon;
@@ -92,7 +88,6 @@ class EndorsementController extends Controller
         }
         $ratings = PilotRating::whereIn('vatsim_rating', [1, 3, 7, 15])->get();
 
-
         return view('endorsements.create', compact('users', 'ratings', 'prefillUserId'));
     }
 
@@ -104,7 +99,7 @@ class EndorsementController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', [Endorsement::class]);
-        
+
         $data = [];
         $data = request()->validate([
             'user' => 'required|numeric|exists:App\Models\User,id',
@@ -113,7 +108,6 @@ class EndorsementController extends Controller
 
         $user = User::find($data['user']);
         // check if pilot endorsement exists
-
 
         foreach ($data['rating'] as $rating) {
             $r = PilotRating::find($rating);

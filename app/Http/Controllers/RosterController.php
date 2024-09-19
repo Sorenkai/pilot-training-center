@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InstructorEndorsement;
 use App\Models\PilotRating;
 use App\Models\User;
-use App\Models\InstructorEndorsement;
-use Illuminate\Database\Eloquent\Builder;
 
 class RosterController extends Controller
 {
@@ -17,7 +16,6 @@ class RosterController extends Controller
         $users = User::allWithGroup(4);
         $ratings = PilotRating::whereIn('id', [2, 3, 4, 5])->get();
         $endorsements = InstructorEndorsement::all();
-
 
         return view('roster', compact('users', 'ratings', 'endorsements'));
     }
