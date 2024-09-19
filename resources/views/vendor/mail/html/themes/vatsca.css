@@ -89,7 +89,7 @@ ul li {
 /* Layout */
 
 .wrapper {
-    background-color: #1a475f;
+    background-color: #265640;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -225,11 +225,11 @@ ul li {
 
 .button-blue,
 .button-primary {
-    background-color: #1a475f;
-    border-top: 10px solid #1a475f;
-    border-right: 18px solid #1a475f;
-    border-bottom: 10px solid #1a475f;
-    border-left: 18px solid #1a475f;
+    background-color: #265640;
+    border-top: 10px solid #265640;
+    border-right: 18px solid #265640;
+    border-bottom: 10px solid #265640;
+    border-left: 18px solid #265640;
 }
 
 .button-green,
