@@ -7,12 +7,6 @@
 <div class="alert alert-success d-none" id="success-message"></div>
 
 
-@if($atcInactiveMessage)
-<div class="alert alert-warning" role="alert">
-    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your ATC rating is marked as inactive in {{ config('app.owner_name') }}. <a href="{{ Setting::get('linkContact') }}" target="_blank">Contact {{ Setting::get('atcActivityContact') }}</a> to request a refresh or transfer training to be allowed to control in our airspace.
-</div>
-@endif
-
 @if($completedTrainingMessage)
 <div class="alert alert-success" role="alert">
     <i class="fas fa-star"></i>&nbsp;<b>Congratulations on your completed training!</b>&nbsp;<i class="fas fa-star"></i> You'll receive an email from VATSIM when your rating has been upgraded and ready to be used.
@@ -37,11 +31,6 @@
 </div>
 @endif
 
-@if($oudatedVersionWarning)
-<div class="alert alert-info" role="alert">
-    <i class="fas fa-info-circle"></i>&nbsp;&nbsp;<b>Update Available:</b> Control Center {{ Setting::get('_updateAvailable') }} is available. You are running v{{ config('app.version') }}. <a href="https://github.com/Vatsim-Scandinavia/controlcenter/releases" target="_blank">See details here.</a>
-</div>
-@endif
 
 <div class="row">
     <!-- Current rating card  -->
@@ -51,7 +40,7 @@
                 <div class="row g-0 align-items-center">
                     <div class="col me-2">
                         <div class="fs-sm fw-bold text-uppercase text-gray-600 mb-1">Current Rating</div>
-                        <div class="h5 mb-0 fw-bold text-gray-800">{{ $data['rating'] }} ({{ $data['rating_short'] }})</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800">{{ $data['pilotrating'] }} ({{ $data['pilotrating_short'] }})</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-id-badge fa-2x text-gray-300"></i>
@@ -82,12 +71,12 @@
     
     <!-- ATC Hours card -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card {{ ($atcHours < Setting::get('atcActivityRequirement', 10)) ? 'border-left-danger' : 'border-left-success' }} shadow h-100 py-2">
+        <div class="card {{ ($pilotHours < Setting::get('atcActivityRequirement', 10)) ? 'border-left-danger' : 'border-left-success' }} shadow h-100 py-2">
             <div class="card-body">
                 <div class="row g-0 align-items-center">
                     <div class="col me-2">
-                        <div class="fs-sm fw-bold text-success text-uppercase mb-1">ATC Hours (Last {{ Setting::get("atcActivityQualificationPeriod") }} months)</div>
-                        <div class="h5 mb-0 fw-bold text-gray-800">{{ $atcHours ? round($atcHours).' hours of '.Setting::get("atcActivityRequirement").' required' : 'N/A' }}</div>
+                        <div class="fs-sm fw-bold text-success text-uppercase mb-1">Pilot Hours</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800">{{ $pilotHours ? round($pilotHours).' hours' : 'N/A' }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -265,7 +254,7 @@
                 <div class="text-center">
                     <img class="img-fluid px-3 px-sm-4 mb-4" style="width: 25rem;" src="images/undraw_speech_to_text_vatsim.svg" alt="">
                 </div>
-                <p>Are you interested in becoming an Air Traffic Controller? Wish to receive training for a higher rating? Request training below and you will be notified when a space is available.</p>
+                <p>Are you interested in getting your first pilot rating? Wish to receive training for a higher rating? Request training below and you will be with further instructions.</p>
                 
                 @can('apply', \App\Models\PilotTraining::class)
                 <div class="d-grid">

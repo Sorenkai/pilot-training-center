@@ -68,7 +68,20 @@ class DashboardController extends Controller
         // Check if there's an active vote running to advertise
         $activeVote = Vote::where('closed', 0)->first();
 
-        $atcHours = ($user->atcActivity->count()) ? $user->atcActivity->sum('hours') : null;
+        $client = new \GuzzleHttp\Client();
+        if (App::environment('production')) {
+            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/' . $user->id . '/rating_times/');
+        } else {
+            $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/819096/rating_times/');
+        }
+
+        if ($res->getStatusCode() == 200) {
+            $vatsimStats = json_decode($res->getBody(), true);
+        } else {
+            return redirect()->back()->withErrors('We were unable to load the application for you due to missing data from VATSIM. Please try again later.');
+        }
+
+        $pilotHours = $vatsimStats['pilot'];
 
         $studentTrainings = \Auth::user()->instructingTrainings();
 
@@ -76,7 +89,7 @@ class DashboardController extends Controller
 
         $oudatedVersionWarning = $user->isAdmin() && Setting::get('_updateAvailable');
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'atcHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'pilotHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
     }
 
     /**
