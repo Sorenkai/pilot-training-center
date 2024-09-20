@@ -56,8 +56,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/content', [DashboardController::class, 'content'])->name('content');
     Route::get('/mentor', [DashboardController::class, 'mentor'])->name('mentor');
-    Route::get('/trainings', [TrainingController::class, 'index'])->name('requests');
-    Route::get('/trainings/history', [TrainingController::class, 'history'])->name('requests.history');
     Route::get('/pilot/trainings', [PilotTrainingController::class, 'index'])->name('pilot.requests');
     Route::get('/pilot/trainings/history', [PilotTrainingController::class, 'history'])->name('pilot.requests.history');
     Route::get('/users', [UserController::class, 'index'])->name('users');
@@ -109,54 +107,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::post('/admin/templates/update', [NotificationController::class, 'update'])->name('admin.templates.update');
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
 
-    // Training routes
-    Route::controller(TrainingController::class)->group(function () {
-        Route::get('/training/apply', 'apply')->name('training.apply');
-        Route::get('/training/create', 'create')->name('training.create');
-        Route::get('/training/create/{id}', 'create')->name('training.create.id');
-        Route::get('/training/edit/{training}', 'edit')->name('training.edit');
-        Route::patch('/training/edit/{training}', 'updateRequest')->name('training.update.request');
-        Route::post('/training/store', 'store')->name('training.store');
-        Route::get('/training/{training}/action/close', 'close')->name('training.action.close');
-        Route::get('/training/{training}/action/pretraining', 'togglePreTrainingCompleted')->name('training.action.pretraining');
-        Route::patch('/training/{training}', 'updateDetails')->name('training.update.details');
-        Route::get('/training/{training}', 'show')->name('training.show');
-        Route::get('/training/{training}/confirm/{key}', 'confirmInterest')->name('training.confirm.interest');
-    });
-
-    // Training report routes
-    Route::controller(TrainingReportController::class)->group(function () {
-        Route::get('/training/report/{report}', 'edit')->name('training.report.edit');
-        Route::get('/training/{training}/report/create', 'create')->name('training.report.create');
-        Route::post('/training/{training}/report', 'store')->name('training.report.store');
-        Route::patch('/training/report/{report}', 'update')->name('training.report.update');
-        Route::get('/training/report/{report}/delete', 'destroy')->name('training.report.delete');
-    });
-
-    // Training object routes
-    Route::controller(OneTimeLinkController::class)->group(function () {
-        Route::get('/training/onetime/{key}', 'redirect')->name('training.onetimelink.redirect');
-        Route::post('/training/{training}/onetime', 'store')->name('training.onetimelink.store');
-    });
-
-    // Training object attachment routes
-    Route::controller(TrainingObjectAttachmentController::class)->group(function () {
-        Route::get('/training/attachment/{attachment}', 'show')->name('training.object.attachment.show');
-        Route::post('/training/{trainingObjectType}/{trainingObject}/attachment', 'store')->name('training.object.attachment.store');
-        Route::delete('/training/attachment/{attachment}', 'destroy')->name('training.object.attachment.delete');
-    });
-
-    // Training examination routes
-    Route::controller(TrainingExaminationController::class)->group(function () {
-        Route::get('/training/examination/{examination}', 'show')->name('training.examination.show');
-        Route::get('/training/{training}/examination/create', 'create')->name('training.examination.create');
-        Route::post('/training/{training}/examination', 'store')->name('training.examination.store');
-        Route::patch('/training/examination/{examination}', 'update')->name('training.examination.update');
-        Route::get('/training/examination/{examination}/delete', 'destroy')->name('training.examination.delete');
-    });
-
-    Route::post('/training/activity/comment', [TrainingActivityController::class, 'storeComment'])->name('training.activity.comment');
-
+  
     // Pilot routes
 
     Route::controller(PilotTrainingController::class)->group(function () {

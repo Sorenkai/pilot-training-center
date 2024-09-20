@@ -35,7 +35,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $report = PilotTrainingReport::whereIn('pilot_training_id', $user->trainings->pluck('id'))->orderBy('created_at')->get()->last();
+        $report = PilotTrainingReport::whereIn('pilot_training_id', $user->pilotTrainings->pluck('id'))->orderBy('created_at')->get()->last();
 
         $subdivision = $user->subdivision;
         if (empty($subdivision)) {
@@ -54,14 +54,11 @@ class DashboardController extends Controller
 
         $trainings = $user->pilotTrainings;
         $statuses = PilotTrainingController::$statuses;
-        $types = TrainingController::$types;
 
-        //$dueInterestRequest = TrainingInterest::whereIn('training_id', $user->trainings->pluck('id'))->where('expired', false)->get()->first();
 
         // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
-        $atcInactiveMessage = ((in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) && (! $user->hasActiveTrainings(true) && $user->rating > 1 && ! $user->isAtcActive()) && ! $user->hasRecentlyCompletedTraining());
-        $completedTrainingMessage = $user->hasRecentlyCompletedTraining();
+        //$completedTrainingMessage = $user->hasRecentlyCompletedTraining();
 
         $workmailRenewal = (isset($user->setting_workmail_expire)) ? (Carbon::parse($user->setting_workmail_expire)->diffInDays(Carbon::now(), false) > -7) : false;
 
@@ -89,7 +86,7 @@ class DashboardController extends Controller
 
         $oudatedVersionWarning = $user->isAdmin() && Setting::get('_updateAvailable');
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'types', 'atcInactiveMessage', 'completedTrainingMessage', 'activeVote', 'pilotHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'activeVote', 'pilotHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
     }
 
     /**

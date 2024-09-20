@@ -6,13 +6,6 @@
 {{-- Success message fed via JS for TR  --}}
 <div class="alert alert-success d-none" id="success-message"></div>
 
-
-@if($completedTrainingMessage)
-<div class="alert alert-success" role="alert">
-    <i class="fas fa-star"></i>&nbsp;<b>Congratulations on your completed training!</b>&nbsp;<i class="fas fa-star"></i> You'll receive an email from VATSIM when your rating has been upgraded and ready to be used.
-</div>
-@endif
-
 @if($workmailRenewal)
 <div class="alert alert-warning" role="alert">
     <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;Your registered work e-mail address expires soon. <a href="{{ route('user.settings.extendworkmail') }}">Click here to extend for another 30 days</a>. If not extended, all e-mails will go to your default VATSIM account e-mail upon expire.
@@ -258,7 +251,7 @@
                 
                 @can('apply', \App\Models\PilotTraining::class)
                 <div class="d-grid">
-                    <a href="{{ route('training.apply') }}" class="btn btn-success">
+                    <a href="{{ route('pilot.training.apply') }}" class="btn btn-success">
                         Request training
                     </a>
                 </div>
