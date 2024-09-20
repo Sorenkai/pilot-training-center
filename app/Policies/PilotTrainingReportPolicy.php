@@ -20,6 +20,14 @@ class PilotTrainingReportPolicy
             $user->isAdmin();
     }
 
+    public function view(User $user, PilotTrainingReport $trainingReport)
+    {
+        return $trainingReport->pilotTraining->instructors->contains($user) ||
+                $user->isAdmin() ||
+                $user->isInstructor() ||
+                ($user->is($trainingReport->pilotTraining->user) && ! $trainingReport->draft);
+    }
+
     public function create(User $user)
     {
         return $user->isAdmin() || $user->isInstructor();

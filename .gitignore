@@ -24,6 +24,7 @@ public/js/*
 resources/sass/_env.scss
 yarn-error.log
 
+*.old
 # phpunit and results
 *.phpunit.cache
 *.phpunit.result.cache
