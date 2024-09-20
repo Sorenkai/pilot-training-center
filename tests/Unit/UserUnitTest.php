@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Exceptions\PolicyMissingException;
-use App\Models\Training;
+use App\Models\PilotTraining;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -57,22 +57,22 @@ class UserUnitTest extends TestCase
     #[Test]
     public function user_can_have_trainings_they_can_access()
     {
-        $training = Training::factory()->create(['user_id' => $this->user->id]);
+        $training = PilotTraining::factory()->create(['user_id' => $this->user->id]);
 
         $this->user->can('view', $training)
-            ? $this->assertTrue($this->user->viewableModels('\App\Models\Training')->contains($training))
-            : $this->assertFalse($this->user->viewableModels('\App\Models\Training')->contains($training));
+            ? $this->assertTrue($this->user->viewableModels('\App\Models\PilotTraining')->contains($training))
+            : $this->assertFalse($this->user->viewableModels('\App\Models\PilotTraining')->contains($training));
     }
 
     #[Test]
     public function trainings_can_exist_with_out_user_being_able_to_see_them()
     {
         $otherUser = User::factory()->create(['id' => ($this->user->id + 1)]);
-        $training = Training::factory()->create(['user_id' => $otherUser->id]);
+        $training = PilotTraining::factory()->create(['user_id' => $otherUser->id]);
 
         $this->user->can('view', $training)
-            ? $this->assertTrue($this->user->viewableModels('\App\Models\Training')->contains($training))
-            : $this->assertFalse($this->user->viewableModels('\App\Models\Training')->contains($training));
+            ? $this->assertTrue($this->user->viewableModels('\App\Models\PilotTraining')->contains($training))
+            : $this->assertFalse($this->user->viewableModels('\App\Models\PilotTraining')->contains($training));
     }
 
     #[Test]
