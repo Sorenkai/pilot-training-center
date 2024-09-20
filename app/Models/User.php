@@ -5,8 +5,6 @@ namespace App\Models;
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
-use App\Helpers\VatsimRating;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

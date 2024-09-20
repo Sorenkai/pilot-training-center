@@ -10,18 +10,12 @@ use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\GlobalSettingController;
 use App\Http\Controllers\MentorController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\OneTimeLinkController;
 use App\Http\Controllers\PilotTrainingActivityController;
 use App\Http\Controllers\PilotTrainingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RosterController;
 use App\Http\Controllers\SweatbookController;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\TrainingActivityController;
-use App\Http\Controllers\TrainingController;
-use App\Http\Controllers\TrainingExaminationController;
-use App\Http\Controllers\TrainingObjectAttachmentController;
-use App\Http\Controllers\TrainingReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoteController;
 
@@ -107,7 +101,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     Route::post('/admin/templates/update', [NotificationController::class, 'update'])->name('admin.templates.update');
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
 
-  
     // Pilot routes
 
     Route::controller(PilotTrainingController::class)->group(function () {

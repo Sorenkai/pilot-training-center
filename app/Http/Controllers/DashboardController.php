@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Models\PilotTrainingReport;
-use App\Models\TrainingInterest;
 use App\Models\User;
 use App\Models\Vote;
 use Carbon\Carbon;
@@ -54,7 +53,6 @@ class DashboardController extends Controller
 
         $trainings = $user->pilotTrainings;
         $statuses = PilotTrainingController::$statuses;
-
 
         // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));

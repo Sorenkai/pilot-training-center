@@ -14,9 +14,9 @@ use App\Notifications\PilotTrainingClosedNotification;
 use App\Notifications\PilotTrainingCreatedNotification;
 use App\Notifications\PilotTrainingInstructorNotification;
 use App\Notifications\PilotTrainingPreStatusNotification;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 
 class PilotTrainingController extends Controller
@@ -369,7 +369,7 @@ class PilotTrainingController extends Controller
         $training->english_only_training = array_key_exists('englishOnly', $attributes) ? true : false;
 
         $training->save();
-        
+
         $this->assignCallsign($training);
 
         ActivityLogController::warning('TRAINING', 'Updated pilot training request ' . $training->id .

@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Lesson;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
 use App\Models\User;
-use App\Models\Lesson;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
@@ -28,13 +28,13 @@ class PilotTrainingReportsTest extends TestCase
         $instructor = User::factory()->create(['id' => 10000400]);
         $instructor->groups()->attach(4, ['area_id' => 2]);
         $training->instructors()->attach($instructor, ['expire_at' => now()->addYears(10)]);
-    
+
         $report = PilotTrainingReport::factory()->create([
             'pilot_training_id' => $training->id,
             'written_by_id' => $instructor->id,
             'report_date' => now()->addYear(),
             'lesson_id' => $lesson->id,
-            'content' => "Lorem Ipsum",
+            'content' => 'Lorem Ipsum',
             'contentimprove' => null,
             'draft' => false,
         ]);
@@ -52,13 +52,13 @@ class PilotTrainingReportsTest extends TestCase
         $lesson = Lesson::factory()->create();
 
         $instructor = User::factory()->create(['id' => 10000400]);
-    
+
         $report = PilotTrainingReport::factory()->create([
             'pilot_training_id' => $training->id,
             'written_by_id' => $instructor->id,
             'report_date' => now()->addYear(),
             'lesson_id' => $lesson->id,
-            'content' => "Lorem Ipsum",
+            'content' => 'Lorem Ipsum',
             'contentimprove' => null,
             'draft' => false,
         ]);
@@ -76,13 +76,13 @@ class PilotTrainingReportsTest extends TestCase
         $lesson = Lesson::factory()->create();
 
         $instructor = User::factory()->create(['id' => 10000400]);
-    
+
         $report = PilotTrainingReport::factory()->create([
             'pilot_training_id' => $training->id,
             'written_by_id' => $instructor->id,
             'report_date' => now()->addYear(),
             'lesson_id' => $lesson->id,
-            'content' => "Lorem Ipsum",
+            'content' => 'Lorem Ipsum',
             'contentimprove' => null,
             'draft' => false,
         ]);
@@ -101,13 +101,13 @@ class PilotTrainingReportsTest extends TestCase
 
         $instructor = User::factory()->create(['id' => 10000159]);
         $instructor->groups()->attach(4, ['area_id' => 2]);
-    
+
         $report = PilotTrainingReport::factory()->create([
             'pilot_training_id' => $training->id,
             'written_by_id' => $instructor->id,
             'report_date' => now()->addYear(),
             'lesson_id' => $lesson->id,
-            'content' => "Lorem Ipsum",
+            'content' => 'Lorem Ipsum',
             'contentimprove' => null,
             'draft' => true,
         ]);
@@ -126,13 +126,13 @@ class PilotTrainingReportsTest extends TestCase
 
         $instructor = User::factory()->create(['id' => 10000080]);
         $instructor->groups()->attach(4, ['area_id' => 2]);
-    
+
         $report = PilotTrainingReport::factory()->create([
             'pilot_training_id' => $training->id,
             'written_by_id' => $instructor->id,
             'report_date' => now()->addYear(),
             'lesson_id' => $lesson->id,
-            'content' => "Lorem Ipsum",
+            'content' => 'Lorem Ipsum',
             'contentimprove' => null,
             'draft' => true,
         ]);

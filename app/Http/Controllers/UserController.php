@@ -10,7 +10,6 @@ use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
 use App\Models\PilotTrainingReport;
-use App\Models\TrainingExamination;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
