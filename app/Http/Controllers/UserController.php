@@ -120,7 +120,6 @@ class UserController extends Controller
 
         $trainings = $user->pilotTrainings;
         $statuses = PilotTrainingController::$statuses;
-        //$endorsements = $user->endorsements->whereIn('type', ['EXAMINER', 'FACILITY', 'SOLO', 'VISITING'])->sortBy([['expired', 'asc'], ['revoked', 'asc']]);
 
         // Get hours and grace per area
         $atcActivityHours = [];
@@ -151,6 +150,7 @@ class UserController extends Controller
         }
 
         // Fetch division exams
+        /*
         $divisionExams = collect();
         $userExams = DivisionApi::getUserExams($user);
         if ($userExams && $userExams->successful()) {
@@ -166,9 +166,10 @@ class UserController extends Controller
 
             // Sort all entries by created_at
             $divisionExams = $divisionExams->sortByDesc('created_at');
-        }
+        }*/
+        $exams = $user->exams;
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'divisionExams', 'totalHours'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'exams', 'totalHours'));
     }
 
     /**

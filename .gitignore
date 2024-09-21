@@ -23,6 +23,7 @@ public/images/logos/*
 public/js/*
 resources/sass/_env.scss
 yarn-error.log
+*.old
 
 *.old
 # phpunit and results

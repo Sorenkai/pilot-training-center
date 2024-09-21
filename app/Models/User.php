@@ -110,6 +110,22 @@ class User extends Authenticatable
         return $this->belongsToMany(PilotTraining::class, 'pilot_training_instructor')->withPivot('expire_at');
     }
 
+    public function exams()
+    {
+        return $this->hasMany(Exam::class);
+    }
+
+    /**
+     * Check is this user is teaching the queried user
+     *
+     * @param  \App\Models\User  $user  to check for
+     * @return bool
+     */
+    public function isTeaching(User $user)
+    {
+        return $this->teaches->where('user_id', $user->id)->count() > 0;
+    }
+
     public function ratings()
     {
         return $this->belongsToMany(Rating::class);
