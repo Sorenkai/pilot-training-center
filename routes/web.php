@@ -130,7 +130,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::delete('/pilot/training/attachment/{attachment}', 'destroy')->name('pilot.training.object.attachment.delete');
     });
 
-    Route::controller(ExamController::class)->group(function(){
+    Route::controller(ExamController::class)->group(function () {
         Route::get('/exam/create', 'create')->name('exam.create');
         Route::get('/exam/create/{id}', 'create')->name('exam.create.id');
         Route::post('exam/store', 'store')->name('exam.store');

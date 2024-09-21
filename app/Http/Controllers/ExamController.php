@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exam;
-use App\Models\User;
 use App\Models\PilotRating;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ExamController extends Controller
@@ -19,8 +19,7 @@ class ExamController extends Controller
             $users = User::all();
         }
 
-        $ratings = PilotRating::whereIn('vatsim_rating', [1,3,7,15,31])->get();
-
+        $ratings = PilotRating::whereIn('vatsim_rating', [1, 3, 7, 15, 31])->get();
 
         return view('exam.create', compact('users', 'ratings', 'prefillUserId'));
     }
@@ -39,7 +38,7 @@ class ExamController extends Controller
 
         $user = User::find($data['user']);
         $rating = PilotRating::find($data['rating']);
-        
+
         $exam = Exam::create([
             'pilot_rating_id' => $rating->id,
             'url' => $data['url'],

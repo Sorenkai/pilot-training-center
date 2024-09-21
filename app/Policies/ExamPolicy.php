@@ -13,7 +13,7 @@ class ExamPolicy
     {
         return $user->isAdmin() || $user->isInstructor();
     }
-    
+
     public function store(User $user)
     {
         return $user->isAdmin() || $user->isInstructor();

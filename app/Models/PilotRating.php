@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Exam;
-use App\Models\Lesson;
 use Illuminate\Database\Eloquent\Model;
 
 class PilotRating extends Model
