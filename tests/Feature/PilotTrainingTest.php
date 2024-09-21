@@ -92,7 +92,7 @@ class PilotTrainingTest extends TestCase
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
         $moderator = User::factory()->create();
-        $moderator->groups()->attach(1, ['area_id' => $training->area->id]);
+        $moderator->groups()->attach(1, ['area_id' => 2]);
 
         $this->actingAs($moderator)->patch(route('pilot.training.update', ['training' => $training->id]), ['status' => 0]);
 
