@@ -84,7 +84,6 @@
     document.addEventListener("DOMContentLoaded", function () {
 
         var payload = {!! json_encode($ratings, true) !!}
-        console.log(payload)
         const app = createApp({
             data(){
                 return {

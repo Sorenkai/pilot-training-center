@@ -36,14 +36,6 @@
             </li>
         @endcan
 
-        @can('view', \App\Models\Booking::class)
-            <li class="nav-item {{ Route::is('booking*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('booking') }}">
-                <i class="fas fa-fw fa-calendar"></i>
-                <span>Booking</span></a>
-            </li>
-        @endcan
-
         @if(Setting::get('linkMoodle') && Setting::get('linkMoodle') != "")
             <li class="nav-item">
             <a class="nav-link" href="{{ Setting::get('linkMoodle') }}" target="_blank">
@@ -51,49 +43,6 @@
                 <span>Moodle</span></a>
             </li>
         @endif
-        
-        <!--    USE SETTING LATER TO CHECK IF ATC OR PILOT
-        @if (\Auth::user()->isMentorOrAbove())
-
-            {{-- Divider --}}
-            <div class="sidebar-divider"></div>
-
-            {{-- Heading --}}
-            <div class="sidebar-heading">
-            Training
-            </div>
-
-            <li class="nav-item {{ Route::is('mentor') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('mentor') }}">
-                <i class="fas fa-fw fa-chalkboard-teacher"></i>
-                <span>My students</span></a>
-            </li>
-
-            <li class="nav-item {{ Route::is('sweatbook') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('sweatbook') }}">
-                    <i class="fas fa-fw fa-calendar-alt"></i>
-                    <span>Sweatbox Calendar</span>
-                </a>
-            </li>
-
-        @endif
-        @if (\Auth::user()->isModeratorOrAbove())
-
-            {{-- Nav Item - Pages Collapse Menu --}}
-            <li class="nav-item {{ Route::is('requests') || Route::is('requests.history') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReq" aria-expanded="true" aria-controls="collapseReq">
-                <i class="fas fa-fw fa-flag"></i>
-                <span>Requests</span>
-            </a>
-            <div id="collapseReq" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('requests') }}">Open Requests</a>
-                <a class="collapse-item" href="{{ route('requests.history') }}">Closed Requests</a>
-                </div>
-            </div>
-            </li>
-
-        @endif  -->
 
         
 
@@ -198,15 +147,15 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                 
                 @if(\Auth::user()->isAdmin())
-                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
+                    <a class="collapse-item" href="#">Trainings</a>
                 @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="{{ route('reports.training.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Trainings</a>
+                    <a class="collapse-item" href="#">Trainings</a>
                 @endif
                 
                 @if(\Auth::user()->isAdmin())
-                    <a class="collapse-item" href="{{ route('reports.activities') }}">Activities</a>
+                    <a class="collapse-item" href="#">Activities</a>
                 @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="{{ route('reports.activities.area', \Auth::user()->groups()->where('group_id', 2)->get()->first()->pivot->area_id) }}">Activities</a>
+                    <a class="collapse-item" href="#">Activities</a>
                 @endif
 
                 <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>

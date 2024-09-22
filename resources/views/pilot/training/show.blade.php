@@ -144,7 +144,7 @@
                     Timeline
                 </h6>
             </div>
-            @cannot('comment', [\App\Models\PilotTraining::class, \App\Models\Training::find($training->id)])
+            @cannot('comment', [\App\Models\PilotTraining::class, \App\Models\PilotTraining::find($training->id)])
                 <form action="{{ route('pilot.training.activity.comment') }}" method="POST">
                     @csrf
                     <div class="input-group">
@@ -331,6 +331,7 @@
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid}}" aria-expanded="true">
                                                         <i class="fas fa-fw fa-chevron-right me-2"></i>{{ $report->report_date->toEuropeanDate() }}
+                                                        <i class="fas fa-scroll me-2 ms-4"></i>{{ $report->lesson->name }}
                                                         @if ($report->draft)
                                                             <span class="badge bg-danger">Draft</span>
                                                         @endif

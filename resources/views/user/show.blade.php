@@ -132,48 +132,41 @@
                 <div class="card shadow mb-4">
                     <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 fw-bold text-white">
-                            Division Exams
+                            Exam Results
                         </h6>
+                        @can('create', \App\Models\Exam::class) 
+                            <a href="{{ route('exam.create.id', ['id' => $user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Create Exam</a>
+                        @endcan
                     </div>
-                    <div class="card-body {{ $divisionExams->count() == 0 ? '' : 'p-0' }}">
+                    <div class="card-body {{ $exams->count() == 0 ? '' : 'p-0' }}">
         
-                        @if($divisionExams->count() == 0)
-                            <p class="mb-0">No division exam history</p>
+                        @if($exams->count() == 0)
+                            <p class="mb-0">No Exam history</p>
                         @else
                             <div class="table-responsive">
                                 <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Exam</th>
-                                            <th>Created</th>
-                                            <th>Status</th>
+                                            <th>Rating</th>
+                                            <th>Grade</th>
+                                            <th>Link</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($divisionExams as $exam)
+                                        @foreach($exams as $exam)
                                             <tr>
                                                 <td>
-                                                    {{ $exam['rating'] }}
-                                                    @if($exam['category'] == 'reassignments')
-                                                        (Retake)
-                                                    @endif
+                                                    &nbsp;&nbsp;&nbsp;<i class="fas fa-circle-check text-success"></i>
                                                 </td>
                                                 <td>
-                                                    {{ $exam['created_at'] }}
+                                                    {{ $exam->pilotRating->name }}
                                                 </td>
                                                 <td>
-                                                    @if($exam['category'] == 'results')
-                                                        @if($exam['passed'])
-                                                            <i class="fas fa-circle-check text-success"></i>
-                                                            Pass {{ $exam['score'] }}%
-                                                        @else
-                                                            <i class="fas fa-circle-xmark text-danger"></i>
-                                                            Fail {{ $exam['score'] }}%
-                                                        @endif
-                                                    @else
-                                                        <i class="fas fa-circle-half-stroke text-warning"></i>
-                                                        Pending
-                                                    @endif
+                                                    {{ $exam->score }}%
+                                                </td>
+                                                <td>
+                                                    <a href="{{ $exam->url }}">View</a>
                                                 </td>
                                             </tr>
                                         @endforeach

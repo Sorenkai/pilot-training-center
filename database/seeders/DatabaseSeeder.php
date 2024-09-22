@@ -116,6 +116,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        /*
         // Populate trainings and other of the Scandinavian users
         for ($i = 1; $i <= rand(100, 125); $i++) {
             $training = Training::factory()->create();
@@ -156,6 +157,6 @@ class DatabaseSeeder extends Seeder
                     ]);
                 }
             }
-        }
+        }*/
     }
 }
