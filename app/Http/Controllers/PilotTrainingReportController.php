@@ -38,8 +38,8 @@ class PilotTrainingReportController extends Controller
 
         // Convert hours flown to decimal
         $time = $data['instructor_hours'];
-        list($hours, $minutes) = explode(':', $time);
-        $data['instructor_hours'] = $hours + ($minutes/60);
+        [$hours, $minutes] = explode(':', $time);
+        $data['instructor_hours'] = $hours + ($minutes / 60);
 
         if (isset($data['report_date'])) {
             $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
@@ -84,8 +84,8 @@ class PilotTrainingReportController extends Controller
 
         // Convert hours flown to decimal
         $time = $data['instructor_hours'];
-        list($hours, $minutes) = explode(':', $time);
-        $data['instructor_hours'] = $hours + ($minutes/60);
+        [$hours, $minutes] = explode(':', $time);
+        $data['instructor_hours'] = $hours + ($minutes / 60);
 
         $report->update($data);
 
@@ -115,6 +115,7 @@ class PilotTrainingReportController extends Controller
     {
         $hours = floor($decimalHours); // Get the whole number part for hours
         $minutes = ($decimalHours - $hours) * 60; // Get the decimal part and convert to minutes
+
         return sprintf('%02d:%02d', $hours, round($minutes)); // Format as HH:MM
     }
 }
