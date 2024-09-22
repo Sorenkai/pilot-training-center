@@ -16,7 +16,8 @@ class TaskPolicy
      */
     public function create(User $user)
     {
-        return $user->isMentorOrAbove() || $user->isExaminer();
+        //return $user->isMentorOrAbove() || $user->isExaminer();
+        return $user->isAdmin();
     }
 
     /**
@@ -26,7 +27,8 @@ class TaskPolicy
      */
     public function update(User $user)
     {
-        return $user->isMentorOrAbove() || $user->isExaminer();
+        //return $user->isMentorOrAbove() || $user->isExaminer();
+        return $user->isAdmin();
     }
 
     /**
@@ -36,6 +38,7 @@ class TaskPolicy
      */
     public function receive(User $user)
     {
-        return $user->isMentorOrAbove() || $user->isExaminer();
+        //return $user->isMentorOrAbove() || $user->isExaminer();
+        return $user->isAdmin();
     }
 }

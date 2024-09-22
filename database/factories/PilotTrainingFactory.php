@@ -2,18 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Models\Training;
+use App\Models\PilotTraining;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class TrainingFactory extends Factory
+class PilotTrainingFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Training::class;
+    protected $model = PilotTraining::class;
 
     /**
      * Define the model's default state.
@@ -33,13 +33,12 @@ class TrainingFactory extends Factory
         return [
             'user_id' => User::inRandomOrder()->first()->id,
             'status' => $status,
-            'area_id' => 1,
-            'motivation' => $this->faker->paragraph(15, false),
             'english_only_training' => false,
+            'experience' => $this->faker->numberBetween(1, 5),
+            'comment' => $this->faker->paragraph(15, false),
+            'created_by' => User::inRandomOrder()->first()->id,
             'created_at' => $this->faker->dateTimeBetween($startDate = '-2 years', $endDate = '-1 years'),
             'updated_at' => \Carbon\Carbon::now(),
-            'type' => $this->faker->numberBetween(1, 5),
-            'experience' => $this->faker->numberBetween(1, 5),
             'started_at' => $started_at,
             'closed_at' => $closed_at,
         ];

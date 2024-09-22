@@ -10,7 +10,6 @@ use App\Models\Area;
 use App\Models\AtcActivity;
 use App\Models\Group;
 use App\Models\PilotTrainingReport;
-use App\Models\TrainingExamination;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -121,8 +120,6 @@ class UserController extends Controller
 
         $trainings = $user->pilotTrainings;
         $statuses = PilotTrainingController::$statuses;
-        $types = TrainingController::$types;
-        //$endorsements = $user->endorsements->whereIn('type', ['EXAMINER', 'FACILITY', 'SOLO', 'VISITING'])->sortBy([['expired', 'asc'], ['revoked', 'asc']]);
 
         // Get hours and grace per area
         $atcActivityHours = [];
@@ -153,6 +150,7 @@ class UserController extends Controller
         }
 
         // Fetch division exams
+        /*
         $divisionExams = collect();
         $userExams = DivisionApi::getUserExams($user);
         if ($userExams && $userExams->successful()) {
@@ -168,9 +166,10 @@ class UserController extends Controller
 
             // Sort all entries by created_at
             $divisionExams = $divisionExams->sortByDesc('created_at');
-        }
+        }*/
+        $exams = $user->exams;
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'divisionExams', 'totalHours'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'exams', 'totalHours'));
     }
 
     /**
@@ -327,10 +326,6 @@ class UserController extends Controller
                 }
             }
 
-            // Check and detach trainings from mentor
-            if ($user->teaches()->where('area_id', $area->id)->count() > 0 && ! $user->isMentor() && $value == false) {
-                $user->teaches()->detach($user->teaches->where('area_id', $area->id));
-            }
         }
 
         return redirect(route('user.show', $user))->with('success', 'User access settings successfully updated.');
@@ -400,22 +395,7 @@ class UserController extends Controller
     {
         $this->authorize('viewReports', $user);
 
-        $examinations = TrainingExamination::where('examiner_id', $user->id)->get();
         $reports = PilotTrainingReport::where('written_by_id', $user->id)->get();
-
-        $reportsAndExams = collect($reports)->merge($examinations);
-        $reportsAndExams = $reportsAndExams->sort(function ($a, $b) {
-            // Define the correct date to sort by model type is report or exam
-            is_a($a, '\App\Models\PilotTrainingReport') ? $aSort = Carbon::parse($a->report_date) : $aSort = Carbon::parse($a->examination_date);
-            is_a($b, '\App\Models\PilotTrainingReport') ? $bSort = Carbon::parse($b->report_date) : $bSort = Carbon::parse($b->examination_date);
-
-            // Sorting algorithm
-            if ($aSort == $bSort) {
-                return (is_a($a, '\App\Models\TrainingExamination')) ? -1 : 1;
-            }
-
-            return ($aSort > $bSort) ? -1 : 1;
-        });
 
         return view('user.reports', compact('user', 'reports'));
     }

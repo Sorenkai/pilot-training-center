@@ -144,7 +144,7 @@
                     Timeline
                 </h6>
             </div>
-            @cannot('comment', [\App\Models\PilotTraining::class, \App\Models\Training::find($training->id)])
+            @cannot('comment', [\App\Models\PilotTraining::class, \App\Models\PilotTraining::find($training->id)])
                 <form action="{{ route('pilot.training.activity.comment') }}" method="POST">
                     @csrf
                     <div class="input-group">
@@ -158,7 +158,7 @@
             <div class="timeline">
                 <ul class="sessions">
                     @foreach($activities as $activity)
-                        @can('view', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id), $activity->type])
+                        @can('view', [\App\Models\PilotTrainingActivity::class, \App\Models\PilotTraining::find($training->id), $activity->type])
                             <li data-id="{{ $activity->id }}">
                                 <div class="time">
                                     @if($activity->type == "STATUS" || $activity->type == "TYPE")
@@ -192,16 +192,16 @@
 
                                     @if($activity->type == "STATUS")
                                         @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
-                                            Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                            Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                         with reason <span class="badge text-bg-light">{{ $activity->comment }}</span>
                                         @else
-                                            Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                            Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                         @endif
                                     @elseif($activity->type == "TYPE")
-                                        Training type changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
+                                        Training type changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$types[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$types[$activity->new_data]["text"] }}</span>
                                     @elseif($activity->type == "INSTRUCTOR")
                                         @if($activity->new_data)
                                             <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as instructor
@@ -361,6 +361,7 @@
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid}}" aria-expanded="true">
                                                         <i class="fas fa-fw fa-chevron-right me-2"></i>{{ $report->report_date->toEuropeanDate() }}
+                                                        <i class="fas fa-scroll me-2 ms-4"></i>{{ $report->lesson->name }}
                                                         @if ($report->draft)
                                                             <span class="badge bg-danger">Draft</span>
                                                         @endif

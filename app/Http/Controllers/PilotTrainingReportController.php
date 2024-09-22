@@ -76,7 +76,7 @@ class PilotTrainingReportController extends Controller
         }
 
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
-
+        dd($data);
         $report->update($data);
 
         // Notify student of new training request if it's not a draft anymore
