@@ -158,7 +158,7 @@
             <div class="timeline">
                 <ul class="sessions">
                     @foreach($activities as $activity)
-                        @can('view', [\App\Models\TrainingActivity::class, \App\Models\Training::find($training->id), $activity->type])
+                        @can('view', [\App\Models\PilotTrainingActivity::class, \App\Models\PilotTraining::find($training->id), $activity->type])
                             <li data-id="{{ $activity->id }}">
                                 <div class="time">
                                     @if($activity->type == "STATUS" || $activity->type == "TYPE")
@@ -192,16 +192,16 @@
 
                                     @if($activity->type == "STATUS")
                                         @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
-                                            Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                            Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                         with reason <span class="badge text-bg-light">{{ $activity->comment }}</span>
                                         @else
-                                            Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                            Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                         @endif
                                     @elseif($activity->type == "TYPE")
-                                        Training type changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
-                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
+                                        Training type changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$types[$activity->old_data]["text"] }}</span>
+                                        to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$types[$activity->new_data]["text"] }}</span>
                                     @elseif($activity->type == "INSTRUCTOR")
                                         @if($activity->new_data)
                                             <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as instructor
@@ -213,36 +213,6 @@
                                             Training paused
                                         @else
                                             Training unpaused
-                                        @endif
-                                    @elseif($activity->type == "ENDORSEMENT")
-                                        @if(\App\Models\Endorsement::find($activity->new_data) !== null)
-                                            @empty($activity->comment)
-                                                <span class="badge text-bg-light">
-                                                    {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
-                                                </span> granted, valid to
-                                                <span class="badge text-bg-light">
-                                                    @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
-                                                        {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
-                                                    @else
-                                                        Forever
-                                                    @endisset
-                                                </span>
-                                            @else
-                                                <span class="badge text-bg-light">
-                                                    {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
-                                                </span> granted, valid to
-                                                <span class="badge text-bg-light">
-                                                    @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
-                                                        {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
-                                                    @else
-                                                        Forever
-                                                    @endisset
-                                                </span>
-                                                for positions:
-                                                @foreach(explode(',', $activity->comment) as $p)
-                                                    <span class="badge text-bg-light">{{ $p }}</span>
-                                                @endforeach
-                                            @endempty
                                         @endif
                                     @elseif($activity->type == "COMMENT")
                                         {!! nl2br($activity->comment) !!}
