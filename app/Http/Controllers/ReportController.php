@@ -7,7 +7,6 @@ use App\Models\Feedback;
 use App\Models\Group;
 use App\Models\ManagementReport;
 use App\Models\Rating;
-use App\Models\PilotTraining;
 use App\Models\Training;
 use App\Models\TrainingActivity;
 use App\Models\TrainingExamination;
@@ -160,7 +159,7 @@ class ReportController extends Controller
 
         $instructors = $instructors->sortBy('name')->unique();
         $statuses = PilotTrainingController::$statuses;
-        
+
         foreach ($instructors as $instructor) {
             $instructor->last_12_months_hours = $instructor->pilotTrainingReports->sum('instructor_hours'); // Sum for the last 12 months
         }
