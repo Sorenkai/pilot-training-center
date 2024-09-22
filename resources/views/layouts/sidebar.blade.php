@@ -147,24 +147,22 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                 
                 @if(\Auth::user()->isAdmin())
-                    <a class="collapse-item" href="#">Trainings</a>
+                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
                 @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="#">Trainings</a>
+                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
                 @endif
                 
                 @if(\Auth::user()->isAdmin())
-                    <a class="collapse-item" href="#">Activities</a>
+                    <a class="collapse-item" href="{{ route('reports.instructors')}}">Activities</a>
                 @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="#">Activities</a>
+                    <a class="collapse-item" href="{{ route('reports.instructors')}}">Activities</a>
                 @endif
 
-                <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
+                <a class="collapse-item" href="{{ route('reports.instructors') }}">Instructors</a>
 
                 @can('viewAccessReport', \App\Models\ManagementReport::class)
                     <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
                 @endcan
-
-                <a class="collapse-item" href="{{ route('reports.feedback') }}">Feedback</a>
                 
                 </div>
             </div>

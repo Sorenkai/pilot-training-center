@@ -89,7 +89,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/reports/activities', 'activities')->name('reports.activities');
         Route::get('/reports/activities/{id}', 'activities')->name('reports.activities.area');
         Route::get('/reports/mentors', 'mentors')->name('reports.mentors');
-        Route::get('/reports/instructors', 'instructors')->name('instructors');
+        Route::get('/reports/instructors', 'instructors')->name('reports.instructors');
         Route::get('/reports/access', 'access')->name('reports.access');
         Route::get('/reports/feedback', 'feedback')->name('reports.feedback');
     });
