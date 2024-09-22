@@ -7,6 +7,7 @@ use App\Models\Feedback;
 use App\Models\Group;
 use App\Models\ManagementReport;
 use App\Models\Rating;
+use App\Models\PilotTraining;
 use App\Models\Training;
 use App\Models\TrainingActivity;
 use App\Models\TrainingExamination;
@@ -133,6 +134,38 @@ class ReportController extends Controller
         $statuses = TrainingController::$statuses;
 
         return view('reports.mentors', compact('mentors', 'statuses'));
+    }
+
+    /**
+     * Show the instructors statistics view
+     *
+     * @return \Illuminate\View\View
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function instructors()
+    {
+        $this->authorize('viewInstructors', ManagementReport::class);
+
+        $instructors = collect();
+
+        if (auth()->user()->isAdmin()) {
+            $instructors = Group::find(4)->users()
+                ->with(['pilotTrainingReports' => function ($query) {
+                    $query->where('created_at', '>=', now()->subYear()); // Filter for last 12 months
+                }, 'instructs', 'instructs.reports', 'instructs.user'])
+                ->withSum('pilotTrainingReports', 'instructor_hours') // Total hours
+                ->get();
+        }
+
+        $instructors = $instructors->sortBy('name')->unique();
+        $statuses = PilotTrainingController::$statuses;
+        
+        foreach ($instructors as $instructor) {
+            $instructor->last_12_months_hours = $instructor->pilotTrainingReports->sum('instructor_hours'); // Sum for the last 12 months
+        }
+
+        return view('reports.instructors', compact('instructors', 'statuses'));
     }
 
     /**

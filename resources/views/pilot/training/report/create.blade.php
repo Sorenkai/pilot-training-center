@@ -43,7 +43,7 @@
                         </datalist>
                     
                         @error('lesson_id')
-                            <span class="text-danger">{{ $errors->first('lesson_name') }}</span>
+                            <span class="text-danger">{{ $errors->first('lesson_id') }}</span>
                         @enderror
                     </div>
 
@@ -52,6 +52,14 @@
                         <input id="date" class="datepicker form-control @error('report_date') is-invalid @enderror" type="text" name="report_date" value="{{ old('report_date') }}" required>
                         @error('report_date')
                             <span class="text-danger">{{ $errors->first('report_date') }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="instructor_hours" class="form-label">Hours flown</label>
+                        <input type="time" id="instructor_hours" class="form-control @error('instructor_hours') is-invalid @enderror" name="instructor_hours" value="00:00" required>
+                        @error('instructor_hours')
+                            <span class="text-danger">{{ $errors->first('instructor_hours') }}</span>
                         @enderror
                     </div>
 

@@ -117,6 +117,11 @@ class User extends Authenticatable
         return $this->hasMany(TrainingReport::class, 'written_by_id');
     }
 
+    public function pilotTrainingReports()
+    {
+        return $this->hasMany(PilotTrainingReport::class, 'written_by_id');
+    }
+
     public function pilotTrainings()
     {
         return $this->hasMany(PilotTraining::class);
