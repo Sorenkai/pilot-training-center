@@ -6,14 +6,12 @@ use App\Models\Area;
 use App\Models\Feedback;
 use App\Models\Group;
 use App\Models\ManagementReport;
-use App\Models\Rating;
-use App\Models\PilotTrainingActivity;
-use App\Models\PilotTraining;
 use App\Models\PilotRating;
+use App\Models\PilotTraining;
+use App\Models\PilotTrainingActivity;
 use App\Models\PilotTrainingReport;
 use App\Models\Training;
 use App\Models\TrainingActivity;
-use App\Models\TrainingExamination;
 use App\Models\TrainingReport;
 use App\Models\User;
 use Carbon\Carbon;
@@ -90,8 +88,7 @@ class ReportController extends Controller
 
         // Fetch TrainingActivity
 
-        $activities = PilotTrainingActivity::with('pilotTraining', 'pilotTraining.pilotRatings', 'pilotTraining.user', 'user' )->orderByDesc('created_at')->limit(100)->get();
-        
+        $activities = PilotTrainingActivity::with('pilotTraining', 'pilotTraining.pilotRatings', 'pilotTraining.user', 'user')->orderByDesc('created_at')->limit(100)->get();
 
         // Fetch TrainingReport and ExaminationReport from last activity to now
         $trainingReports = PilotTrainingReport::where('created_at', '>=', $activities->last()->created_at)->get();
@@ -196,7 +193,6 @@ class ReportController extends Controller
         $payload['exam'] = PilotTraining::where('status', 3)->count();
         $payload['completed'] = PilotTraining::where('status', -1)->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('first day of january this year')))->count();
         $payload['closed'] = PilotTraining::where('status', -2)->where('closed_at', '>=', date('Y-m-d H:i:s', strtotime('first day of january this year')))->count();
-       
 
         return $payload;
     }
@@ -259,14 +255,13 @@ class ReportController extends Controller
         $closedRequests = [];
         $passFailRequests = [];
 
-        
         foreach (PilotRating::all() as $rating) {
             $newRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
             $completedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
             $closedRequests[$rating->name] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
             $passFailRequests['Passed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
             $passFailRequests['Failed'] = [0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0];
-            
+
             // New requests
             DB::enableQueryLog();
 
@@ -357,8 +352,6 @@ class ReportController extends Controller
         foreach ($query as $entry) {
             $passFailRequests['Failed'][$monthTranslator[$entry->month]] = $entry->count;
         }
-
-    
 
         return [$newRequests, $completedRequests, $closedRequests, $passFailRequests];
     }
