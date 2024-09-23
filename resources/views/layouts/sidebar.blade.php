@@ -115,22 +115,6 @@
             </a>
 
         </li>
-
-        {{-- Nav Item - Pages Collapse Menu --}}
-        <li class="nav-item {{ Route::is('endorsements.*') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEndorsements" aria-expanded="true" aria-controls="collapseEndorsements">
-                <i class="fas fa-fw fa-check-square"></i>
-                <span>Endorsements</span>
-            </a>
-            <div id="collapseEndorsements" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('endorsements.solos') }}">Solo</a>
-                <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiner</a>
-                <a class="collapse-item" href="{{ route('endorsements.visiting') }}">Visiting</a>
-                </div>
-            </div>
-        </li>
-
         
 
         @if (\Auth::user()->isModeratorOrAbove())
