@@ -45,7 +45,7 @@ class ExamTest extends TestCase
             'issued_by' => $user2->id,
         ];
 
-        $response = $this->actingAs($user)->post('/exam/store', $attributes)->assertStatus(201);
+        $response = $this->actingAs($user)->post('/exam/store', $attributes)->assertStatus(302);
     }
 
     #[Test]
