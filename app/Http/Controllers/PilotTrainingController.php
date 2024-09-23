@@ -14,6 +14,7 @@ use App\Notifications\PilotTrainingClosedNotification;
 use App\Notifications\PilotTrainingCreatedNotification;
 use App\Notifications\PilotTrainingInstructorNotification;
 use App\Notifications\PilotTrainingPreStatusNotification;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -386,6 +387,7 @@ class PilotTrainingController extends Controller
         return request()->validate([
             'experience' => 'sometimes|required|integer|min:1|max:3',
             'englishOnly' => 'nullable',
+            'paused_at' => 'sometimes',
             'user_id' => 'sometimes|required|integer',
             'comment' => 'nullable',
             'training_level' => 'sometimes|required',
