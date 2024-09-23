@@ -6,9 +6,9 @@ use App\Models\PilotTraining;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use PHPUnit\Framework\Attributes\Test;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PilotTrainingTest extends TestCase
@@ -32,7 +32,7 @@ class PilotTrainingTest extends TestCase
         $this->actingAs($user)
             ->post('/pilot/training/store', $attributes)
             ->assertRedirect('/dashboard');
-        
+
         $this->assertDatabaseHas('pilot_trainings', ['user_id' => $user->id]);
 
         Mail::assertNothingSent();
@@ -89,7 +89,6 @@ class PilotTrainingTest extends TestCase
             ->assertStatus(403);
     }
 
-    
     #[Test]
     public function instructor_can_update_the_trainings_status()
     {
@@ -105,8 +104,7 @@ class PilotTrainingTest extends TestCase
 
         $this->assertDatabaseHas('pilot_trainings', ['id' => $training->id, 'status' => 0]);
     }
-    
-    
+
     #[Test]
     public function a_user_cant_update_their_own_training_request()
     {
@@ -119,7 +117,6 @@ class PilotTrainingTest extends TestCase
             ->assertStatus(403);
     }
 
-    
     #[Test]
     public function an_instructor_can_be_added()
     {
@@ -139,7 +136,6 @@ class PilotTrainingTest extends TestCase
         $this->assertTrue($training->instructors->contains($instructor));
     }
 
-    
     #[Test]
     public function a_user_cant_request_a_new_training_if_they_already_have_one()
     {
@@ -147,5 +143,4 @@ class PilotTrainingTest extends TestCase
         $training = PilotTraining::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user)->assertTrue(Gate::inspect('apply', PilotTraining::class)->denied());
     }
-
 }

@@ -68,7 +68,6 @@ class PilotTrainingObjectAttachmentTest extends TestCase
         Storage::disk('test')->assertExists($attachments->first()->file->full_path);
     }
 
-
     #[Test]
     public function student_cant_upload_an_attachment()
     {
