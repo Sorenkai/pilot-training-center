@@ -146,6 +146,11 @@ class User extends Authenticatable
         return $this->teaches->where('user_id', $user->id)->count() > 0;
     }
 
+    public function isInstructing(User $user)
+    {
+        return $this->instructs->where('user_id', $user->id)->count() > 0;
+    }
+
     public function ratings()
     {
         return $this->belongsToMany(Rating::class);

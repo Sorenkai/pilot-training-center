@@ -15,7 +15,7 @@ class PilotTrainingPolicy
     public function view(User $user, PilotTraining $pilotTraining)
     {
         return $pilotTraining->instructors->contains($user) ||
-            $user->isModeratorOrAbove() ||
+            $user->isInstructorOrAbove() ||
             $user->is($pilotTraining->user);
     }
 
@@ -40,7 +40,7 @@ class PilotTrainingPolicy
             return true;
         }
 
-        return $user->isModeratorOrAbove();
+        return $user->isInstructorOrAbove();
     }
 
     public function viewActiveRequests(User $user)

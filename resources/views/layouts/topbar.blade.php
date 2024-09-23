@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand bg-white topbar {{ (\Auth::user()->isModeratorOrAbove()) ? 'topbar-justify-moderator' : 'topbar-justify-user' }} mb-4 ps-4 pe-4 static-top shadow">
+<nav class="navbar navbar-expand bg-white topbar {{ (\Auth::user()->isInstructorOrAbove()) ? 'topbar-justify-moderator' : 'topbar-justify-user' }} mb-4 ps-4 pe-4 static-top shadow">
 
     <a class="sidebar-brand sidebar-brand-topbar align-items-center" href="{{ route('dashboard') }}">
         <div class="sidebar-brand-icon">
@@ -15,7 +15,7 @@
     </a>
 
     {{-- Topbar Desktop Search --}}
-    @if(\Auth::user()->isModeratorOrAbove())
+    @if(\Auth::user()->isInstructorOrAbove())
         <form class="d-none d-md-inline-block my-2 my-md-0 mw-100 navbar-search" id="user-search-form-desktop">
             <div class="input-group">
                 <div class="search input-group input-lg">
@@ -36,7 +36,7 @@
     {{-- Topbar Navbar --}}
     <ul class="navbar-nav">
 
-        @if(\Auth::user()->isModeratorOrAbove())
+        @if(\Auth::user()->isInstructorOrAbove())
 
             {{-- Search Dropdown (Visible Only XS) --}}
             <li class="nav-item dropdown no-arrow d-md-none">

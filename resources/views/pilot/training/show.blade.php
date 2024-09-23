@@ -90,7 +90,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="trainingStateSelect">Select training state</label>
-                        <select class="form-select"name="status" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
+                        <select class="form-select"name="status" id="trainingStateSelect" @if(!Auth::user()->isInstructorOrAbove()) disabled @endif>
                             @foreach ($statuses as $id => $data)
                                 @if($data["assignableByStaff"])
                                     @if($id == $training->status)
@@ -108,7 +108,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
+                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isInstructorOrAbove()) disabled @endif>
                         <label class="form-check-label" for="check1">
                             Paused
                             @if(isset($training->paused_at))
@@ -118,7 +118,7 @@
                     </div>
 
                     <hr>
-                    @if (\Auth::user()->isModeratorOrAbove())
+                    @if (\Auth::user()->isInstructorOrAbove())
                         <div class="mb-3">
                             <label class="form-label" for="assignInstructors">Assigned instructors: <span class="badge bg-secondary">Ctrl/Cmd+Click</span> to select multiple</label>
                             <select multiple class="form-select" name="instructors[]" id="assignInstructors">
@@ -144,7 +144,7 @@
                     Timeline
                 </h6>
             </div>
-            @cannot('comment', [\App\Models\PilotTraining::class, \App\Models\PilotTraining::find($training->id)])
+            @can('comment', [\App\Models\PilotTraining::class, \App\Models\PilotTraining::find($training->id)])
                 <form action="{{ route('pilot.training.activity.comment') }}" method="POST">
                     @csrf
                     <div class="input-group">
@@ -154,7 +154,7 @@
                         <button class="btn btn-outline-primary" id="activity_button" type="submit">Comment</button>
                     </div>
                 </form>                    
-            @endcannot
+            @endcan
             <div class="timeline">
                 <ul class="sessions">
                     @foreach($activities as $activity)
@@ -290,17 +290,14 @@
 
                 @if ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                     <div class="dropdown" style="display: inline;">
-                        <button class="btn btn-light icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-plus"></i> Create
-                        </button>
-                    
-
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @can('create', [\App\Models\PilotTrainingReport::class, $training])
                                 @if ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value)
                                     <a class="dropdown-item" href="{{ route('pilot.training.report.create', ['training' => $training->id])}}"><i class="fas fa-file"></i> Training Report</a>
+                                    <button class="btn btn-light icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-plus"></i> Create
+                                    </button>
                                 @endif
-                            
                             @else
                                 <a href="#" class="dropdown-item disabled"><i class="fas fa-lock"></i>&nbsp;Training Report</a>
                             @endcan

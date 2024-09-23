@@ -88,7 +88,7 @@
         Members
         </div>
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @if (\Auth::user()->isInstructorOrAbove())
 
             {{-- Nav Item - Pages Collapse Menu --}}
             <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
@@ -117,7 +117,7 @@
         </li>
         
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @if (\Auth::user()->isAdmin())
             {{-- Divider --}}
             <div class="sidebar-divider"></div>
 
@@ -153,7 +153,7 @@
             </li>
         @endif
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @if (\Auth::user()->isAdmin())
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
@@ -169,7 +169,7 @@
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
                 @endif
 
-                @if (\Auth::user()->isModeratorOrAbove())
+                @if (\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                 @endif
                 </div>

@@ -47,7 +47,7 @@
                     <dt class="pt-2">Last login</dt>
                     <dd>{{ $user->last_login->toEuropeanDateTime() }}</dd>
 
-                    @if(\Auth::user()->isModeratorOrAbove())
+                    @if(\Auth::user()->isInstructorOrAbove())
                         <dt class="pt-2">Last activity</dt>
                         <dd>{{ isset($user->last_activity) ? $user->last_activity->toEuropeanDateTime() : 'N/A' }}</dd>
                     @endif
@@ -177,7 +177,7 @@
         
                     </div>
                 </div>
-
+               
                 <div class="card shadow mb-4">
                     <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 fw-bold text-white">
