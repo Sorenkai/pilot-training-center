@@ -164,6 +164,40 @@ class PilotTrainingController extends Controller
         return redirect()->intended(route('dashboard'));
     }
 
+    public function close(PilotTraining $training)
+    {
+        $this->authorize('close', $training);
+
+        ActivityLogController::warning('TRAINING', 'Student clsoed training request '. $training->id .
+        ' - Status: ' . PilotTrainingController::$statuses[$training->status]['text']);
+        PilotTrainingActivityController::create($training->id, 'STATUS', -3, $training->status, $training->user->id);
+
+        $training->instructors()->detach();
+        $training->updateStatus(-3);
+
+        $training->user->notify(new PilotTrainingClosedNotification($training, (int) $training->status));
+
+        return redirect($training->path())->withSuccess('Training successfully closed.');
+    }
+
+    public function togglePreTrainingCompleted(PilotTraining $training)
+    {
+        $this->authorize('togglePreTrainingCompleted', $training);
+
+        $user = Auth::user();
+        $state = $training->pre_training_completed;
+        $newState = ! $state;
+        $newStateText = (($newState) ? 'completed' : 'not completed');
+
+        $training->pre_training_completed = $newState;
+        $training->save();
+
+        ActivityLogController::warning('TRAINING', 'Student marked pre-training as completed ' . $training->id);
+        PilotTrainingActivityController::create($training->id, 'PRETRAINING', $newState, $state, $user->id);
+
+        return redirect($training->path())->withSuccess('Pre-training marked as ' . $newStateText);
+    }
+
     public function assignCallsign(PilotTraining $pilotTraining)
     {
         $baseNumber = 000;

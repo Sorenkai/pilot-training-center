@@ -106,6 +106,8 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/pilot/training/create/{id}', 'create')->name('pilot.training.create.id');
         Route::post('/pilot/training/store', 'store')->name('pilot.training.store');
         Route::get('/pilot/training/{training}', 'show')->name('pilot.training.show');
+        Route::get('/pilot/training/{training}/action/close', 'close')->name('pilot.training.action.close');
+        Route::get('/pilot/training/{training}/action/pretraining', 'togglePreTrainingCompleted')->name('pilot.training.action.pretraining');
         Route::patch('/pilot/training/{training}', 'updateDetails')->name('pilot.training.update.details');
         Route::get('/pilot/training/edit/{training}', 'edit')->name('pilot.training.edit');
         Route::patch('/pilot/training/edit/{training}', 'updateRequest')->name('pilot.training.update.request');

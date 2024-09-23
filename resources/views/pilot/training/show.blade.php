@@ -2,8 +2,31 @@
 
 @section('title', 'Pilot Training')
 @section('title-flex')
+    <div>
+        @can('close', $training)
+            <a href="{{ route('pilot.training.action.close', $training->id) }}" onclick="return confirm('Are you sure you want to close your training?')" class="btn btn-danger"><i class="fas fa-xmark"></i> Close my training</a>
+        @endcan
+    </div>
 @endsection
 @section('content')
+
+@if($training->status < \App\Helpers\TrainingStatus::COMPLETED->value && $training->status != \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT->value)
+    <div class="alert alert-warning" role="alert">
+        <b>Training is closed with reason: </b>
+        @if(isset($training->closed_reason))
+            {{ $training->closed_reason }}
+        @else
+            No reason given
+        @endif
+    </div>
+@endif
+
+@if($training->status == \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT->value)
+    <div class="alert alert-warning" role="alert">
+        <b>Training closed by student</b>
+    </div>
+@endif
+
 <div class="row">
     <div class="col-xl-3 col-md-12 col-sm-12 mb-12">
         <div class="card shadow mb-2">
