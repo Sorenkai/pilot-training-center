@@ -57,7 +57,7 @@
 
                     {{-- URL --}}
                     <div class="mb-3">
-                        <label for="url" class="form-label my-1 me-3">Link to exam</label>
+                        <label for="url" class="form-label my-1 me-3">Link to moodle result</label>
                         <input
                             id="url"
                             class="form-control @error('url') is-invalid @enderror"
