@@ -10,6 +10,7 @@ use App\Models\PilotRating;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
 use App\Models\User;
+use App\Models\Task;
 use App\Notifications\PilotTrainingClosedNotification;
 use App\Notifications\PilotTrainingCreatedNotification;
 use App\Notifications\PilotTrainingInstructorNotification;
@@ -149,6 +150,19 @@ class PilotTrainingController extends Controller
         // Create and assign callsign to pilot training
         $this->assignCallsign($pilot_training);
 
+        $task = Task::create([
+            'type' => 'App\Tasks\Types\MoodleAccess',
+            'message' => null,
+            'subject_user_id' => $pilot_training->user_id,
+            'subject_training_id' => $pilot_training->id,
+            'subject_training_rating_id' => $pilot_training->pilotRatings->first()->id,
+            'assignee_user_id' => Setting::get('ptmCID'),
+            'created_at' => now(),
+        ]);
+
+        // Run the create method on the task type to trigger type specific actions on creation
+        $task->type()->create($task);
+
         if ($request->expectsJson()) {
             return $pilot_training;
         }
@@ -174,7 +188,7 @@ class PilotTrainingController extends Controller
 
         $training->instructors()->detach();
         $training->updateStatus(-3);
-
+        
         $training->user->notify(new PilotTrainingClosedNotification($training, (int) $training->status));
 
         return redirect($training->path())->withSuccess('Training successfully closed.');
@@ -256,7 +270,9 @@ class PilotTrainingController extends Controller
         $experiences = PilotTrainingController::$experiences;
         $activities = $training->activities->sortByDesc('created_at');
 
-        return view('pilot.training.show', compact('training', 'instructors', 'statuses', 'experiences', 'activities', 'reports'));
+        $requestTypes = TaskController::getTypes();
+
+        return view('pilot.training.show', compact('training', 'instructors', 'statuses', 'experiences', 'activities', 'reports', 'requestTypes'));
     }
 
     public function edit(PilotTraining $training)

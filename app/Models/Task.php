@@ -29,12 +29,12 @@ class Task extends Model
 
     public function subjectTraining()
     {
-        return $this->belongsTo(Training::class, 'subject_training_id');
+        return $this->belongsTo(PilotTraining::class, 'subject_training_id');
     }
 
     public function subjectTrainingRating()
     {
-        return $this->belongsTo(Rating::class, 'subject_training_rating_id');
+        return $this->belongsTo(PilotRating::class, 'subject_training_rating_id');
     }
 
     public function assignee()

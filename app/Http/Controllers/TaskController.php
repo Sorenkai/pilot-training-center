@@ -45,15 +45,15 @@ class TaskController extends Controller
             'type' => ['required', new ValidTaskType],
             'message' => 'sometimes|min:3|max:256',
             'subject_user_id' => 'required|exists:users,id',
-            'subject_training_id' => 'required|exists:trainings,id',
-            'subject_training_rating_id' => 'nullable|exists:ratings,id',
+            'subject_training_id' => 'required|exists:pilot_trainings,id',
+            'subject_training_rating_id' => 'nullable|exists:pilot_ratings,id',
             'assignee_user_id' => 'required|exists:users,id',
         ]);
 
         $data['creator_user_id'] = $user->id;
         $data['created_at'] = now();
 
-        // Check if recipient is mentor or above
+        // Check if recipient is admin
         $recipient = User::findOrFail($data['assignee_user_id']);
 
         // Policy check if recpient can recieve a task
@@ -96,8 +96,8 @@ class TaskController extends Controller
         }
 
         self::close($task, TaskStatus::COMPLETED);
-
-        return redirect()->back()->with('success', sprintf('Completed task regarding %s from %s.', $task->subject->name, $task->creator->name));
+        
+        return redirect()->back()->with('success', sprintf('Completed task regarding %s from %s.', $task->subject->name, isset($task->creator) ? $task->creator->name : 'System'));
     }
 
     /**
@@ -115,7 +115,7 @@ class TaskController extends Controller
 
         self::close($task, TaskStatus::DECLINED);
 
-        return redirect()->back()->with('success', sprintf('Declined task regarding %s from %s.', $task->subject->name, $task->creator->name));
+        return redirect()->back()->with('success', sprintf('Declined task regarding %s from %s.', $task->subject->name, isset($task->creator) ? $task->creator->name : 'System'));
     }
 
     /**

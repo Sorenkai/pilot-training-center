@@ -39,6 +39,24 @@
                         @endforeach
                     </i>
                 </h6>
+
+                @can('create', \App\Models\Task::class)
+                    <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-hand"></i> Request
+                    </button>
+                    <div class="dropdown">
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @foreach($requestTypes as $requestType)
+                                @if($requestType->allowNonVatsimRatings() == true || ($requestType->allowNonVatsimRatings() == false))
+                                    <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#{{ Str::camel($requestType->getName()) }}">
+                                        <i class="fas {{ $requestType->getIcon() }}"></i>&nbsp;
+                                        {{ $requestType->getName() }}
+                                    </button>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                @endcan
             </div>
             <div class="card-body">
                 <dl class="copyable">
@@ -167,7 +185,7 @@
                     Timeline
                 </h6>
             </div>
-            @can('comment', [\App\Models\PilotTraining::class, \App\Models\PilotTraining::find($training->id)])
+            @can('comment', [\App\Models\PilotTrainingActivity::class, \App\Models\PilotTraining::find($training->id)])
                 <form action="{{ route('pilot.training.activity.comment') }}" method="POST">
                     @csrf
                     <div class="input-group">
@@ -313,13 +331,16 @@
 
                 @if ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                     <div class="dropdown" style="display: inline;">
+                        @can('create', \App\Models\PilotTrainingReport::class)
+                            <button class="btn btn-light icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-plus"></i> Create
+                            </button>
+                        @endcan
+
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @can('create', [\App\Models\PilotTrainingReport::class, $training])
+                            @can('create', \App\Models\PilotTrainingReport::class)
                                 @if ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value)
                                     <a class="dropdown-item" href="{{ route('pilot.training.report.create', ['training' => $training->id])}}"><i class="fas fa-file"></i> Training Report</a>
-                                    <button class="btn btn-light icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-plus"></i> Create
-                                    </button>
                                 @endif
                             @else
                                 <a href="#" class="dropdown-item disabled"><i class="fas fa-lock"></i>&nbsp;Training Report</a>
@@ -466,6 +487,13 @@
         </div>
     </div>
 </div>
+
+@foreach($requestTypes as $requestType)
+    @if($requestType->allowNonVatsimRatings() == true || ($requestType->allowNonVatsimRatings() == false))
+        @include('pilot.training.parts.taskmodal', ['requestType' => $requestType, 'training' => $training])
+    @endif
+@endforeach
+
 @endsection
 
 @section('js')

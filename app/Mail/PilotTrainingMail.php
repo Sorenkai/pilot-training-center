@@ -32,7 +32,7 @@ class PilotTrainingMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(string $mailSubject, PilotTraining $training, array $textLines, ?string $url1 = null, ?string $url2 = null, ?string $contactMail = null, ?string $actionUrl = null, ?string $actionText = null, string $actionColor = 'primary')
+    public function __construct(string $mailSubject, PilotTraining $training, array $textLines, ?string $contactMail = null, ?string $url1 = null, ?string $url2 = null, ?string $actionUrl = null, ?string $actionText = null, string $actionColor = 'primary')
     {
         $this->mailSubject = $mailSubject;
         $this->training = $training;
