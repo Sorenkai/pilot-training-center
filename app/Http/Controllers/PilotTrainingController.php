@@ -9,8 +9,8 @@ use App\Models\Callsign;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
-use App\Models\User;
 use App\Models\Task;
+use App\Models\User;
 use App\Notifications\PilotTrainingClosedNotification;
 use App\Notifications\PilotTrainingCreatedNotification;
 use App\Notifications\PilotTrainingInstructorNotification;
@@ -182,13 +182,13 @@ class PilotTrainingController extends Controller
     {
         $this->authorize('close', $training);
 
-        ActivityLogController::warning('TRAINING', 'Student clsoed training request '. $training->id .
+        ActivityLogController::warning('TRAINING', 'Student clsoed training request ' . $training->id .
         ' - Status: ' . PilotTrainingController::$statuses[$training->status]['text']);
         PilotTrainingActivityController::create($training->id, 'STATUS', -3, $training->status, $training->user->id);
 
         $training->instructors()->detach();
         $training->updateStatus(-3);
-        
+
         $training->user->notify(new PilotTrainingClosedNotification($training, (int) $training->status));
 
         return redirect($training->path())->withSuccess('Training successfully closed.');

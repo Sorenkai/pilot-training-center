@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Models\PilotTraining;
 use App\Helpers\TrainingStatus;
+use App\Models\PilotTraining;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;

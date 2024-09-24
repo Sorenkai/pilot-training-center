@@ -46,6 +46,7 @@ class PilotTrainingInstructorNotification extends Notification implements Should
             'Your instructor will then give you more information on the next steps.',
         ];
         $contactMail = Setting::get('ptmEmail');
+
         return (new PilotTrainingMail('Training Instructor Assigned', $this->training, $textLines, $contactMail))
             ->to($this->training->user->notificationEmail, $this->training->user->name);
     }

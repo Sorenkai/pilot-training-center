@@ -61,6 +61,7 @@ class PilotTrainingCreatedNotification extends Notification implements ShouldQue
         $url1 = 'https://wiki.vatsim-scandinavia.org/shelves/pilot-training';
         $url2 = 'https://moodle.vatsim-scandinavia.org';
         $contactMail = Setting::get('ptmEmail');
+
         return (new PilotTrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail, $url1, $url2))
             ->to($this->training->user->notificationEmail, $this->training->user->name)
             ->bcc($bcc->pluck('notificationEmail'));

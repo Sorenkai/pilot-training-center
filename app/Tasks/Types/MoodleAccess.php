@@ -3,15 +3,11 @@
 namespace App\Tasks\Types;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Facades\DivisionApi;
 use App\Http\Controllers\PilotTrainingActivityController;
 use App\Models\Task;
-use App\Notifications\TrainingCustomNotification;
-use Illuminate\Support\Facades\Auth;
 
 class MoodleAccess extends Types
 {
-
     public function getName()
     {
         return 'Moodle Access';

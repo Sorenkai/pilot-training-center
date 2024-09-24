@@ -96,7 +96,7 @@ class TaskController extends Controller
         }
 
         self::close($task, TaskStatus::COMPLETED);
-        
+
         return redirect()->back()->with('success', sprintf('Completed task regarding %s from %s.', $task->subject->name, isset($task->creator) ? $task->creator->name : 'System'));
     }
 
