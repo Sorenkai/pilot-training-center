@@ -380,7 +380,7 @@ class PilotTrainingController extends Controller
 
                 $training->user->notify(new PilotTrainingClosedNotification($training, (int) $training->status, $training->closed_reason));
 
-                return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation of pre-training sent to the student.');
+                return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation of closure sent to the student.');
             }
 
             if ((int) $training->status == TrainingStatus::PRE_TRAINING->value) {
@@ -435,7 +435,7 @@ class PilotTrainingController extends Controller
     protected function validateUpdateDetails()
     {
         return request()->validate([
-            'experience' => 'sometimes|required|integer|min:1|max:3',
+            'experience' => 'required|integer|min:1|max:3',
             'englishOnly' => 'nullable',
             'paused_at' => 'sometimes',
             'user_id' => 'sometimes|required|integer',

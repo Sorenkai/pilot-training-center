@@ -126,57 +126,117 @@
                         
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 fw-bold text-white">
+                                    Theory Results
+                                </h6>
+                                @can('create', \App\Models\Exam::class) 
+                                    <a href="{{ route('exam.create.id', ['id' => $user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Result</a>
+                                @endcan
+                            </div>
+                            <div class="card-body {{ $exams->where('type', 'THEORY')->count() == 0 ? '' : 'p-0' }}">
+                
+                                @if($exams->where('type', 'THEORY')->count() == 0)
+                                    <p class="mb-0">No Exam history</p>
+                                @else
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Rating</th>
+                                                    <th>Grade</th>
+                                                    <th>Link</th>
+
+                                                </tr>                                   
+                                            </thead>
+                                            <tbody>
+                                                @foreach($exams->where('type', 'THEORY') as $exam)
+                                                    <tr>
+                                                        <td>
+                                                            <i class="fas fa-circle-check text-success"></i>
+                                                            {{ $exam->pilotRating->name }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $exam->score }}%
+                                                        </td>
+                                                        <td>
+                                                            <a href="{{ $exam->url }}">View</a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 fw-bold text-white">
+                                    Exam Results
+                                </h6>
+                                @can('create', \App\Models\Exam::class) 
+                                    <a href="{{ route('exam.practical.create.id', ['id' => $user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
+                                @endcan
+                            </div>
+                            <div class="card-body {{ $exams->where('type', 'PRACTICAL')->count() == 0 ? '' : 'p-0' }}">
+                
+                                @if($exams->where('type', 'PRACTICAL')->count() == 0)
+                                    <p class="mb-0">No Exam history</p>
+                                @else
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Exam</th>
+                                                    <th>Result</th>
+                                                    <th>Date</th>
+        
+                                                </tr>                                   
+                                            </thead>
+                                            <tbody>
+                                                @foreach($exams->where('type', 'PRACTICAL') as $exam)
+                                                    <tr>
+                                                        <td>
+                                                            @if ($exam->result == 'PASS')
+                                                                <i class="fas fa-circle-check text-success"></i> {{$exam->pilotRating->name}}
+                                                            @elseif ($exam->result == 'PARTIAL PASS')
+                                                                <i class="fas fa-circle-minus text-warning"></i> {{$exam->pilotRating->name}}
+                                                            @elseif ($exam->result == 'FAIL')
+                                                                <i class="fas fa-circle-xmark text-danger"></i> {{$exam->pilotRating->name}}
+                                                            @endif
+                                                            
+                                                        </td>
+                                                        <td>
+                                                            {{ ucwords(strtolower($exam->result)) }}
+                                                        </td>
+                                                        <td>
+                                                            <!-- if exam type is theory then show score otherwise show pass, fail or partial pass -->
+                                                            {{ $exam->created_at->toEuropeanDate() }}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         
             <div class="col-xl-4 col-lg-12 col-md-12">
-                <div class="card shadow mb-4">
-                    <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 fw-bold text-white">
-                            Exam Results
-                        </h6>
-                        @can('create', \App\Models\Exam::class) 
-                            <a href="{{ route('exam.create.id', ['id' => $user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Create Exam</a>
-                        @endcan
-                    </div>
-                    <div class="card-body {{ $exams->count() == 0 ? '' : 'p-0' }}">
-        
-                        @if($exams->count() == 0)
-                            <p class="mb-0">No Exam history</p>
-                        @else
-                            <div class="table-responsive">
-                                <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Exam</th>
-                                            <th>Rating</th>
-                                            <th>Grade</th>
-                                            <th>Link</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($exams as $exam)
-                                            <tr>
-                                                <td>
-                                                    &nbsp;&nbsp;&nbsp;<i class="fas fa-circle-check text-success"></i>
-                                                </td>
-                                                <td>
-                                                    {{ $exam->pilotRating->name }}
-                                                </td>
-                                                <td>
-                                                    {{ $exam->score }}%
-                                                </td>
-                                                <td>
-                                                    <a href="{{ $exam->url }}">View</a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endif
-        
-                    </div>
-                </div>
+                
                
                 <div class="card shadow mb-4">
                     <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">

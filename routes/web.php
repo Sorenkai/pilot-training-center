@@ -130,9 +130,12 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     });
 
     Route::controller(ExamController::class)->group(function () {
-        Route::get('/exam/create', 'create')->name('exam.create');
-        Route::get('/exam/create/{id}', 'create')->name('exam.create.id');
-        Route::post('exam/store', 'store')->name('exam.store');
+        Route::get('/exam/create', 'createTheory')->name('exam.create');
+        Route::get('/exam/create/{id}', 'createTheory')->name('exam.create.id');
+        Route::post('exam/store', 'storeTheory')->name('exam.store');
+        Route::get('/exam/practical/create', 'createPractical')->name('exam.practical.create');
+        Route::get('/exam/practical/create/{id}', 'createPractical')->name('exam.practical.create.id');
+        Route::post('/exam/practical/store', 'storePractical')->name('exam.practical.store');
     });
 
     Route::controller(FileController::class)->group(function () {

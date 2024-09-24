@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Theory Result')
+@section('title', 'Create Exam Result')
 @section ('content')
 
 <div class="row" id="giveExamResult">
@@ -8,12 +8,12 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Create Theory Result
+                    Create Exam Result
                 </h6>
             </div>
 
             <div class="card-body" id="examselector">
-                <form action="{{ route('exam.store') }}" method="POST">
+                <form action="{{ route('exam.practical.store') }}" method="POST">
                     @csrf
 
                     {{-- User --}}
@@ -27,7 +27,7 @@
                             list="userList"
                             v-model="user"
                             v-bind:class="{'is-invalid': (validationError && user == null)}"
-                            value="{{ isset($prefillUserId) ? $prefillUserId : old('user') }}"
+                            value="{{ isset($prefillUserId) ? $prefillUserId : old('student') }}"
                             required>
 
                         <datalist id="userList">
@@ -55,34 +55,18 @@
                         @enderror
                     </div>
 
-                    {{-- URL --}}
+                    {{-- Result --}}
                     <div class="mb-3">
-                        <label for="url" class="form-label my-1 me-3">Link to moodle result</label>
-                        <input
-                            id="url"
-                            class="form-control @error('url') is-invalid @enderror"
-                            type="url"
-                            name="url"
-                            >
-                        @error('url')
-                            <span class="text-danger">{{ $errors->first('url') }}</span>
-                        @enderror
-                    </div>
-                    {{-- Score --}}
-                    <div class="mb-3">
-                        <label for="score" class="form-lavel my-1 me-2">Achieved Score</label>
-                        <input
-                            id="score"
-                            class="form-control @error('score') is-invalid @enderror"
-                            type="number"
-                            name="score"
-                            min="0"
-                            max="100"
-                            step="0.01"
-                            value="{{ old('score') }}">
+                        <label for="result" class="form-lavel my-1 me-2">Result</label>
+                        <select id="result" name="result" class="form-select @error('result') is-invalid @enderror" required>
+                            <option value="PASS">PASS</option>
+                            <option value="PARTIAL PASS">PARTIAL PASS</option>
+                            <option value="FAIL">FAIL</option>
+                        </select>
+                        
 
-                        @error('score')
-                            <span class="text-danger">{{ $errors->first('score') }}</span>
+                        @error('result')
+                            <span class="text-danger">{{ $errors->first('result') }}</span>
                         @enderror
                     </div>
 

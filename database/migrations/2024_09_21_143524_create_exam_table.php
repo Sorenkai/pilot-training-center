@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', ['THEORY', 'PRACTICAL']);
+            $table->enum('result', ['PASS', 'PARTIAL PASS', 'FAIL'])->nullable();
             $table->unsignedInteger('pilot_rating_id');
             $table->text('url')->nullable();
-            $table->unsignedInteger('score');
+            $table->unsignedInteger('score')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('issued_by');
             $table->timestamps();
