@@ -45,8 +45,8 @@ class PilotTrainingInstructorNotification extends Notification implements Should
             'Your instructor is: **' . $this->training->getInlineInstructors() . '**. You can contact them on [Discord](' . Setting::get('linkDiscord') . ').',
             'Your instructor will then give you more information on the next steps.',
         ];
-
-        return (new PilotTrainingMail('Training Instructor Assigned', $this->training, $textLines))
+        $contactMail = Setting::get('ptmEmail');
+        return (new PilotTrainingMail('Training Instructor Assigned', $this->training, $textLines, $contactMail))
             ->to($this->training->user->notificationEmail, $this->training->user->name);
     }
 

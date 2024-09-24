@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\PilotTrainingMail;
 use App\Models\PilotTraining;
 use Illuminate\Bus\Queueable;
@@ -44,9 +45,10 @@ class PilotTrainingPreStatusNotification extends Notification implements ShouldQ
             'Access to the Moodle has been granted',
         ];
 
+        $contactMail = Setting::get('ptmEmail');
         $url2 = 'https://moodle.vatsim-scandinavia.org';
 
-        return (new PilotTrainingMail('Training Assigned', $this->training, $textLines, $url1 = null, $url2))
+        return (new PilotTrainingMail('Training Assigned', $this->training, $textLines, $contactMail, $url1 = null, $url2))
             ->to($this->training->user->notificationEmail, $this->training->user->name);
     }
 

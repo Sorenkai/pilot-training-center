@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\PilotTrainingMail;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
@@ -44,8 +45,9 @@ class PilotTrainingReportNotification extends Notification implements ShouldQueu
         $textLines = [
             'Your instructor ' . $this->report->author->name . ' has written a new report for your training.',
         ];
-
-        return (new PilotTrainingMail('Training Report', $this->training, $textLines, null, null, null, route('pilot.training.show', $this->training->id), 'Read Report'))
+        $contactMail = Setting::get('ptmEmail');
+        dd($contactMail);
+        return (new PilotTrainingMail('Training Report', $this->training, $textLines, $contactMail, null, null, route('pilot.training.show', $this->training->id), 'Read Report'))
             ->to($this->training->user->notificationEmail, $this->training->user->name);
     }
 

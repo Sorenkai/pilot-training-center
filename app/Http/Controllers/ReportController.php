@@ -280,7 +280,7 @@ class ReportController extends Controller
 
             // Completed requests
             $query = DB::table('pilot_trainings')
-                ->select(DB::raw('count(pilot_trainings.id) as `count`'), DB::raw('MONTH(pilot_trainings.created_at) as month'))
+                ->select(DB::raw('count(pilot_trainings.id) as `count`'), DB::raw('MONTH(pilot_trainings.closed_at) as month'))
                 ->join('pilot_rating_pilot_training', 'pilot_trainings.id', '=', 'pilot_rating_pilot_training.pilot_training_id')
                 ->join('pilot_ratings', 'pilot_ratings.id', '=', 'pilot_rating_pilot_training.pilot_rating_id')
                 ->where('status', -1)
@@ -295,7 +295,7 @@ class ReportController extends Controller
 
             // Closed requests
             $query = DB::table('pilot_trainings')
-                ->select(DB::raw('count(pilot_trainings.id) as `count`'), DB::raw('MONTH(pilot_trainings.created_at) as month'))
+                ->select(DB::raw('count(pilot_trainings.id) as `count`'), DB::raw('MONTH(pilot_trainings.closed_at) as month'))
                 ->join('pilot_rating_pilot_training', 'pilot_trainings.id', '=', 'pilot_rating_pilot_training.pilot_training_id')
                 ->join('pilot_ratings', 'pilot_ratings.id', '=', 'pilot_rating_pilot_training.pilot_rating_id')
                 ->where('status', -2)
