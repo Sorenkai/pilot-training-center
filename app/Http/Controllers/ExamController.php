@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exam;
-use App\Models\PilotTraining;
 use App\Models\PilotRating;
+use App\Models\PilotTraining;
 use App\Models\User;
 use Illuminate\Http\Request;
 

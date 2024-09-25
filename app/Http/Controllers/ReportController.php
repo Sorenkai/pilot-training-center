@@ -392,13 +392,13 @@ class ReportController extends Controller
         foreach ($query as $entry) {
             $allExamResults['Passed'] = $entry->count;
         }
-        
+
         $query = DB::table('exams')
             ->select(DB::raw('count(exams.id) as `count`'))
             ->where('type', 'PRACTICAL')
             ->where('result', 'PARTIAL PASS')
             ->get();
-        
+
         foreach ($query as $entry) {
             $allExamResults['Partially Passed'] = $entry->count;
         }

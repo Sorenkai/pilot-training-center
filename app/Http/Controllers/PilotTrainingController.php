@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Helpers\TrainingStatus;
-use App\Models\Exam;
 use App\Models\Callsign;
+use App\Models\Exam;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
@@ -273,7 +273,7 @@ class PilotTrainingController extends Controller
         $requestTypes = TaskController::getTypes();
         $exams = Exam::where('pilot_training_id', $training->id)->get();
 
-        return view('pilot.training.show', compact('exams','training', 'instructors', 'statuses', 'experiences', 'activities', 'reports', 'requestTypes'));
+        return view('pilot.training.show', compact('exams', 'training', 'instructors', 'statuses', 'experiences', 'activities', 'reports', 'requestTypes'));
     }
 
     public function edit(PilotTraining $training)
