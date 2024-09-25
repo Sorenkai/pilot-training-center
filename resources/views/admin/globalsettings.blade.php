@@ -13,7 +13,6 @@
                 {!! Session::has('success') ? Session::pull("success") : $error !!}
             </div>
         @endif
-
         <form action="{{ route('admin.settings.store') }}" method="POST">
             @csrf
 
@@ -36,7 +35,7 @@
                                 </div>
                             @else
                             <div class="alert alert-warning" role="alert">
-                                You're running an old version. <a href="https://github.com/Vatsim-Scandinavia/controlcenter/releases" target="_blank">Update {{ Setting::get('_updateAvailable') }} available.</a>
+                                You're running an old version. <a href="https://github.com/Sorenkai/pilot-training-center/releases" target="_blank">Update {{ Setting::get('_updateAvailable') }} available.</a>
                             </div>
                             @endif
 
@@ -71,7 +70,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 mb-12">
-
+                            <!--
                             <div class="form-check">
                                 <input class="form-check-input @error('trainingEnabled') is-invalid @enderror" type="checkbox" id="check0" name="trainingEnabled" {{ Setting::get('trainingEnabled') ? "checked" : "" }}>
                                 <label class="form-check-label" for="check0">
@@ -80,6 +79,18 @@
                             </div>
 
                             <hr>
+                            -->
+                            <div class="mb-4">
+                                <label for="ptmEmail" class="form-label">Pilot Training Manager Email</label>
+                                <input type="email" class="form-control" id="ptmEmail" name="ptmEmail" required value="{{Setting::get("ptmEmail")}}">
+                                <small class="form-text">Email of the Pilot Training Manager.</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="ptmCID" class="form-label">Pilot Training Manager CID</label>
+                                <input type="number" class="form-control" id="ptmCID" name="ptmCID" required value="{{Setting::get("ptmCID")}}">
+                                <small class="form-text">CID of the Pilot Training Manager.</small>
+                            </div>
 
                             <div class="mb-4">
                                 <label class="form-label" for="spoUrl">Student Policy URL</label>
@@ -109,123 +120,12 @@
                             @enderror
 
                             <div class="mb-4">
-                                <label class="form-label" for="atcActivityQualificationPeriod">Required Training Interval</label>
-                                <input type="number" class="form-control @error('trainingInterval') is-invalid @enderror" id="trainingInterval" name="trainingInterval" required value="{{ Setting::get("trainingInterval") }}">
-                                <small class="form-text">Input number of days required, used to mark stalled trainings</small>
-                            </div>
-                            @error('trainingInterval')
-                                <span class="text-danger">{{ $errors->first('trainingInterval') }}</span>
-                            @enderror
-
-                            <div class="mb-4">
-                                <label class="form-label" for="atcActivityQualificationPeriod">Solo Endorsement Requirement</label>
-                                <input type="text" class="form-control @error('trainingSoloRequirement') is-invalid @enderror" id="trainingSoloRequirement" maxlength="200" name="trainingSoloRequirement" required value="{{ Setting::get("trainingSoloRequirement") }}">
-                                <small class="form-text">Used to confirm solo endorsement creation.</small>
-                            </div>
-                            @error('trainingSoloRequirement')
-                                <span class="text-danger">{{ $errors->first('trainingSoloRequirement') }}</span>
-                            @enderror
-
-                            <div class="mb-4">
                                 <label for="ptdCallsign" class="form-label">Pilot Training Department Callsign</label>
                                 <input type="text" class="form-control" id="ptdCallsign" maxlength="3" name="ptdCallsign" required value="{{Setting::get("ptdCallsign")}}">
                                 <smal class="form-text">The prefix to be used for assigning callsigns.</smal>
                             </div>
 
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card shadow mb-4">
-                <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 fw-bold text-white">ATC Activity</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-4 col-md-12 col-sm-12">
-                            <div class="mb-4">
-                                <label class="form-label" for="atcActivityQualificationPeriod">Qualification Period</label>
-                                <input type="number" class="form-control @error('atcActivityQualificationPeriod') is-invalid @enderror" id="atcActivityQualificationPeriod" name="atcActivityQualificationPeriod" required value="{{ Setting::get("atcActivityQualificationPeriod") }}">
-                                <small class="form-text">Input number of months</small>
-                            </div>
-                            @error('atcActivityQualificationPeriod')
-                                <span class="text-danger">{{ $errors->first('atcActivityQualificationPeriod') }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="col-lg-4 col-md-12 col-sm-12">
-                            <div class="mb-4">
-                                <label class="form-label" for="atcActivityGracePeriod">Grace Period</label>
-                                <input type="number" class="form-control @error('atcActivityGracePeriod') is-invalid @enderror" id="atcActivityGracePeriod" name="atcActivityGracePeriod" required value="{{ Setting::get("atcActivityGracePeriod") }}">
-                                <small class="form-text">Input number of months</small>
-                            </div>
-                            @error('atcActivityGracePeriod')
-                                <span class="text-danger">{{ $errors->first('atcActivityGracePeriod') }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="col-lg-4 col-md-12 col-sm-12">
-                            <div class="mb-4">
-                                <label class="form-label" for="atcActivityRequirement">Activity Requirement</label>
-                                <input type="number" class="form-control @error('atcActivityRequirement') is-invalid @enderror" id="atcActivityRequirement" name="atcActivityRequirement" required value="{{ Setting::get("atcActivityRequirement") }}">
-                                <small class="form-text">Input number of hours</small>
-                            </div>
-                            @error('atcActivityRequirement')
-                                <span class="text-danger">{{ $errors->first('atcActivityRequirement') }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12">
-                            <div class="mb-4">
-                                <label class="form-label" for="atcActivityContact">Inactivity Warning Contact</label>
-                                <input type="text" class="form-control @error('atcActivityContact') is-invalid @enderror" id="atcActivityContact" placeholder="e.g. Training Director" maxlength="40" name="atcActivityContact" required value="{{ Setting::get("atcActivityContact") }}">
-                                <small class="form-text">Write who the user should contact regarding refresh or transfer trainings. This text links to your <a href="#linkContact">contact list</a>.</small>
-                            </div>
-                            @error('atcActivityContact')
-                                <span class="text-danger">{{ $errors->first('atcActivityContact') }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input @error('atcActivityBasedOnTotalHours') is-invalid @enderror" type="checkbox" id="checkatcActivityBasedOnTotalHours" name="atcActivityBasedOnTotalHours" {{ Setting::get('atcActivityBasedOnTotalHours') ? "checked" : "" }}>
-                        <label class="form-check-label" for="checkatcActivityBasedOnTotalHours">
-                            Activity based on total hours
-                        </label>
-                        <small class="form-text d-block">
-                            Enabled: ATC Active status is granted based on total controlling hours across all areas<br>
-                            Disabled: ATC Active status is granted if the activity requirement is met in one or more individual areas.
-                            
-                        </small>
-                    </div>
-                    <div class="form-check mt-3">
-                        <input class="form-check-input @error('atcActivityNotifyInactive') is-invalid @enderror" type="checkbox" id="check1" name="atcActivityNotifyInactive" {{ Setting::get('atcActivityNotifyInactive') ? "checked" : "" }}>
-                        <label class="form-check-label" for="check1">
-                            Send inactive controller login warnings
-                        </label>
-                        <small class="form-text d-block">When a controller logs on the network as inactive, a warning email is sent to the controller with a copy to area staff.</small>
-                    </div>
-                    <div class="form-check mt-3">
-                        <input class="form-check-input @error('atcActivityAllowReactivation') is-invalid @enderror" type="checkbox" id="check2" name="atcActivityAllowReactivation" {{ Setting::get('atcActivityAllowReactivation') ? "checked" : "" }}>
-                        <label class="form-check-label" for="check2">
-                            Allow automatic re-activation of inactive controllers
-                        </label>
-                        <small class="form-text d-block">
-                            Enabled: Allow a controller to collect enough hours as inactive to automatically become active<br>
-                            Disabled: Only a training marked as completed will reactivate a controller as ATC Active
-                        </small>
-                    </div>
-                    <div class="form-check mt-3">
-                        <input class="form-check-input @error('atcActivityAllowInactiveControlling') is-invalid @enderror" type="checkbox" id="check3" name="atcActivityAllowInactiveControlling" {{ Setting::get('atcActivityAllowInactiveControlling') ? "checked" : "" }}>
-                        <label class="form-check-label" for="check3">
-                            Allow inactive controlling
-                        </label>
-                        <small class="form-text d-block">
-                            Enabled: When going inactive, we tell the controller that controlling is still allowed.<br>
-                            Disabled: When going inactive, we tell the controller that controlling is no longer allowed prior of refresh training.
-                            
-                        </small>
                     </div>
                 </div>
             </div>
@@ -305,6 +205,15 @@
                             </div>
                             @error('linkMoodle')
                                 <span class="text-danger">{{ $errors->first('linkMoodle') }}</span>
+                            @enderror
+
+                            <div class="mb-4">
+                                <label class="form-label" for="linkWiki">Wiki</label>
+                                <input type="url" class="form-control @error('linkWiki') is-invalid @enderror" id="linkWiki" name="linkWiki" value="{{ (Setting::get("linkWiki") != false) ? Setting::get("linkWiki") : '' }}">
+                                <small class="form-text">Enter full link to Wiki or leave blank to disable</small>
+                            </div>
+                            @error('linkWiki')
+                                <span class="text-danger">{{ $errors->first('linkWiki') }}</span>
                             @enderror
 
                         </div>

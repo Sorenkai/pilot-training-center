@@ -154,8 +154,34 @@
             </div>
         </div>
     </div>
-</div>
 
+    <div class="col-xl-4 col-md-12 mb-12 d-none d-xl-block d-lg-block d-md-block">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Exam results last year
+                </h6> 
+            </div>
+            <div class="card-body">
+                <canvas id="TrainingPassFailRate"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12 mb-12 d-none d-xl-block d-lg-block d-md-block">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Exam results all time
+                </h6> 
+            </div>
+            <div class="card-body">
+                <canvas id="ExamResultAllTime"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 @endsection
 
@@ -189,6 +215,11 @@
                 }]
             },
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: {
@@ -267,13 +298,17 @@
             type: 'bar',
             data: barChartData,
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 scales: {
                     x: {
                         stacked: true,
                         title: {
                             display: true,
-                            text: 'Note: One request may have multiple ratings shown indvidually in this graph'
                         }
                     },
                     y: {
@@ -328,13 +363,17 @@
             type: 'bar',
             data: barChartData,
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 scales: {
                     x: {
                         stacked: true,
                         title: {
                             display: true,
-                            text: 'Note: One request may have multiple ratings shown indvidually in this graph'
                         }
                     },
                     y: {
@@ -390,13 +429,17 @@
             type: 'bar',
             data: barChartData,
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 scales: {
                     x: {
                         stacked: true,
                         title: {
                             display: true,
-                            text: 'Note: One request may have multiple ratings shown indvidually in this graph'
                         }
                     },
                     y: {
@@ -411,5 +454,123 @@
     });
 </script>
 
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Pass/fail rate for requests last 6 months
+        var passFailRequestsData = {!! json_encode($passFailRequests) !!}
+
+        var barChartData = {
+            labels: [
+                    moment().subtract(11, "month").startOf("month").format('MMMM'),
+                    moment().subtract(10, "month").startOf("month").format('MMMM'),
+                    moment().subtract(9, "month").startOf("month").format('MMMM'),
+                    moment().subtract(8, "month").startOf("month").format('MMMM'),
+                    moment().subtract(7, "month").startOf("month").format('MMMM'),
+                    moment().subtract(6, "month").startOf("month").format('MMMM'),
+                    moment().subtract(5, "month").startOf("month").format('MMMM'),
+                    moment().subtract(4, "month").startOf("month").format('MMMM'),
+                    moment().subtract(3, "month").startOf("month").format('MMMM'),
+                    moment().subtract(2, "month").startOf("month").format('MMMM'),
+                    moment().subtract(1, "month").startOf("month").format('MMMM'),
+                    moment().startOf("month").format('MMMM')],
+            datasets: [{
+                label: 'Failed',
+                backgroundColor: 'rgb(200, 100, 100)',
+                data: passFailRequestsData["Failed"]
+            },{
+                label: 'Partially Passed',
+                backgroundColor: 'rgb(255, 152, 0)',
+                data: passFailRequestsData["Partially Passed"]
+            },{
+                label: 'Passed',
+                backgroundColor: 'rgb(100, 200, 100)',
+                data: passFailRequestsData["Passed"]
+            }]
+
+        };
+
+        var mix = document.getElementById("TrainingPassFailRate").getContext('2d');
+        var passFailTrainings = new Chart(mix, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Note: A training may have multiple exams'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Pass data from Laravel to JavaScript
+        var allExamResults = {!! json_encode($allExamResults) !!};
+        
+        // Prepare data for the pie chart
+        var pieChartData = {
+            labels: Object.keys(allExamResults),
+            datasets: [{
+                label: 'Exam Results',
+                backgroundColor: [
+                    'rgb(100, 200, 100)',
+                    'rgb(255, 152, 0)',
+                    'rgb(200, 100, 100)',
+                ],
+                data: Object.values(allExamResults),
+            }],
+        };
+
+        // Get context for the pie chart
+        var mix = document.getElementById("ExamResultAllTime").getContext('2d');
+
+        // Create the pie chart 
+        var allExams = new Chart(mix, {
+            type: 'pie',
+            data: pieChartData,
+            plugins: [],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom', // Adjust legend position if needed
+                    },
+                    datalabels: {
+                        color: '#00000', // Change color for visibility
+                        formatter: function(value, context) {
+                            let sum = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); // Calculate total
+                            let percentage = ((value / sum) * 100).toFixed(1) + "%"; // Calculate percentage
+                            return percentage; // Return formatted percentage
+                        },
+                        display: function(ctx) {
+                            return ctx.dataset.data[ctx.dataIndex] > 0 || ctx.dataset.data[ctx.dataIndex] === 0; // Always show labels
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 
 @endsection

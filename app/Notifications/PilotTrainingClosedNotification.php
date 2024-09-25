@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Helpers\TrainingStatus;
 use App\Http\Controllers\PilotTrainingController;
 use App\Mail\PilotTrainingMail;
@@ -56,8 +57,9 @@ class PilotTrainingClosedNotification extends Notification implements ShouldQueu
         if ($this->trainingStatus == TrainingStatus::COMPLETED->value) {
             // add feedback
         }
+        $contactMail = Setting::get('ptmEmail');
 
-        return (new PilotTrainingMail('Training Request Closed', $this->training, $textLines))
+        return (new PilotTrainingMail('Training Request Closed', $this->training, $textLines, $contactMail))
             ->to($this->training->user->notificationEmail, $this->training->user->name);
     }
 

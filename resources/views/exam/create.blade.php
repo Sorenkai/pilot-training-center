@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Exam Result')
+@section('title', 'Create Theory Result')
 @section ('content')
 
 <div class="row" id="giveExamResult">
@@ -8,7 +8,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Create Exam Result
+                    Create Theory Result
                 </h6>
             </div>
 
@@ -27,7 +27,7 @@
                             list="userList"
                             v-model="user"
                             v-bind:class="{'is-invalid': (validationError && user == null)}"
-                            value="{{ isset($prefillUserId) ? $prefillUserId : old('student') }}"
+                            value="{{ isset($prefillUserId) ? $prefillUserId : old('user') }}"
                             required>
 
                         <datalist id="userList">

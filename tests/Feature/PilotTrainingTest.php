@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\PilotTraining;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,6 +23,8 @@ class PilotTrainingTest extends TestCase
         $this->withoutExceptionHandling();
 
         $user = User::factory()->create(['id' => 10000005]);
+        Setting::set('ptmCID', 10000001);
+
         $attributes = [
             'experience' => $this->faker->numberBetween(1, 3),
             'englishOnly' => (int) $this->faker->boolean,
@@ -64,7 +67,6 @@ class PilotTrainingTest extends TestCase
         $moderator->groups()->attach(4, ['area_id' => 2]); // pilot trainings dont have ares, so hardcoded
 
         $this->assertDatabaseHas('pilot_trainings', ['id' => $training->id]);
-
         $this->actingAs($moderator)
             ->patch($training->path(), $attributes = ['status' => 0])
             ->assertRedirect($training->path())

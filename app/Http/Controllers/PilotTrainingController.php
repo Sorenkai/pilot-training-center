@@ -6,9 +6,11 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Helpers\TrainingStatus;
 use App\Models\Callsign;
+use App\Models\Exam;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
 use App\Models\PilotTrainingReport;
+use App\Models\Task;
 use App\Models\User;
 use App\Notifications\PilotTrainingClosedNotification;
 use App\Notifications\PilotTrainingCreatedNotification;
@@ -148,6 +150,18 @@ class PilotTrainingController extends Controller
 
         // Create and assign callsign to pilot training
         $this->assignCallsign($pilot_training);
+        $task = Task::create([
+            'type' => 'App\Tasks\Types\MoodleAccess',
+            'message' => null,
+            'subject_user_id' => $pilot_training->user_id,
+            'subject_training_id' => $pilot_training->id,
+            'subject_training_rating_id' => $pilot_training->pilotRatings->first()->id,
+            'assignee_user_id' => Setting::get('ptmCID'),
+            'created_at' => now(),
+        ]);
+
+        // Run the create method on the task type to trigger type specific actions on creation
+        $task->type()->create($task);
 
         if ($request->expectsJson()) {
             return $pilot_training;
@@ -162,6 +176,40 @@ class PilotTrainingController extends Controller
         }
 
         return redirect()->intended(route('dashboard'));
+    }
+
+    public function close(PilotTraining $training)
+    {
+        $this->authorize('close', $training);
+
+        ActivityLogController::warning('TRAINING', 'Student clsoed training request ' . $training->id .
+        ' - Status: ' . PilotTrainingController::$statuses[$training->status]['text']);
+        PilotTrainingActivityController::create($training->id, 'STATUS', -3, $training->status, $training->user->id);
+
+        $training->instructors()->detach();
+        $training->updateStatus(-3);
+
+        $training->user->notify(new PilotTrainingClosedNotification($training, (int) $training->status));
+
+        return redirect($training->path())->withSuccess('Training successfully closed.');
+    }
+
+    public function togglePreTrainingCompleted(PilotTraining $training)
+    {
+        $this->authorize('togglePreTrainingCompleted', $training);
+
+        $user = Auth::user();
+        $state = $training->pre_training_completed;
+        $newState = ! $state;
+        $newStateText = (($newState) ? 'completed' : 'not completed');
+
+        $training->pre_training_completed = $newState;
+        $training->save();
+
+        ActivityLogController::warning('TRAINING', 'Student marked pre-training as completed ' . $training->id);
+        PilotTrainingActivityController::create($training->id, 'PRETRAINING', $newState, $state, $user->id);
+
+        return redirect($training->path())->withSuccess('Pre-training marked as ' . $newStateText);
     }
 
     public function assignCallsign(PilotTraining $pilotTraining)
@@ -222,7 +270,10 @@ class PilotTrainingController extends Controller
         $experiences = PilotTrainingController::$experiences;
         $activities = $training->activities->sortByDesc('created_at');
 
-        return view('pilot.training.show', compact('training', 'instructors', 'statuses', 'experiences', 'activities', 'reports'));
+        $requestTypes = TaskController::getTypes();
+        $exams = Exam::where('pilot_training_id', $training->id)->get();
+
+        return view('pilot.training.show', compact('exams', 'training', 'instructors', 'statuses', 'experiences', 'activities', 'reports', 'requestTypes'));
     }
 
     public function edit(PilotTraining $training)
@@ -330,7 +381,7 @@ class PilotTrainingController extends Controller
 
                 $training->user->notify(new PilotTrainingClosedNotification($training, (int) $training->status, $training->closed_reason));
 
-                return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation of pre-training sent to the student.');
+                return redirect($training->path())->withSuccess('Training successfully closed. E-mail confirmation of closure sent to the student.');
             }
 
             if ((int) $training->status == TrainingStatus::PRE_TRAINING->value) {

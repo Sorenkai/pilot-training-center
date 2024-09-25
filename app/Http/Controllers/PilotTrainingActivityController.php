@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class PilotTrainingActivityController extends Controller
 {
-    public static $activityTypes = ['STATUS' => true, 'INSTRUCTOR' => true, 'PAUSE' => true, 'COMMENT' => true, 'PRETRAINING' => true];
+    public static $activityTypes = ['STATUS' => true, 'INSTRUCTOR' => true, 'PAUSE' => true, 'COMMENT' => true, 'PRETRAINING' => true, 'EXAM' => true];
 
     public static function create(int $trainingId, string $type, ?int $new_data = null, ?int $old_data = null, ?int $userId = null, ?string $comment = null)
     {

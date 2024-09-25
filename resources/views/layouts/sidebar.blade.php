@@ -44,6 +44,14 @@
             </li>
         @endif
 
+        @if (Setting::get('linkWiki') && Setting::get('linkWiki') != "")
+            <li class="nav-item">
+                <a class="nav-link" href="{{ Setting::get('linkWiki') }}" target="_blank">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Wiki</span></a>
+            </li>
+        @endif
+
         
 
         {{-- Divider --}}

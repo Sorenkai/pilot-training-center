@@ -111,7 +111,7 @@
 
                                 <div class="mb-3" v-show="remarkChecked">
                                     <label class="form-label" for="remarkTextarea">Remark</label>
-                                    <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Please don't repeat information from the application" maxlength="500"></textarea>
+                                    <textarea class="form-control" name="comment" id="remarkTextarea" rows="2" placeholder="Enter important information regarding your application such as experience or something else we should know" maxlength="500"></textarea>
                                 </div>
                             </div>
 
@@ -145,6 +145,7 @@
                     ratings: payload,
                     errRating: 0,
                     errHours: 0,
+                    errExperience: false,
                     remarkChecked: 0,
                 }
             },
