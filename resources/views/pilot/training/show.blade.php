@@ -318,7 +318,61 @@
             </div>
         </div>
     </div>
+
     <div class="col-xl-5 col-md-6 col-sm-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Exam Results
+                </h6>
+                @can('create', \App\Models\Exam::class) 
+                    <a href="{{ route('exam.practical.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
+                @endcan
+            </div>
+            <div class="card-body {{ $exams->where('type', 'PRACTICAL')->count() == 0 ? '' : 'p-0' }}">
+
+                @if($exams->where('type', 'PRACTICAL')->count() == 0)
+                    <p class="mb-0">No Exam history</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Exam</th>
+                                    <th>Result</th>
+                                    <th>Date</th>
+
+                                </tr>                                   
+                            </thead>
+                            <tbody>
+                                @foreach($exams->where('type', 'PRACTICAL') as $exam)
+                                    <tr>
+                                        <td>   
+                                            @if ($exam->result == 'PASS')
+                                                <i class="fas fa-circle-check text-success"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                            @elseif ($exam->result == 'PARTIAL PASS')
+                                                <i class="fas fa-circle-minus text-warning"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                            @elseif ($exam->result == 'FAIL')
+                                                <i class="fas fa-circle-xmark text-danger"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                            @endif
+                                            
+                                        </td>
+                                        <td>
+                                            {{ ucwords(strtolower($exam->result)) }}
+                                        </td>
+                                        <td>
+                                            <!-- if exam type is theory then show score otherwise show pass, fail or partial pass -->
+                                            {{ $exam->created_at->toEuropeanDate() }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+            </div>
+        </div>
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)

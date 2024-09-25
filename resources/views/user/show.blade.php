@@ -203,13 +203,13 @@
                                             <tbody>
                                                 @foreach($exams->where('type', 'PRACTICAL') as $exam)
                                                     <tr>
-                                                        <td>
+                                                        <td>   
                                                             @if ($exam->result == 'PASS')
-                                                                <i class="fas fa-circle-check text-success"></i> {{$exam->pilotRating->name}}
+                                                                <i class="fas fa-circle-check text-success"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
                                                             @elseif ($exam->result == 'PARTIAL PASS')
-                                                                <i class="fas fa-circle-minus text-warning"></i> {{$exam->pilotRating->name}}
+                                                                <i class="fas fa-circle-minus text-warning"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
                                                             @elseif ($exam->result == 'FAIL')
-                                                                <i class="fas fa-circle-xmark text-danger"></i> {{$exam->pilotRating->name}}
+                                                                <i class="fas fa-circle-xmark text-danger"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
                                                             @endif
                                                             
                                                         </td>

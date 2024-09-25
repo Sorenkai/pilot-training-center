@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exam;
+use App\Models\PilotTraining;
 use App\Models\PilotRating;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -29,9 +30,9 @@ class ExamController extends Controller
         $this->authorize('create', Exam::class);
 
         if ($prefillUserId) {
-            $users = collect(User::where('id', $prefillUserId)->get());
+            $users = User::where('id', $prefillUserId)->with(['pilotTrainings', 'pilotTrainings.pilotRatings'])->get();
         } else {
-            $users = User::all();
+            $users = User::with(['pilotTrainings', 'pilotTrainings.pilotRatings'])->get();
         }
 
         $ratings = PilotRating::whereIn('vatsim_rating', [1, 3, 7, 15, 31])->get();
@@ -73,16 +74,17 @@ class ExamController extends Controller
         $data = [];
         $data = request()->validate([
             'user' => 'required|numeric|exists:App\Models\User,id',
-            'rating' => 'required',
+            'training' => 'required|numeric|exists:App\Models\PilotTraining,id',
             'result' => 'required',
         ]);
 
         $user = User::find($data['user']);
-        $rating = PilotRating::find($data['rating']);
+        $training = PilotTraining::find($data['training']);
 
         $exam = Exam::create([
-            'pilot_rating_id' => $rating->id,
             'type' => 'PRACTICAL',
+            'pilot_training_id' => $training->id,
+            'pilot_rating_id' => $training->pilotRatings()->first()->id,
             'result' => $data['result'],
             'user_id' => $user->id,
             'issued_by' => \Auth::user()->id,

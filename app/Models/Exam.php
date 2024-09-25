@@ -20,4 +20,9 @@ class Exam extends Model
     {
         return $this->belongsTo(PilotRating::class);
     }
+
+    public function pilotTraining()
+    {
+        return $this->belongsTo(PilotTraining::class);
+    }
 }
