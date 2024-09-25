@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Control Center'),
+    'name' => env('APP_NAME', 'Pilot Training Center'),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return [
     |
     */
     /* x-release-please-start-version */
-    'version' => '6.0.0',
+    'version' => '0.0.5',
     /* x-release-please-end */
 
     /*

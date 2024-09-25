@@ -2,7 +2,7 @@
 {{-- Header --}}
 @slot('header')
 @component('mail::header', ['url' => config('app.url')])
-{{ config('app.owner_name') }}<br><span style="font-weight: 400">Control Center</span>
+{{ config('app.owner_name') }}<br><span style="font-weight: 400">Pilot Training Center</span>
 @endcomponent
 @endslot
 

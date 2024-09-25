@@ -12,7 +12,7 @@
 
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="alert alert-info" role="alert">
-            <i class="fas fa-info-circle"></i>&nbsp;&nbsp;This list only shows users from outside of {{ config('app.owner_name_short') }} who have logged into Control Center.
+            <i class="fas fa-info-circle"></i>&nbsp;&nbsp;This list only shows users from outside of {{ config('app.owner_name_short') }} who have logged into Pilot Training Center.
         </div>
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">

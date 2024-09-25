@@ -198,7 +198,7 @@
         {{--  Logo and version element --}}
         <div class="d-flex flex-column align-items-center mt-auto mb-3">
             <a href="{{ Setting::get('linkHome') }}" class="d-block"><img class="logo" src="{{ asset('images/logos/'.Config::get('app.logo')) }}"></a>
-            <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version">Control Center v{{ config('app.version') }}</a>
+            <a href="https://github.com/Sorenkai/pilot-training-center/releases" target="_blank" class="version">Pilot Training Center v{{ config('app.version') }}</a>
         </div>
         
     </ul>

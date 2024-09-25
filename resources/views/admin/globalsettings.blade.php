@@ -25,7 +25,7 @@
                         <div class="col-xl-6 col-md-6 mb-12">
 
                             <div class="mb-4">
-                                <label class="form-label" for="spoUrl">Control Center Version</label>
+                                <label class="form-label" for="spoUrl">Pilot Training Center Version</label>
                                 <input type="text" class="form-control" required value="{{ config('app.version') }}" disabled>
                             </div>
 
@@ -284,7 +284,7 @@
                                 <label class="form-check-label" for="checkTele">
                                     Enable telemetry
                                 </label>
-                                <small class="form-text d-block">This is used to prioritise development based on stats and who is using Control Center. Telemetry only sends the url, version and division name.</small>
+                                <small class="form-text d-block">This is used to prioritise development based on stats and who is using Pilot Training Center. Telemetry only sends the url, version and division name.</small>
                             </div>
 
                         </div>

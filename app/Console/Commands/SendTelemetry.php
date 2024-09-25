@@ -32,7 +32,7 @@ class SendTelemetry extends Command
         $uuid = \Ramsey\Uuid\Uuid::uuid5('151323ad-e7d1-4ed0-9c49-18a5cde076d8', Config::get('app.key') . Config::get('app.url'));
 
         try {
-            $req = Http::post('https://telemetry.vatsca.org/v1/', [
+            $req = Http::post('#', [
                 'service' => 'cc',
                 'uuid' => $uuid,
                 'url' => Config::get('app.url'),
