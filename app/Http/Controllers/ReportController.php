@@ -228,7 +228,6 @@ class ReportController extends Controller
             array_push($payload, $load);
         }
 
-        //        dd($payload);
         return $payload;
     }
 

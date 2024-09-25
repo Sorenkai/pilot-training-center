@@ -149,7 +149,6 @@ class PilotTrainingController extends Controller
 
         // Create and assign callsign to pilot training
         $this->assignCallsign($pilot_training);
-
         $task = Task::create([
             'type' => 'App\Tasks\Types\MoodleAccess',
             'message' => null,
@@ -435,7 +434,7 @@ class PilotTrainingController extends Controller
     protected function validateUpdateDetails()
     {
         return request()->validate([
-            'experience' => 'required|integer|min:1|max:3',
+            'experience' => 'sometimes|required|integer|min:1|max:3',
             'englishOnly' => 'nullable',
             'paused_at' => 'sometimes',
             'user_id' => 'sometimes|required|integer',
