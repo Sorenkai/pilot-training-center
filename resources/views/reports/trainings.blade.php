@@ -215,6 +215,11 @@
                 }]
             },
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: {
@@ -293,6 +298,11 @@
             type: 'bar',
             data: barChartData,
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 scales: {
                     x: {
@@ -353,6 +363,11 @@
             type: 'bar',
             data: barChartData,
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 scales: {
                     x: {
@@ -414,6 +429,11 @@
             type: 'bar',
             data: barChartData,
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 scales: {
                     x: {
@@ -476,6 +496,11 @@
             type: 'bar',
             data: barChartData,
             options: {
+                plugins: {
+                    datalabels: {
+                        display: false // Disable data labels for this chart
+                    }
+                },
                 responsive: true,
                 scales: {
                     x: {
@@ -523,6 +548,7 @@
         var allExams = new Chart(mix, {
             type: 'pie',
             data: pieChartData,
+            plugins: [],
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -531,10 +557,10 @@
                         position: 'bottom', // Adjust legend position if needed
                     },
                     datalabels: {
-                        color: '#ffffff', // Change color for visibility
-                        formatter: function(value) {
-                            let sum = this.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); // Calculate total
-                            let percentage = ((value / sum) * 100).toFixed(2) + "%"; // Calculate percentage
+                        color: '#00000', // Change color for visibility
+                        formatter: function(value, context) {
+                            let sum = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); // Calculate total
+                            let percentage = ((value / sum) * 100).toFixed(1) + "%"; // Calculate percentage
                             return percentage; // Return formatted percentage
                         },
                         display: function(ctx) {

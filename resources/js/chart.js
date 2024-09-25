@@ -2,10 +2,12 @@
  * Imports
 */
 
-import Chart from 'chart.js/auto';
+import {Chart} from 'chart.js/auto';
 import * as helpers from 'chart.js/helpers';
 import 'chartjs-adapter-moment';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+// Register the plugin to all charts:
 
 
 /**
@@ -15,4 +17,3 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 Chart.helpers = helpers;
 window.Chart = Chart;
 
-// Register plugins
