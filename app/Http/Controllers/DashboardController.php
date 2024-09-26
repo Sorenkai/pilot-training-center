@@ -84,7 +84,11 @@ class DashboardController extends Controller
 
         $oudatedVersionWarning = $user->isAdmin() && Setting::get('_updateAvailable');
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'activeVote', 'pilotHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning'));
+        $ptmCIDWarning = $user->isAdmin() && Setting::get('ptmCID') == null;
+        $ptmMailWarning = $user->isAdmin() && Setting::get('ptmEmail') == null;
+
+
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'activeVote', 'pilotHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning', 'ptmCIDWarning', 'ptmMailWarning'));
     }
 
     /**

@@ -145,9 +145,9 @@
                 @endif
                 
                 @if(\Auth::user()->isAdmin())
-                    <a class="collapse-item" href="{{ route('reports.instructors')}}">Activities</a>
+                    <a class="collapse-item" href="{{ route('reports.activities')}}">Activities</a>
                 @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="{{ route('reports.instructors')}}">Activities</a>
+                    <a class="collapse-item" href="{{ route('reports.activities')}}">Activities</a>
                 @endif
 
                 <a class="collapse-item" href="{{ route('reports.instructors') }}">Instructors</a>
