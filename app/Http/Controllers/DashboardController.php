@@ -87,7 +87,6 @@ class DashboardController extends Controller
         $ptmCIDWarning = $user->isAdmin() && Setting::get('ptmCID') == null;
         $ptmMailWarning = $user->isAdmin() && Setting::get('ptmEmail') == null;
 
-
         return view('dashboard', compact('data', 'trainings', 'statuses', 'activeVote', 'pilotHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning', 'ptmCIDWarning', 'ptmMailWarning'));
     }
 
