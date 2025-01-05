@@ -56,7 +56,7 @@ class DashboardController extends Controller
 
         // If the user belongs to our subdivision, doesn't have any training requests, has S2+ rating and is marked as inactive -> show notice
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
-        //$completedTrainingMessage = $user->hasRecentlyCompletedTraining();
+        // $completedTrainingMessage = $user->hasRecentlyCompletedTraining();
 
         $workmailRenewal = (isset($user->setting_workmail_expire)) ? (Carbon::parse($user->setting_workmail_expire)->diffInDays(Carbon::now(), false) > -7) : false;
 
