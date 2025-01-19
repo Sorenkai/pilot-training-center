@@ -10,7 +10,7 @@ RUN npm ci --omit dev && \
     npm run build
 
 # Setup container
-FROM docker.io/library/php:8.3.11-apache-bookworm
+FROM docker.io/library/php:8.4.3-apache-bookworm
 
 # Default container port for the apache configuration
 EXPOSE 80 443
