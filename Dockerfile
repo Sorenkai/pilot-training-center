@@ -39,5 +39,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer install
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+COPY --from=frontend --chown=www-data:www-data /app/public/ /app/public/
+
 RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache && \
                     mkdir -p /app/storage/app/public/files
