@@ -38,7 +38,7 @@ class GlobalSettingController extends Controller
         $this->authorize('edit', $setting);
 
         $data = $request->validate([
-            //'trainingEnabled' => '',
+            // 'trainingEnabled' => '',
             'trainingSOP' => 'required|url',
             'trainingExamTemplate' => '',
             'trainingSubDivisions' => 'required',
@@ -59,7 +59,7 @@ class GlobalSettingController extends Controller
             'ptmCID' => 'required|exists:App\Models\User,id',
         ]);
 
-        //isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
+        // isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
         isset($data['telemetryEnabled']) ? $telemetryEnabled = true : $telemetryEnabled = false;
         isset($data['atcActivityBasedOnTotalHours']) ? $atcActivityBasedOnTotalHours = true : $atcActivityBasedOnTotalHours = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
@@ -75,7 +75,7 @@ class GlobalSettingController extends Controller
         isset($data['feedbackForwardEmail']) ? $feedbackForwardEmail = $data['feedbackForwardEmail'] : $feedbackForwardEmail = false;
         isset($data['trainingExamTemplate']) ? $trainingExamTemplate = $data['trainingExamTemplate'] : $trainingExamTemplate = false;
 
-        //Setting::set('trainingEnabled', $trainingEnabled);
+        // Setting::set('trainingEnabled', $trainingEnabled);
         Setting::set('trainingSOP', $data['trainingSOP']);
         Setting::set('trainingExamTemplate', $trainingExamTemplate);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
