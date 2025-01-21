@@ -5,7 +5,7 @@ on:
     branches:
       - feature/docker
 
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build:
