@@ -1,6 +1,5 @@
 .DS_Store
 .env
-.htaccess
 .idea/
 .vscode/
 .github.old/
