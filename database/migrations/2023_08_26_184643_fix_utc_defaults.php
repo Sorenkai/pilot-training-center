@@ -15,11 +15,11 @@ return new class extends Migration
     {
         // Remove the defaults
         Schema::table('votes', function (Blueprint $table) {
-            $table->timestamp('end_at')->default(null)->change();
+            $table->timestamp('end_at')->nullable()->default(null)->change();
         });
 
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->timestamp('created_at')->default(null)->change();
+            $table->timestamp('created_at')->nullable()->default(null)->change();
         });
     }
 
