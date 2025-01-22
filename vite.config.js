@@ -12,8 +12,8 @@ export default ({ mode }) => {
     const scssContent = `
         // Do not change this file, it will be overwritten!
         // Theming variables generated from .env while building front-end
-        $envColorPrimary: ${process.env.VITE_THEME_PRIMARY || '#1a475f'};
-        $envColorSecondary: ${process.env.VITE_THEME_SECONDARY || '#484b4c'};
+        $envColorPrimary: ${process.env.VITE_THEME_PRIMARY || '#265640'};
+        $envColorSecondary: ${process.env.VITE_THEME_SECONDARY || '#1f4835'};
         $envColorTertiary: ${process.env.VITE_THEME_TERTIARY || '#011328'};
         $envColorInfo: ${process.env.VITE_THEME_INFO || '#17a2b8'};
         $envColorSuccess: ${process.env.VITE_THEME_SUCCESS || '#41826e'};
