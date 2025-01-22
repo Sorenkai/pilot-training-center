@@ -40,7 +40,7 @@ RUN composer install
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-COPY --from=frontend --chown=www-data:www-data /app/public/ /app/public/
+COPY --from=frontend --chown=www-data:www-data /app/public/ /var/www/html/public/
 
 RUN cp /var/www/html/.env.example /var/www/html/.env
 
