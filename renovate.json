@@ -1,6 +1,32 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "config:recommended"
-    ]
+  "extends": ["config:base"],
+  "baseBranches": ["deps-updates"], 
+  "branchPrefix": "chore/",
+  "updateNotScheduled": false,
+  "schedule": ["after 10pm on every weekday"], 
+  "groupName": "all-minor-patches",
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "devDependencies updates"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "prPriority": 10,
+      "prConcurrentLimit": 2
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ],
+  "labels": ["dependencies"],
+  "automerge": {
+    "type": "pr",
+    "branch": false,
+    "method": "squash"
+  },
+  "postUpdateOptions": ["yarnDedupeHighest", "npmDedupe"]
 }
