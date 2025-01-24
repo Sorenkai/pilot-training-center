@@ -23,10 +23,5 @@
     }
   ],
   "labels": ["dependencies"],
-  "automerge": {
-    "type": "pr",
-    "branch": false,
-    "method": "squash"
-  },
   "postUpdateOptions": ["yarnDedupeHighest", "npmDedupe"]
 }
