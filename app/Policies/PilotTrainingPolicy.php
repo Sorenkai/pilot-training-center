@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use anlutro\LaravelSettings\Facade as Setting;
+use App\Helpers\TrainingStatus;
 use App\Models\PilotTraining;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -15,7 +16,7 @@ class PilotTrainingPolicy
     public function view(User $user, PilotTraining $pilotTraining)
     {
         return $pilotTraining->instructors->contains($user) ||
-            $user->isModeratorOrAbove() ||
+            $user->isInstructorOrAbove() ||
             $user->is($pilotTraining->user);
     }
 
@@ -40,7 +41,7 @@ class PilotTrainingPolicy
             return true;
         }
 
-        return $user->isModeratorOrAbove();
+        return $user->isInstructorOrAbove();
     }
 
     public function viewActiveRequests(User $user)
@@ -68,5 +69,10 @@ class PilotTrainingPolicy
         }*/
 
         return ! $user->hasActivePilotTraining(true) ? Response::allow() : Response::deny('You have an active training request');
+    }
+
+    public function close(User $user, PilotTraining $training)
+    {
+        return $user->is($training->user) && $training->status == TrainingStatus::IN_QUEUE->value;
     }
 }

@@ -2,8 +2,31 @@
 
 @section('title', 'Pilot Training')
 @section('title-flex')
+    <div>
+        @can('close', $training)
+            <a href="{{ route('pilot.training.action.close', $training->id) }}" onclick="return confirm('Are you sure you want to close your training?')" class="btn btn-danger"><i class="fas fa-xmark"></i> Close my training</a>
+        @endcan
+    </div>
 @endsection
 @section('content')
+
+@if($training->status < \App\Helpers\TrainingStatus::COMPLETED->value && $training->status != \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT->value)
+    <div class="alert alert-warning" role="alert">
+        <b>Training is closed with reason: </b>
+        @if(isset($training->closed_reason))
+            {{ $training->closed_reason }}
+        @else
+            No reason given
+        @endif
+    </div>
+@endif
+
+@if($training->status == \App\Helpers\TrainingStatus::CLOSED_BY_STUDENT->value)
+    <div class="alert alert-warning" role="alert">
+        <b>Training closed by student</b>
+    </div>
+@endif
+
 <div class="row">
     <div class="col-xl-3 col-md-12 col-sm-12 mb-12">
         <div class="card shadow mb-2">
@@ -16,6 +39,24 @@
                         @endforeach
                     </i>
                 </h6>
+
+                @can('create', \App\Models\Task::class)
+                    <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-hand"></i> Request
+                    </button>
+                    <div class="dropdown">
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @foreach($requestTypes as $requestType)
+                                @if($requestType->allowNonVatsimRatings() == true || ($requestType->allowNonVatsimRatings() == false))
+                                    <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#{{ Str::camel($requestType->getName()) }}">
+                                        <i class="fas {{ $requestType->getIcon() }}"></i>&nbsp;
+                                        {{ $requestType->getName() }}
+                                    </button>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                @endcan
             </div>
             <div class="card-body">
                 <dl class="copyable">
@@ -90,7 +131,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="trainingStateSelect">Select training state</label>
-                        <select class="form-select"name="status" id="trainingStateSelect" @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
+                        <select class="form-select"name="status" id="trainingStateSelect" @if(!Auth::user()->isInstructorOrAbove()) disabled @endif>
                             @foreach ($statuses as $id => $data)
                                 @if($data["assignableByStaff"])
                                     @if($id == $training->status)
@@ -108,7 +149,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isModeratorOrAbove()) disabled @endif>
+                        <input class="form-check-input" type="checkbox" id="check1" name="paused_at" {{ $training->paused_at ? "checked" : "" }} @if(!Auth::user()->isInstructorOrAbove()) disabled @endif>
                         <label class="form-check-label" for="check1">
                             Paused
                             @if(isset($training->paused_at))
@@ -118,7 +159,7 @@
                     </div>
 
                     <hr>
-                    @if (\Auth::user()->isModeratorOrAbove())
+                    @if (\Auth::user()->isInstructorOrAbove())
                         <div class="mb-3">
                             <label class="form-label" for="assignInstructors">Assigned instructors: <span class="badge bg-secondary">Ctrl/Cmd+Click</span> to select multiple</label>
                             <select multiple class="form-select" name="instructors[]" id="assignInstructors">
@@ -144,7 +185,7 @@
                     Timeline
                 </h6>
             </div>
-            @cannot('comment', [\App\Models\PilotTraining::class, \App\Models\PilotTraining::find($training->id)])
+            @can('comment', [\App\Models\PilotTrainingActivity::class, \App\Models\PilotTraining::find($training->id)])
                 <form action="{{ route('pilot.training.activity.comment') }}" method="POST">
                     @csrf
                     <div class="input-group">
@@ -154,7 +195,7 @@
                         <button class="btn btn-outline-primary" id="activity_button" type="submit">Comment</button>
                     </div>
                 </form>                    
-            @endcannot
+            @endcan
             <div class="timeline">
                 <ul class="sessions">
                     @foreach($activities as $activity)
@@ -213,36 +254,6 @@
                                             Training paused
                                         @else
                                             Training unpaused
-                                        @endif
-                                    @elseif($activity->type == "ENDORSEMENT")
-                                        @if(\App\Models\Endorsement::find($activity->new_data) !== null)
-                                            @empty($activity->comment)
-                                                <span class="badge text-bg-light">
-                                                    {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
-                                                </span> granted, valid to
-                                                <span class="badge text-bg-light">
-                                                    @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
-                                                        {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
-                                                    @else
-                                                        Forever
-                                                    @endisset
-                                                </span>
-                                            @else
-                                                <span class="badge text-bg-light">
-                                                    {{ str(\App\Models\Endorsement::find($activity->new_data)->type)->lower()->ucfirst() }} endorsement
-                                                </span> granted, valid to
-                                                <span class="badge text-bg-light">
-                                                    @isset(\App\Models\Endorsement::find($activity->new_data)->valid_to)
-                                                        {{ \App\Models\Endorsement::find($activity->new_data)->valid_to->toEuropeanDateTime() }}
-                                                    @else
-                                                        Forever
-                                                    @endisset
-                                                </span>
-                                                for positions:
-                                                @foreach(explode(',', $activity->comment) as $p)
-                                                    <span class="badge text-bg-light">{{ $p }}</span>
-                                                @endforeach
-                                            @endempty
                                         @endif
                                     @elseif($activity->type == "COMMENT")
                                         {!! nl2br($activity->comment) !!}
@@ -307,7 +318,61 @@
             </div>
         </div>
     </div>
+
     <div class="col-xl-5 col-md-6 col-sm-12 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Exam Results
+                </h6>
+                @can('create', \App\Models\Exam::class) 
+                    <a href="{{ route('exam.practical.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
+                @endcan
+            </div>
+            <div class="card-body {{ $exams->where('type', 'PRACTICAL')->count() == 0 ? '' : 'p-0' }}">
+
+                @if($exams->where('type', 'PRACTICAL')->count() == 0)
+                    <p class="mb-0">No Exam history</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Exam</th>
+                                    <th>Result</th>
+                                    <th>Date</th>
+
+                                </tr>                                   
+                            </thead>
+                            <tbody>
+                                @foreach($exams->where('type', 'PRACTICAL') as $exam)
+                                    <tr>
+                                        <td>   
+                                            @if ($exam->result == 'PASS')
+                                                <i class="fas fa-circle-check text-success"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                            @elseif ($exam->result == 'PARTIAL PASS')
+                                                <i class="fas fa-circle-minus text-warning"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                            @elseif ($exam->result == 'FAIL')
+                                                <i class="fas fa-circle-xmark text-danger"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                            @endif
+                                            
+                                        </td>
+                                        <td>
+                                            {{ ucwords(strtolower($exam->result)) }}
+                                        </td>
+                                        <td>
+                                            <!-- if exam type is theory then show score otherwise show pass, fail or partial pass -->
+                                            {{ $exam->created_at->toEuropeanDate() }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+            </div>
+        </div>
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
@@ -320,17 +385,17 @@
 
                 @if ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                     <div class="dropdown" style="display: inline;">
-                        <button class="btn btn-light icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-plus"></i> Create
-                        </button>
-                    
+                        @can('create', \App\Models\PilotTrainingReport::class)
+                            <button class="btn btn-light icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-plus"></i> Create
+                            </button>
+                        @endcan
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @can('create', [\App\Models\PilotTrainingReport::class, $training])
+                            @can('create', \App\Models\PilotTrainingReport::class)
                                 @if ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value)
                                     <a class="dropdown-item" href="{{ route('pilot.training.report.create', ['training' => $training->id])}}"><i class="fas fa-file"></i> Training Report</a>
                                 @endif
-                            
                             @else
                                 <a href="#" class="dropdown-item disabled"><i class="fas fa-lock"></i>&nbsp;Training Report</a>
                             @endcan
@@ -361,7 +426,8 @@
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $uuid}}" aria-expanded="true">
                                                         <i class="fas fa-fw fa-chevron-right me-2"></i>{{ $report->report_date->toEuropeanDate() }}
-                                                        <i class="fas fa-scroll me-2 ms-4"></i>{{ $report->lesson->name }}
+                                                        <i class="fas fa-scroll ms-2 me-1"></i>
+                                                        <span class="d-inline-block align-middle text-truncate" style="max-width: 320px;">{{ $report->lesson->name }}</span>
                                                         @if ($report->draft)
                                                             <span class="badge bg-danger">Draft</span>
                                                         @endif
@@ -476,6 +542,13 @@
         </div>
     </div>
 </div>
+
+@foreach($requestTypes as $requestType)
+    @if($requestType->allowNonVatsimRatings() == true || ($requestType->allowNonVatsimRatings() == false))
+        @include('pilot.training.parts.taskmodal', ['requestType' => $requestType, 'training' => $training])
+    @endif
+@endforeach
+
 @endsection
 
 @section('js')

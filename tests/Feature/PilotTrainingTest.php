@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use anlutro\LaravelSettings\Facade as Setting;
 use App\Models\PilotTraining;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -13,32 +16,36 @@ class PilotTrainingTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    //    #[Test]
-    //    public function user_can_create_a_training_request()
-    //    {
-    //        $this->withoutExceptionHandling();
-    //
-    //        $user = factory(\App\Models\User::class)->create();
-    //        \Auth::login($user);
-    //
-    //        $attributes = [
-    //            'experience' => $this->faker->numberBetween(1, 5),
-    //            'englishOnly' => (int) $this->faker->boolean,
-    //            'motivation' => $this->faker->realText(1500,2),
-    //            'comment' => "",
-    //            'training_level' => \App\Models\Rating::find($this->faker->numberBetween(1,7))->id,
-    //            'training_area' => \App\Models\Area::find($this->faker->numberBetween(1,5))->id
-    //        ];
-    //
-    //        $this->assertJson($this->postJson('/training/store', $attributes)->content());
-    //        $this->assertDatabaseHas('trainings', ['motivation' => $attributes['motivation']]);
-    //    }
+    #[Test]
+    public function user_can_create_a_training_request()
+    {
+        Mail::fake();
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create(['id' => 10000005]);
+        Setting::set('ptmCID', 10000001);
+
+        $attributes = [
+            'experience' => $this->faker->numberBetween(1, 3),
+            'englishOnly' => (int) $this->faker->boolean,
+            'comment' => '',
+            'training_level' => \App\Models\PilotRating::find($this->faker->numberBetween(1, 7))->id,
+        ];
+
+        $this->actingAs($user)
+            ->post('/pilot/training/store', $attributes)
+            ->assertRedirect('/dashboard');
+
+        $this->assertDatabaseHas('pilot_trainings', ['user_id' => $user->id]);
+
+        Mail::assertNothingSent();
+    }
 
     #[Test]
     public function guest_cant_create_pilot_training_request()
     {
         $attributes = [
-            'experience' => $this->faker->numberBetween(1, 5),
+            'experience' => $this->faker->numberBetween(1, 3),
             'englishOnly' => (int) $this->faker->boolean,
             'comment' => '',
             'training_level' => \App\Models\PilotRating::find($this->faker->numberBetween(1, 7))->id,
@@ -60,7 +67,6 @@ class PilotTrainingTest extends TestCase
         $moderator->groups()->attach(4, ['area_id' => 2]); // pilot trainings dont have ares, so hardcoded
 
         $this->assertDatabaseHas('pilot_trainings', ['id' => $training->id]);
-
         $this->actingAs($moderator)
             ->patch($training->path(), $attributes = ['status' => 0])
             ->assertRedirect($training->path())
@@ -85,89 +91,58 @@ class PilotTrainingTest extends TestCase
             ->assertStatus(403);
     }
 
-    //#[Test]
-    public function moderator_can_update_the_trainings_status()
+    #[Test]
+    public function instructor_can_update_the_trainings_status()
     {
         $training = PilotTraining::factory()->create([
             'user_id' => User::factory()->create(['id' => 10000005])->id,
         ]);
-        $moderator = User::factory()->create();
-        $moderator->groups()->attach(1, ['area_id' => 2]);
+        $instructor = User::factory()->create();
+        $instructor->groups()->attach(4, ['area_id' => 2]);
 
-        $this->actingAs($moderator)->patch(route('pilot.training.update', ['training' => $training->id]), ['status' => 0]);
+        $this->assertDatabaseHas('pilot_trainings', ['id' => $training->id]);
 
-        $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => 0]);
+        $this->actingAs($instructor)->patch(route('pilot.training.update.details', ['training' => $training->id]), ['status' => 0]);
 
-        $this->actingAs($moderator)->patch(route('pilot.training.update', ['training' => $training->id]), ['status' => 1]);
-
-        $this->assertDatabaseHas('trainings', ['id' => $training->id, 'status' => 1, 'started_at' => $training->fresh()->started_at->format('Y-m-d H:i:s')]);
-
-        $this->actingAs($moderator)->patch(route('pilot.training.update', ['training' => $training->id]), ['status' => 3]);
-
-        $this->assertDatabaseHas('trainings', [
-            'id' => $training->id,
-            'status' => 3,
-            'started_at' => $training->fresh()->started_at->format('Y-m-d H:i:s'),
-            'closed_at' => $training->fresh()->closed_at->format('Y-m-d H:i:s'),
-        ]);
-
-        $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => 0]);
-
-        $this->assertDatabaseHas('trainings', [
-            'id' => $training->id,
-            'status' => 0,
-            'started_at' => null,
-            'closed_at' => null,
-        ]);
-
-        $this->actingAs($moderator)->patch(route('training.update', ['training' => $training->id]), ['status' => -1]);
-
-        $this->assertDatabaseHas('trainings', [
-            'id' => $training->id,
-            'status' => -1,
-            'started_at' => null,
-            'closed_at' => null,
-        ]);
+        $this->assertDatabaseHas('pilot_trainings', ['id' => $training->id, 'status' => 0]);
     }
 
-    //    #[Test]
-    //    public function a_mentor_can_be_added()
-    //    {
-    //        $training = factory(\App\Models\Training::class)->create();
-    //        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
-    //        $mentor = factory(\App\Models\User::class)->create(['group' => 3]);
-    //
-    //        $training->area->mentors()->attach($mentor);
-    //
-    //        $this->actingAs($moderator)
-    //            ->patchJson(route('training.update', ['training' => $training]), ['mentors' => [$mentor->id]])
-    //            ->assertStatus(302);
-    //
-    //        $this->assertTrue($training->mentors->contains($mentor));
-    //    }
+    #[Test]
+    public function a_user_cant_update_their_own_training_request()
+    {
+        $training = PilotTraining::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000005])->id,
+        ]);
 
-    //    #[Test]
-    //    public function a_training_can_have_many_mentors_added()
-    //    {
-    //        $training = factory(\App\Models\Training::class)->create();
-    //        $moderator = factory(\App\Models\User::class)->create(['group' => 2]);
-    //
-    //        $attributes = [
-    //            'mentors' => [
-    //                factory(\App\Models\User::class)->create(['group' => 3])->id,
-    //                factory(\App\Models\User::class)->create(['group' => 3])->id
-    //            ]
-    //        ];
-    //
-    //        $training->area->mentors()->attach($attributes['mentors']);
-    //
-    //        $this->actingAs($moderator)
-    //                ->patchJson(route('training.update', ['training' => $training]), $attributes)
-    //                ->assertStatus(302);
-    //
-    //        $this->assertTrue($training->mentors->contains($attributes['mentors'][0]));
-    //        $this->assertTrue($training->mentors->contains($attributes['mentors'][1]));
-    //
-    //    }
+        $this->actingAs($training->user)
+            ->patch($training->path(), $attributes = ['status' => 0])
+            ->assertStatus(403);
+    }
 
+    #[Test]
+    public function an_instructor_can_be_added()
+    {
+        Mail::fake();
+        $training = PilotTraining::factory()->create([
+            'user_id' => User::factory()->create(['id' => 10000005])->id,
+        ]);
+        $instructor = User::factory()->create();
+
+        $instructor->groups()->attach(4, ['area_id' => 2]);
+
+        $this->actingAs($instructor)
+            ->patchJson(route('pilot.training.update.details', ['training' => $training]), ['instructors' => [$instructor->id]])
+            ->assertStatus(302);
+
+        $training->refresh();
+        $this->assertTrue($training->instructors->contains($instructor));
+    }
+
+    #[Test]
+    public function a_user_cant_request_a_new_training_if_they_already_have_one()
+    {
+        $user = User::factory()->create();
+        $training = PilotTraining::factory()->create(['user_id' => $user->id]);
+        $this->actingAs($user)->assertTrue(Gate::inspect('apply', PilotTraining::class)->denied());
+    }
 }

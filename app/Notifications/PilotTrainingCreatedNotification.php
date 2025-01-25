@@ -44,9 +44,11 @@ class PilotTrainingCreatedNotification extends Notification implements ShouldQue
         $textLines = [
             'We hereby confirm that we have received your training request for ' . $this->training->getInlineRatings() . '.',
             'Your callsign is: **' . $this->training->callsign->callsign . '**, which will be used for DUAL and solo flights.',
-            'The theory is completed at your own pace and ther is no specific deadline for the exam. You\'ll need to log in to Moodle once before we can grant you access.',
+            'The theory is completed at your own pace and ther is no specific deadline for the exam.',
+            'You\'ll need to log in to Moodle once before we can grant you access.',
             'After successfully completing the theoretical exam, you will start practical flight training together with your assigned instructor.',
-            'The theoretical material and other documents are available on the VATSIM Scandinavia wiki. If you have any questions, feel free to contact your instructor or ask in the pilot training channel on [Discord](' . Setting::get('linkDiscord') . ').',
+            'The theoretical material and other documents are available on the VATSIM Scandinavia wiki.',
+            'If you have any questions, feel free to contact your instructor or ask in the pilot training channel on [Discord](' . Setting::get('linkDiscord') . ').',
         ];
 
         $bcc = User::allWithGroup(4)->where('setting_notify_newreq', true);
@@ -58,8 +60,9 @@ class PilotTrainingCreatedNotification extends Notification implements ShouldQue
 
         $url1 = 'https://wiki.vatsim-scandinavia.org/shelves/pilot-training';
         $url2 = 'https://moodle.vatsim-scandinavia.org';
+        $contactMail = Setting::get('ptmEmail');
 
-        return (new PilotTrainingMail('New Training Request Confirmation', $this->training, $textLines, $url1, $url2))
+        return (new PilotTrainingMail('New Training Request Confirmation', $this->training, $textLines, $contactMail, $url1, $url2))
             ->to($this->training->user->notificationEmail, $this->training->user->name)
             ->bcc($bcc->pluck('notificationEmail'));
     }

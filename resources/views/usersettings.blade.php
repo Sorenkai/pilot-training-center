@@ -33,7 +33,7 @@
                                 @endif
                             </div>
 
-                            @if($user->isMentorOrAbove())
+                            @if($user->isInstructorOrAbove())
                                 <hr>
 
                                 <h5>Mentor Notifications</h5>
@@ -47,7 +47,7 @@
                                 
                             @endif
 
-                            @if($user->isModeratorOrAbove())
+                            @if($user->isInstructorOrAbove())
                                 <hr>
 
                                 <h5>Moderator Notifications</h5>

@@ -20,8 +20,6 @@ return new class extends Migration
             $table->string('status_comment', 256)->nullable();
             $table->string('message', 256)->nullable();
             $table->foreignId('subject_user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('subject_training_id')->constrained('trainings')->onDelete('cascade');
-            $table->foreignId('assignee_user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('creator_user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->boolean('assignee_notified')->default(false);
             $table->boolean('creator_notified')->default(false);

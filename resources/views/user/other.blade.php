@@ -12,7 +12,7 @@
 
     <div class="col-xl-12 col-md-12 mb-12">
         <div class="alert alert-info" role="alert">
-            <i class="fas fa-info-circle"></i>&nbsp;&nbsp;This list only shows users from outside of {{ config('app.owner_name_short') }} who have logged into Control Center.
+            <i class="fas fa-info-circle"></i>&nbsp;&nbsp;This list only shows users from outside of {{ config('app.owner_name_short') }} who have logged into Pilot Training Center.
         </div>
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
@@ -31,7 +31,7 @@
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
                                 <th data-field="firstname" data-sortable="true" data-filter-control="input">First Name</th>
                                 <th data-field="lastname" data-sortable="true" data-filter-control="input">Last Name</th>
-                                <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">ATC Rating</th>                                
+                                <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Pilot Rating</th>                                
                                 <th data-field="region" data-sortable="true" data-filter-control="select">Region</th>
                                 <th data-field="division" data-sortable="true" data-filter-control="select">Division</th>
                                 <th data-field="subdivision" data-sortable="true" data-filter-control="select">Subdivision</th>
@@ -44,7 +44,7 @@
                                         <td><a href="{{ route('user.show', $user->id) }}">{{ $user->id }}</a></td>
                                         <td>{{ $user->first_name }}</td>
                                         <td>{{ $user->last_name }}</td>
-                                        <td>{{ $user->rating_short }}</td>
+                                        <td>{{ $user->pilotrating_short }}</td>
                                         <td>{{ $user->region }}</td>
                                         <td>{{ $user->division }}</td>
                                         <td>{{ $user->subdivision }}</td>

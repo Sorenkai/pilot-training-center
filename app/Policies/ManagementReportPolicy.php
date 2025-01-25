@@ -34,6 +34,11 @@ class ManagementReportPolicy
         return $user->isModeratorOrAbove();
     }
 
+    public function viewInstructors(User $user)
+    {
+        return $user->isAdmin() || $user->isInstructor();
+    }
+
     /**
      * Determine whether the user can restore the model.
      *

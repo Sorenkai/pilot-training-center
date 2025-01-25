@@ -24,6 +24,18 @@
 </div>
 @endif
 
+@if($ptmCIDWarning)
+<div class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;<b>Configuration Error:</b> Pilot Training Manager CID not set! Expect errors when a training is created.
+</div>
+@endif
+
+@if($ptmMailWarning)
+<div class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;<b>Configuration Error:</b> Pilot Training Manager Email not set! Expect errors when a training is created.
+</div>
+@endif
+
 
 <div class="row">
     <!-- Current rating card  -->

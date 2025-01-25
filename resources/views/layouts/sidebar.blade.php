@@ -44,6 +44,14 @@
             </li>
         @endif
 
+        @if (Setting::get('linkWiki') && Setting::get('linkWiki') != "")
+            <li class="nav-item">
+                <a class="nav-link" href="{{ Setting::get('linkWiki') }}" target="_blank">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Wiki</span></a>
+            </li>
+        @endif
+
         
 
         {{-- Divider --}}
@@ -88,7 +96,7 @@
         Members
         </div>
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @if (\Auth::user()->isInstructorOrAbove())
 
             {{-- Nav Item - Pages Collapse Menu --}}
             <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
@@ -115,25 +123,9 @@
             </a>
 
         </li>
-
-        {{-- Nav Item - Pages Collapse Menu --}}
-        <li class="nav-item {{ Route::is('endorsements.*') ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEndorsements" aria-expanded="true" aria-controls="collapseEndorsements">
-                <i class="fas fa-fw fa-check-square"></i>
-                <span>Endorsements</span>
-            </a>
-            <div id="collapseEndorsements" class="collapse" data-bs-parent="#sidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('endorsements.solos') }}">Solo</a>
-                <a class="collapse-item" href="{{ route('endorsements.examiners') }}">Examiner</a>
-                <a class="collapse-item" href="{{ route('endorsements.visiting') }}">Visiting</a>
-                </div>
-            </div>
-        </li>
-
         
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @if (\Auth::user()->isAdmin())
             {{-- Divider --}}
             <div class="sidebar-divider"></div>
 
@@ -147,31 +139,29 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                 
                 @if(\Auth::user()->isAdmin())
-                    <a class="collapse-item" href="#">Trainings</a>
+                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
                 @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="#">Trainings</a>
+                    <a class="collapse-item" href="{{ route('reports.trainings') }}">Trainings</a>
                 @endif
                 
                 @if(\Auth::user()->isAdmin())
-                    <a class="collapse-item" href="#">Activities</a>
+                    <a class="collapse-item" href="{{ route('reports.activities')}}">Activities</a>
                 @elseif(\Auth::user()->isModerator())
-                    <a class="collapse-item" href="#">Activities</a>
+                    <a class="collapse-item" href="{{ route('reports.activities')}}">Activities</a>
                 @endif
 
-                <a class="collapse-item" href="{{ route('reports.mentors') }}">Mentors</a>
+                <a class="collapse-item" href="{{ route('reports.instructors') }}">Instructors</a>
 
                 @can('viewAccessReport', \App\Models\ManagementReport::class)
                     <a class="collapse-item" href="{{ route('reports.access') }}">Access</a>
                 @endcan
-
-                <a class="collapse-item" href="{{ route('reports.feedback') }}">Feedback</a>
                 
                 </div>
             </div>
             </li>
         @endif
 
-        @if (\Auth::user()->isModeratorOrAbove())
+        @if (\Auth::user()->isAdmin())
 
             {{-- Nav Item - Utilities Collapse Menu --}}
             <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
@@ -187,7 +177,7 @@
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
                 @endif
 
-                @if (\Auth::user()->isModeratorOrAbove())
+                @if (\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                 @endif
                 </div>
@@ -208,7 +198,7 @@
         {{--  Logo and version element --}}
         <div class="d-flex flex-column align-items-center mt-auto mb-3">
             <a href="{{ Setting::get('linkHome') }}" class="d-block"><img class="logo" src="{{ asset('images/logos/'.Config::get('app.logo')) }}"></a>
-            <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version">Control Center v{{ config('app.version') }}</a>
+            <a href="https://github.com/Sorenkai/pilot-training-center/releases" target="_blank" class="version">Pilot Training Center v{{ config('app.version') }}</a>
         </div>
         
     </ul>

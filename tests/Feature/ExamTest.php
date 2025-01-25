@@ -36,6 +36,16 @@ class ExamTest extends TestCase
         $user->groups()->attach(4, ['area_id' => 2]);
 
         $this->actingAs($user)->assertTrue(Gate::inspect('store', \App\Models\Exam::class)->allowed());
+        $user2 = User::factory()->create(['id' => 10000002]);
+        $attributes = [
+            'rating' => \App\Models\PilotRating::find($this->faker->numberBetween(1, 7))->id,
+            'score' => $this->faker->numberBetween(0, 100),
+            'user' => $user->id,
+            'url' => 'https://example.com',
+            'issued_by' => $user2->id,
+        ];
+
+        $response = $this->actingAs($user)->post('/exam/store', $attributes)->assertStatus(302);
     }
 
     #[Test]
@@ -43,5 +53,14 @@ class ExamTest extends TestCase
     {
         $user = User::factory()->create(['id' => 10000001]);
         $this->actingAs($user)->assertTrue(Gate::inspect('store', \App\Models\Exam::class)->denied());
+        $user2 = User::factory()->create(['id' => 10000002]);
+        $attributes = [
+            'rating' => \App\Models\PilotRating::find($this->faker->numberBetween(1, 7))->id,
+            'score' => $this->faker->numberBetween(0, 100),
+            'user_id' => $user->id,
+            'issued_by' => $user2->id,
+        ];
+
+        $response = $this->actingAs($user)->post('/exam/store', $attributes)->assertStatus(403);
     }
 }

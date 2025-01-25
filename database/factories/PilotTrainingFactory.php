@@ -34,7 +34,7 @@ class PilotTrainingFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id,
             'status' => $status,
             'english_only_training' => false,
-            'experience' => $this->faker->numberBetween(1, 5),
+            'experience' => $this->faker->numberBetween(1, 3),
             'comment' => $this->faker->paragraph(15, false),
             'created_by' => User::inRandomOrder()->first()->id,
             'created_at' => $this->faker->dateTimeBetween($startDate = '-2 years', $endDate = '-1 years'),

@@ -18,7 +18,7 @@ class UserPolicy
      */
     public function index(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->isInstructorOrAbove();
     }
 
     /**
@@ -28,7 +28,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        return $user->is($model) || $user->isModeratorOrAbove() || $user->isTeaching($model);
+        return $user->is($model) || $user->isInstructorOrAbove() || $user->isInstructing($model);
     }
 
     /**
@@ -38,7 +38,7 @@ class UserPolicy
      */
     public function viewAccess(User $user)
     {
-        return $user->isModeratorOrAbove();
+        return $user->isInstructorOrAbove();
     }
 
     /**
@@ -48,7 +48,7 @@ class UserPolicy
      */
     public function viewReports(User $user, User $model)
     {
-        return $user->is($model) || $user->isModeratorOrAbove();
+        return $user->is($model) || $user->isInstructorOrAbove();
     }
 
     /**
@@ -58,7 +58,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        return $user->isModeratorOrAbove();
+        return $user->isInstructorOrAbove();
     }
 
     /**

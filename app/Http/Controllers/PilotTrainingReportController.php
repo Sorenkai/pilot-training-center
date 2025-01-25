@@ -36,6 +36,11 @@ class PilotTrainingReportController extends Controller
         $data['written_by_id'] = Auth::id();
         $data['pilot_training_id'] = $training->id;
 
+        // Convert hours flown to decimal
+        $time = $data['instructor_hours'];
+        [$hours, $minutes] = explode(':', $time);
+        $data['instructor_hours'] = $hours + ($minutes / 60);
+
         if (isset($data['report_date'])) {
             $data['report_date'] = Carbon::createFromFormat('d/m/Y', $data['report_date'])->format('Y-m-d H:i:s');
         }
@@ -76,7 +81,12 @@ class PilotTrainingReportController extends Controller
         }
 
         (isset($data['draft'])) ? $data['draft'] = true : $data['draft'] = false;
-        dd($data);
+
+        // Convert hours flown to decimal
+        $time = $data['instructor_hours'];
+        [$hours, $minutes] = explode(':', $time);
+        $data['instructor_hours'] = $hours + ($minutes / 60);
+
         $report->update($data);
 
         // Notify student of new training request if it's not a draft anymore
@@ -92,11 +102,20 @@ class PilotTrainingReportController extends Controller
         return request()->validate([
             'content' => 'sometimes|required',
             'contentimprove' => 'nullable',
+            'instructor_hours' => 'required|date_format:H:i|not_in:00:00',
             'report_date' => 'required|date_format:d/m/Y',
             'lesson_id' => 'required|exists:lessons,id',
             'draft' => 'sometimes',
             'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',
             'contentimprove' => 'sometimes|nullable|string',
         ]);
+    }
+
+    public static function decimalToTime($decimalHours)
+    {
+        $hours = floor($decimalHours); // Get the whole number part for hours
+        $minutes = ($decimalHours - $hours) * 60; // Get the decimal part and convert to minutes
+
+        return sprintf('%02d:%02d', $hours, round($minutes)); // Format as HH:MM
     }
 }

@@ -2,17 +2,7 @@
 
 @section('title', 'Training Activities')
 @section('title-flex')
-    <div>
-        <i class="fas fa-filter text-secondary"></i>&nbsp;Filter&nbsp;
-        @if(\Auth::user()->isAdmin())
-            <a class="btn btn-sm {{ $filterName == "All Areas" ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities') }}">All Areas</a>
-        @endif
-        @foreach($areas as $area)
-            @if(\Auth::user()->isModeratorOrAbove($area))
-                <a class="btn btn-sm {{ $filterName == $area->name ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('reports.activities.area', $area->id) }}">{{ $area->name }}</a>
-            @endif
-        @endforeach 
-    </div>
+
 @endsection
 
 @section('header')
@@ -45,7 +35,7 @@
                             <tr>
                                 <th data-field="id" data-sortable="false" data-filter-control="input">Training</th>
                                 <th data-field="who" data-sortable="false" data-filter-control="input">Who</th>
-                                <th data-field="mentor" data-sortable="false" data-filter-control="input">Activity</th>
+                                <th data-field="instructor" data-sortable="false" data-filter-control="input">Activity</th>
                                 <th data-field="level" data-sortable="false">When</th>
                             </tr>
                         </thead>
@@ -53,29 +43,27 @@
                             @foreach($entries as $activity)
                                 <tr>
                                     <td>
-                                        <i class="{{ $statuses[$activity->training->status]["icon"] }} text-{{  $statuses[$activity->training->status]["color"] }}"></i>
-                                        <a href="{{ route('training.show', $activity->training) }}">{{ $activity->training->user->name }}'s {{ $activity->training->getInlineRatings() }}</a>
+                                        <i class="{{ $statuses[$activity->pilotTraining->status]["icon"] }} text-{{  $statuses[$activity->pilotTraining->status]["color"] }}"></i>
+                                        <a href="{{ route('pilot.training.show', $activity->pilotTraining) }}">{{ $activity->pilotTraining->user->name }}'s {{ $activity->pilotTraining->getInlineRatings() }}</a>
                                     </td>
                                     <td>
-                                        @if(is_a($activity, 'App\Models\TrainingActivity'))
+                                        @if(is_a($activity, 'App\Models\PilotTrainingActivity'))
                                             @isset($activity->user)
                                                 {{ $activity->user->name }}
                                             @else
                                                 System
                                             @endisset
-                                        @elseif(is_a($activity, 'App\Models\TrainingReport'))
+                                        @elseif(is_a($activity, 'App\Models\PilotTrainingReport'))
                                             {{ $activity->author->name }}
-                                        @elseif(is_a($activity, 'App\Models\TrainingExamination'))
-                                            {{ $activity->examiner->name }}
                                         @endif
                                     </td>
                                     <td>
 
-                                        @if(is_a($activity, 'App\Models\TrainingActivity'))
+                                        @if(is_a($activity, 'App\Models\PilotTrainingActivity'))
 
                                             @if($activity->type == "STATUS" || $activity->type == "TYPE")
                                                 <i class="fas fa-right-left"></i>
-                                            @elseif($activity->type == "MENTOR")
+                                            @elseif($activity->type == "INSTRUCTOR")
                                                 @if($activity->new_data)
                                                     <i class="fas fa-user-plus"></i>
                                                 @elseif($activity->old_data)
@@ -93,21 +81,21 @@
 
                                             @if($activity->type == "STATUS")
                                                 @if(($activity->new_data == -2 || $activity->new_data == -4) && isset($activity->comment))
-                                                    Status changed from <span class="badge text-bg-light text-primary">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                                to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                                    Status changed from <span class="badge text-bg-light text-primary">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                                to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                                 with reason <span class="badge text-bg-light">{{ $activity->comment }}</span>
                                                 @else
-                                                    Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->old_data]["text"] }}</span>
-                                                to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$statuses[$activity->new_data]["text"] }}</span>
+                                                    Status changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->old_data]["text"] }}</span>
+                                                to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$statuses[$activity->new_data]["text"] }}</span>
                                                 @endif
                                             @elseif($activity->type == "TYPE")
-                                                Training type changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->old_data]["text"] }}</span>
-                                                to <span class="badge text-bg-light">{{ \App\Http\Controllers\TrainingController::$types[$activity->new_data]["text"] }}</span>
-                                            @elseif($activity->type == "MENTOR")
+                                                Training type changed from <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$types[$activity->old_data]["text"] }}</span>
+                                                to <span class="badge text-bg-light">{{ \App\Http\Controllers\PilotTrainingController::$types[$activity->new_data]["text"] }}</span>
+                                            @elseif($activity->type == "INSTRUCTOR")
                                                 @if($activity->new_data)
-                                                    <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as mentor
+                                                    <span class="badge text-bg-light">{{ \App\Models\User::find($activity->new_data)->name }}</span> assigned as instructor
                                                 @elseif($activity->old_data)
-                                                <span class="badge text-bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as mentor
+                                                <span class="badge text-bg-light">{{ \App\Models\User::find($activity->old_data)->name }}</span> removed as instructor
                                                 @endif
                                             @elseif($activity->type == "PAUSE")
                                                 @if($activity->new_data)
@@ -164,12 +152,9 @@
                                                 </span>
                                             @endif
 
-                                        @elseif(is_a($activity, 'App\Models\TrainingReport'))
+                                        @elseif(is_a($activity, 'App\Models\PilotTrainingReport'))
                                             <i class="fas fa-file"></i>
                                             Training report published
-                                        @elseif(is_a($activity, 'App\Models\TrainingExamination'))
-                                            <i class="fas fa-file"></i>
-                                            Examination report published with result <span class="badge text-bg-light">{{ ucfirst(strtolower($activity->result)) }}</span>
                                         @endif
 
                                     </td>

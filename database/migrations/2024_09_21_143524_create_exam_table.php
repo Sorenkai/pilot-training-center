@@ -13,14 +13,18 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', ['THEORY', 'PRACTICAL']);
+            $table->enum('result', ['PASS', 'PARTIAL PASS', 'FAIL'])->nullable();
             $table->unsignedInteger('pilot_rating_id');
+            $table->unsignedBigInteger('pilot_training_id')->nullable();
             $table->text('url')->nullable();
-            $table->unsignedInteger('score');
+            $table->unsignedInteger('score')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('issued_by');
             $table->timestamps();
 
             $table->foreign('pilot_rating_id')->references('id')->on('pilot_ratings')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign('pilot_training_id')->references('id')->on('pilot_trainings')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->foreign('issued_by')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
         });

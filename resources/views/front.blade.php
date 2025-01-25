@@ -65,7 +65,7 @@
         
         <div class="logo">
             <img src="{{ asset('images/logos/'.Config::get('app.logo')) }}">
-            <a href="https://github.com/Vatsim-Scandinavia/controlcenter" target="_blank" class="version-front">Control Center v{{ config('app.version') }}</a>
+            <a href="https://github.com/Sorenkai/pilot-training-center" target="_blank" class="version-front">Pilot Training Center v{{ config('app.version') }}</a>
         </div>
     </div>
 @endsection

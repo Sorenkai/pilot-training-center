@@ -14,12 +14,13 @@
         "bootstrap-table": "^1.19.1",
         "chart.js": "^4.4.0",
         "chartjs-adapter-moment": "^1.0.1",
+        "chartjs-plugin-datalabels": "^2.2.0",
         "core-js": "^3.37.1",
         "easymde": "^2.18.0",
         "flatpickr": "^4.6.13",
         "laravel-vite-plugin": "^1.0.0",
         "moment": "^2.29.1",
-        "sass": "1.79.1",
+        "sass": "1.83.4",
         "vite": "^5.0.0",
         "vue": "^3.0"
     }

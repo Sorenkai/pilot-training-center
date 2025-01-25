@@ -62,6 +62,14 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="instructor_hours" class="form-label">Hours flown</label>
+                        <input type="time" id="instructor_hours" class="form-control @error('instructor_hours') is-invalid @enderror" name="instructor_hours" value="{{ \App\Http\Controllers\PilotTrainingReportController::decimalToTime($report->instructor_hours) }}" required>
+                        @error('instructor_hours')
+                            <span class="text-danger">{{ $errors->first('instructor_hours') }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label" for="contentBox">Report</label>
                         <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ empty(old('content')) ? $report->content : old('content') }}</textarea>
                         @error('content')

@@ -38,35 +38,28 @@ class GlobalSettingController extends Controller
         $this->authorize('edit', $setting);
 
         $data = $request->validate([
-            'trainingEnabled' => '',
+            // 'trainingEnabled' => '',
             'trainingSOP' => 'required|url',
             'trainingExamTemplate' => '',
             'trainingSubDivisions' => 'required',
-            'trainingInterval' => 'required|integer|min:1',
-            'trainingSoloRequirement' => 'required|max:200',
-            'atcActivityQualificationPeriod' => 'required|integer|min:1',
-            'atcActivityGracePeriod' => 'required|integer|min:0',
-            'atcActivityRequirement' => 'required|integer|min:0',
-            'atcActivityContact' => 'max:40',
-            'atcActivityBasedOnTotalHours' => '',
-            'atcActivityNotifyInactive' => '',
-            'atcActivityAllowReactivation' => '',
-            'atcActivityAllowInactiveControlling' => '',
             'linkDomain' => 'required',
             'linkHome' => 'required|url',
             'linkJoin' => 'required|url',
             'linkContact' => 'required|url',
             'linkVisiting' => 'required|url',
             'linkDiscord' => 'required|url',
-            'linkMoodle' => '',
+            'linkMoodle' => 'url',
+            'linkWiki' => 'url',
             'divisionApiEnabled' => '',
             'feedbackEnabled' => '',
             'feedbackForwardEmail' => 'nullable|email',
             'telemetryEnabled' => '',
             'ptdCallsign' => 'required|max:3',
+            'ptmEmail' => 'required|email',
+            'ptmCID' => 'required|exists:App\Models\User,id',
         ]);
 
-        isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
+        // isset($data['trainingEnabled']) ? $trainingEnabled = true : $trainingEnabled = false;
         isset($data['telemetryEnabled']) ? $telemetryEnabled = true : $telemetryEnabled = false;
         isset($data['atcActivityBasedOnTotalHours']) ? $atcActivityBasedOnTotalHours = true : $atcActivityBasedOnTotalHours = false;
         isset($data['atcActivityNotifyInactive']) ? $atcActivityNotifyInactive = true : $atcActivityNotifyInactive = false;
@@ -77,23 +70,15 @@ class GlobalSettingController extends Controller
 
         // The setting dependency doesn't support null values, so we need to set it to false if it's not set
         isset($data['linkMoodle']) ? $linkMoodle = $data['linkMoodle'] : $linkMoodle = false;
+        isset($data['linkWiki']) ? $linkWiki = $data['linkWiki'] : $linkWiki = false;
+
         isset($data['feedbackForwardEmail']) ? $feedbackForwardEmail = $data['feedbackForwardEmail'] : $feedbackForwardEmail = false;
         isset($data['trainingExamTemplate']) ? $trainingExamTemplate = $data['trainingExamTemplate'] : $trainingExamTemplate = false;
 
-        Setting::set('trainingEnabled', $trainingEnabled);
+        // Setting::set('trainingEnabled', $trainingEnabled);
         Setting::set('trainingSOP', $data['trainingSOP']);
         Setting::set('trainingExamTemplate', $trainingExamTemplate);
         Setting::set('trainingSubDivisions', $data['trainingSubDivisions']);
-        Setting::set('trainingInterval', $data['trainingInterval']);
-        Setting::set('trainingSoloRequirement', $data['trainingSoloRequirement']);
-        Setting::set('atcActivityQualificationPeriod', $data['atcActivityQualificationPeriod']);
-        Setting::set('atcActivityGracePeriod', $data['atcActivityGracePeriod']);
-        Setting::set('atcActivityRequirement', $data['atcActivityRequirement']);
-        Setting::set('atcActivityContact', $data['atcActivityContact']);
-        Setting::set('atcActivityBasedOnTotalHours', $atcActivityBasedOnTotalHours);
-        Setting::set('atcActivityNotifyInactive', $atcActivityNotifyInactive);
-        Setting::set('atcActivityAllowReactivation', $atcActivityAllowReactivation);
-        Setting::set('atcActivityAllowInactiveControlling', $atcActivityAllowInactiveControlling);
         Setting::set('linkDomain', $data['linkDomain']);
         Setting::set('linkHome', $data['linkHome']);
         Setting::set('linkJoin', $data['linkJoin']);
@@ -101,11 +86,14 @@ class GlobalSettingController extends Controller
         Setting::set('linkVisiting', $data['linkVisiting']);
         Setting::set('linkDiscord', $data['linkDiscord']);
         Setting::set('linkMoodle', $linkMoodle);
+        Setting::set('linkWiki', $linkWiki);
         Setting::set('divisionApiEnabled', $divisionApiEnabled);
         Setting::set('feedbackEnabled', $feedbackEnabled);
         Setting::set('feedbackForwardEmail', $feedbackForwardEmail);
         Setting::set('telemetryEnabled', $telemetryEnabled);
         Setting::set('ptdCallsign', $data['ptdCallsign']);
+        Setting::set('ptmEmail', $data['ptmEmail']);
+        Setting::set('ptmCID', $data['ptmCID']);
         Setting::save();
 
         ActivityLogController::danger('OTHER', 'Global Settings Updated');

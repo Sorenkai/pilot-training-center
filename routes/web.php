@@ -27,21 +27,21 @@ use App\Http\Controllers\VoteController;
 |
 */
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Main page
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 Route::get('/', [FrontPageController::class, 'index'])->name('front');
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // VATSIM Authentication
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 Route::get('/login', [LoginController::class, 'login'])->middleware('guest')->name('login');
 Route::get('/validate', [LoginController::class, 'validateLogin'])->middleware('guest');
 Route::get('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Sites behind authentication
-//--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     // Sidebar Navigation
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -55,14 +55,10 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
 
     // Endorsements
     Route::controller(EndorsementController::class)->group(function () {
-        Route::get('/endorsements/solos', 'indexSolos')->name('endorsements.solos');
-        Route::get('/endorsements/examiners', 'indexExaminers')->name('endorsements.examiners');
-        Route::get('/endorsements/visiting', 'indexVisitors')->name('endorsements.visiting');
         Route::get('/endorsements/create', 'create')->name('endorsements.create');
         Route::get('/endorsements/create/{id}', 'create')->name('endorsements.create.id');
         Route::post('/endorsements/store', 'store')->name('endorsements.store');
         Route::get('/endorsements/{id}/delete', 'destroy')->name('endorsements.delete');
-        Route::get('/endorsements/shorten/{id}/{date}', 'shorten')->name('endorsements.shorten');
     });
 
     // Users
@@ -86,6 +82,7 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/reports/activities', 'activities')->name('reports.activities');
         Route::get('/reports/activities/{id}', 'activities')->name('reports.activities.area');
         Route::get('/reports/mentors', 'mentors')->name('reports.mentors');
+        Route::get('/reports/instructors', 'instructors')->name('reports.instructors');
         Route::get('/reports/access', 'access')->name('reports.access');
         Route::get('/reports/feedback', 'feedback')->name('reports.feedback');
     });
@@ -106,6 +103,8 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/pilot/training/create/{id}', 'create')->name('pilot.training.create.id');
         Route::post('/pilot/training/store', 'store')->name('pilot.training.store');
         Route::get('/pilot/training/{training}', 'show')->name('pilot.training.show');
+        Route::get('/pilot/training/{training}/action/close', 'close')->name('pilot.training.action.close');
+        Route::get('/pilot/training/{training}/action/pretraining', 'togglePreTrainingCompleted')->name('pilot.training.action.pretraining');
         Route::patch('/pilot/training/{training}', 'updateDetails')->name('pilot.training.update.details');
         Route::get('/pilot/training/edit/{training}', 'edit')->name('pilot.training.edit');
         Route::patch('/pilot/training/edit/{training}', 'updateRequest')->name('pilot.training.update.request');
@@ -128,9 +127,12 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     });
 
     Route::controller(ExamController::class)->group(function () {
-        Route::get('/exam/create', 'create')->name('exam.create');
-        Route::get('/exam/create/{id}', 'create')->name('exam.create.id');
-        Route::post('exam/store', 'store')->name('exam.store');
+        Route::get('/exam/create', 'createTheory')->name('exam.create');
+        Route::get('/exam/create/{id}', 'createTheory')->name('exam.create.id');
+        Route::post('exam/store', 'storeTheory')->name('exam.store');
+        Route::get('/exam/practical/create', 'createPractical')->name('exam.practical.create');
+        Route::get('/exam/practical/create/{id}', 'createPractical')->name('exam.practical.create.id');
+        Route::post('/exam/practical/store', 'storePractical')->name('exam.practical.store');
     });
 
     Route::controller(FileController::class)->group(function () {

@@ -100,6 +100,26 @@ class User extends Authenticatable
         return $this->hasMany(InstructorEndorsement::class);
     }
 
+    public function trainings()
+    {
+        return $this->hasMany(Training::class);
+    }
+
+    public function trainingActivities()
+    {
+        return $this->hasMany(TrainingActivity::class);
+    }
+
+    public function trainingReports()
+    {
+        return $this->hasMany(TrainingReport::class, 'written_by_id');
+    }
+
+    public function pilotTrainingReports()
+    {
+        return $this->hasMany(PilotTrainingReport::class, 'written_by_id');
+    }
+
     public function pilotTrainings()
     {
         return $this->hasMany(PilotTraining::class);
@@ -124,6 +144,11 @@ class User extends Authenticatable
     public function isTeaching(User $user)
     {
         return $this->teaches->where('user_id', $user->id)->count() > 0;
+    }
+
+    public function isInstructing(User $user)
+    {
+        return $this->instructs->where('user_id', $user->id)->count() > 0;
     }
 
     public function ratings()
