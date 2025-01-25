@@ -20,7 +20,7 @@ class CheckUpdate extends Command
      *
      * @var string
      */
-    protected $description = 'Check for Control Center updates';
+    protected $description = 'Check for Pilot Training Center updates';
 
     /**
      * Execute the console command.
@@ -31,16 +31,16 @@ class CheckUpdate extends Command
     {
 
         $currentVersion = 'v' . config('app.version');
-        $releasedData = Http::get('https://api.github.com/repos/Vatsim-Scandinavia/controlcenter/releases')->json();
+        $releasedData = Http::get('https://api.github.com/repos/Sorenkai/pilot-training-center/releases')->json();
 
         if (isset($releasedData) && isset($releasedData[0]) && isset($releasedData[0]['name'])) {
             $releasedVersion = $releasedData[0]['name'];
 
             if ($currentVersion != $releasedVersion) {
-                $this->info("There's a new version of Control Center available! Please update to $releasedVersion.");
+                $this->info("There's a new version of Pilot Training Center available! Please update to $releasedVersion.");
                 Setting::set('_updateAvailable', $releasedVersion);
             } else {
-                $this->info('Control Center is up to date.');
+                $this->info('Pilot Training Center is up to date.');
                 Setting::forget('_updateAvailable');
             }
 
