@@ -28,7 +28,7 @@ return [
     |
     */
     /* x-release-please-start-version */
-    'version' => '0.0.5',
+    'version' => '0.0.7',
     /* x-release-please-end */
 
     /*
