@@ -1,7 +1,7 @@
 {
-    "name": "vatsim-scandinavia/controlcenter",
+    "name": "Sorenkai/pilot-training-center",
     "type": "project",
-    "description": "The training & booking management system for VATSIM entities.",
+    "description": "The training & booking management system for VATSIM Pilot Training.",
     "keywords": [
         "framework",
         "laravel"
