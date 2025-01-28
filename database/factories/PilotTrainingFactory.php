@@ -22,12 +22,15 @@ class PilotTrainingFactory extends Factory
      */
     public function definition()
     {
-        $status = $this->faker->numberBetween(0, 3);
+        $status = $this->faker->numberBetween(-1, 3);
         $started_at = null;
         $closed_at = null;
 
         if ($status > 1) {
             $started_at = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = '-1 months');
+        } else if ($status == -1) {
+            $started_at = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = '-1 months');
+            $closed_at = $this->faker->dateTimeBetween($startDate = '-1 months', $endDate = 'now');
         }
 
         return [
@@ -37,7 +40,7 @@ class PilotTrainingFactory extends Factory
             'experience' => $this->faker->numberBetween(1, 3),
             'comment' => $this->faker->paragraph(15, false),
             'created_by' => User::inRandomOrder()->first()->id,
-            'created_at' => $this->faker->dateTimeBetween($startDate = '-2 years', $endDate = '-1 years'),
+            'created_at' => $this->faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now'),
             'updated_at' => \Carbon\Carbon::now(),
             'started_at' => $started_at,
             'closed_at' => $closed_at,

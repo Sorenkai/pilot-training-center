@@ -6,6 +6,7 @@ use App\Helpers\FactoryHelper;
 use App\Helpers\TrainingStatus;
 use App\Models\Callsign;
 use App\Models\Endorsement;
+use App\Models\Exam;
 use App\Models\Group;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
@@ -170,6 +171,16 @@ class DatabaseSeeder extends Seeder
                     'written_by_id' => $training->instructors()->inRandomOrder()->first(),
                 ]);
             }
+
+            /*if ($training->status == TrainingStatus::AWAITING_EXAM->value) {
+                // And some a exam result
+                if ($i % 7 == 0) {
+                    TrainingExamination::factory()->create([
+                        'training_id' => $training->id,
+                        //'examiner_id' => User::where('id', '!=', $training->user_id)->inRandomOrder()->first(),
+                    ]);
+                }
+            }*/
 
             /*
             // Give all exam awaiting trainings a solo endorsement
