@@ -408,15 +408,17 @@
                                             {{ $exam->created_at->toEuropeanDate() }}
                                         </td>
                                         <td>
-                                            @if($exam->attachments->count() > 0)
-                                                    <div>
-                                                        <a href="{{ route('exam.object.attachment.show', ['attachment' => $exam->attachments]) }}" target="_blank">
-                                                            <i class="fa fa-file"></i>&nbsp;View
-                                                        </a>
-                                                    </div>
+                                            @if($exam->attachments && $exam->attachments->count() > 0)
+                                                <div>
+                                                    <a href="{{ route('exam.object.attachment.show', ['attachment' => $exam->attachments]) }}" target="_blank">
+                                                        <i class="fa fa-file"></i>&nbsp;View
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <div>
+                                                    -
+                                                </div>
                                             @endif
-
-                                            
                                         </td>
                                     </tr>
                                 @endforeach

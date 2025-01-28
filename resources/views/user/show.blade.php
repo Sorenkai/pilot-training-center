@@ -140,7 +140,7 @@
                             <div class="card-body {{ $exams->where('type', 'THEORY')->count() == 0 ? '' : 'p-0' }}">
                 
                                 @if($exams->where('type', 'THEORY')->count() == 0)
-                                    <p class="mb-0">No Exam history</p>
+                                    <p class="mb-0">No Theory history</p>
                                 @else
                                     <div class="table-responsive">
                                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
@@ -226,14 +226,16 @@
                                                             {{ $exam->created_at->toEuropeanDate() }}
                                                         </td>
                                                         <td>
-                                                            @if($exam->attachments->count() > 0)
-                                                                    <div>
-                                                                        <a href="{{ route('exam.object.attachment.show', ['attachment' => $exam->attachments]) }}" target="_blank">
-                                                                            <i class="fa fa-file"></i>&nbsp;View
-                                                                        </a>
-                                                                    </div>
+                                                            @if($exam->attachments && $exam->attachments->count() > 0)
+                                                                <div>
+                                                                    <a href="{{ route('exam.object.attachment.show', ['attachment' => $exam->attachments]) }}" target="_blank">
+                                                                        <i class="fa fa-file"></i>&nbsp;View
+                                                                    </a>
+                                                                </div>
                                                             @else
+                                                                <div>
                                                                     -
+                                                                </div>
                                                             @endif
                                                         </td>
                                                     </tr>
