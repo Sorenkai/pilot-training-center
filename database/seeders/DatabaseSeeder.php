@@ -171,16 +171,19 @@ class DatabaseSeeder extends Seeder
                     'written_by_id' => $training->instructors()->inRandomOrder()->first(),
                 ]);
             }
-
-            /*if ($training->status == TrainingStatus::AWAITING_EXAM->value) {
-                // And some a exam result
-                if ($i % 7 == 0) {
-                    TrainingExamination::factory()->create([
-                        'training_id' => $training->id,
-                        //'examiner_id' => User::where('id', '!=', $training->user_id)->inRandomOrder()->first(),
+            $training->load('instructors');
+            if ($training->status == TrainingStatus::COMPLETED->value) {
+                if ($i % 3 == 0) {
+                    Exam::factory()->create([
+                        'pilot_training_id' => $training->id,
+                        'issued_by' => User::whereHas('groups', function ($query) {
+                            $query->where('id', 4);
+                        })->inRandomOrder()->first(),
+                        'user_id' => $training->user_id,
+                        'pilot_rating_id' => $training->pilotRatings()->first()->id,
                     ]);
                 }
-            }*/
+            }
 
             /*
             // Give all exam awaiting trainings a solo endorsement
