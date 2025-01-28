@@ -156,7 +156,11 @@
                                                 @foreach($exams->where('type', 'THEORY') as $exam)
                                                     <tr>
                                                         <td>
-                                                            <i class="fas fa-circle-check text-success"></i>
+                                                            @if ($exam->score >= 60)
+                                                                <i class="fas fa-circle-check text-success"></i>
+                                                            @elseif ($exam->score < 60)
+                                                                <i class="fas fa-circle-xmark text-danger"></i>
+                                                            @endif
                                                             {{ $exam->pilotRating->name }}
                                                         </td>
                                                         <td>
@@ -197,6 +201,7 @@
                                                     <th>Exam</th>
                                                     <th>Result</th>
                                                     <th>Date</th>
+                                                    <th>Link</th>
         
                                                 </tr>                                   
                                             </thead>
@@ -205,11 +210,11 @@
                                                     <tr>
                                                         <td>   
                                                             @if ($exam->result == 'PASS')
-                                                                <i class="fas fa-circle-check text-success"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                                                <i class="fas fa-circle-check text-success"></i> <a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}">{{$exam->pilotRating->name}}</a>
                                                             @elseif ($exam->result == 'PARTIAL PASS')
-                                                                <i class="fas fa-circle-minus text-warning"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                                                <i class="fas fa-circle-minus text-warning"></i> <a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}">{{$exam->pilotRating->name}}</a>
                                                             @elseif ($exam->result == 'FAIL')
-                                                                <i class="fas fa-circle-xmark text-danger"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                                                <i class="fas fa-circle-xmark text-danger"></i> <a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}">{{$exam->pilotRating->name}}</a>
                                                             @endif
                                                             
                                                         </td>
@@ -219,6 +224,17 @@
                                                         <td>
                                                             <!-- if exam type is theory then show score otherwise show pass, fail or partial pass -->
                                                             {{ $exam->created_at->toEuropeanDate() }}
+                                                        </td>
+                                                        <td>
+                                                            @if($exam->attachments->count() > 0)
+                                                                    <div>
+                                                                        <a href="{{ route('exam.object.attachment.show', ['attachment' => $exam->attachments]) }}" target="_blank">
+                                                                            <i class="fa fa-file"></i>&nbsp;View
+                                                                        </a>
+                                                                    </div>
+                                                            @else
+                                                                    -
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach

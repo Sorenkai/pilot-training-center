@@ -135,6 +135,12 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::post('/exam/practical/store', 'storePractical')->name('exam.practical.store');
     });
 
+    Route::controller(ExamObjectAttachmentController::class)->group(function () {
+        Route::get('/exam/attachment/{attachment}', 'show')->name('exam.object.attachment.show');
+        Route::post('/exam/{trainingObjectType}/{trainingObject}/attachment', 'store')->name('exam.object.attachment.store');
+        Route::delete('/exam/attachment/{attachment}', 'destroy')->name('exam.object.attachment.delete');
+    });
+
     Route::controller(FileController::class)->group(function () {
         Route::get('/files/{file}', 'get')->name('file.get');
         Route::post('/files', 'store')->name('file.store');

@@ -15,9 +15,9 @@ class ExamController extends Controller
         $this->authorize('create', Exam::class);
 
         if ($prefillUserId) {
-            $users = collect(User::where('id', $prefillUserId)->get());
+            $users = User::where('id', $prefillUserId)->with(['pilotTrainings', 'pilotTrainings.pilotRatings'])->get();
         } else {
-            $users = User::all();
+            $users = User::with(['pilotTrainings', 'pilotTrainings.pilotRatings'])->get();
         }
 
         $ratings = PilotRating::whereIn('vatsim_rating', [1, 3, 7, 15, 31])->get();
@@ -47,17 +47,18 @@ class ExamController extends Controller
         $data = [];
         $data = request()->validate([
             'user' => 'required|numeric|exists:App\Models\User,id',
-            'rating' => 'required',
+            'training' => 'required|numeric|exists:App\Models\PilotTraining,id',
             'url' => 'required|url',
             'score' => 'required|numeric|min:0|max:100',
         ]);
 
         $user = User::find($data['user']);
-        $rating = PilotRating::find($data['rating']);
+        $training = PilotTraining::find($data['training']);
 
         $exam = Exam::create([
-            'pilot_rating_id' => $rating->id,
             'type' => 'THEORY',
+            'pilot_training_id' => $training->id,
+            'pilot_rating_id' => $training->pilotRatings()->first()->id,
             'url' => $data['url'],
             'score' => $data['score'],
             'user_id' => $user->id,
@@ -72,10 +73,13 @@ class ExamController extends Controller
         $this->authorize('store', [Exam::class]);
 
         $data = [];
+        //dd($request);
+        //dd(request()->file('files'));
         $data = request()->validate([
             'user' => 'required|numeric|exists:App\Models\User,id',
             'training' => 'required|numeric|exists:App\Models\PilotTraining,id',
             'result' => 'required',
+            'files.*' => 'sometimes|file|mimes:pdf,xls,xlsx,doc,docx,txt,png,jpg,jpeg',
         ]);
 
         $user = User::find($data['user']);
@@ -89,6 +93,11 @@ class ExamController extends Controller
             'user_id' => $user->id,
             'issued_by' => \Auth::user()->id,
         ]);
+
+        unset($data['files']);
+        
+
+        ExamObjectAttachmentController::saveAttachments($request, $exam);
 
         return redirect()->intended(route('exam.practical.create'))->withSuccess($user->name . "'s exam result saved");
     }
