@@ -28,7 +28,7 @@ class PilotTrainingFactory extends Factory
 
         if ($status > 1) {
             $started_at = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = '-1 months');
-        } else if ($status == -1) {
+        } elseif ($status == -1) {
             $started_at = $this->faker->dateTimeBetween($startDate = '-1 years', $endDate = '-1 months');
             $closed_at = $this->faker->dateTimeBetween($startDate = '-1 months', $endDate = 'now');
         }
