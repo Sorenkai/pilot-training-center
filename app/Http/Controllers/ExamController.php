@@ -73,8 +73,6 @@ class ExamController extends Controller
         $this->authorize('store', [Exam::class]);
 
         $data = [];
-        //dd($request);
-        //dd(request()->file('files'));
         $data = request()->validate([
             'user' => 'required|numeric|exists:App\Models\User,id',
             'training' => 'required|numeric|exists:App\Models\PilotTraining,id',

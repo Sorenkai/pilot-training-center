@@ -51,7 +51,6 @@ class ExamObjectAttachmentController extends Controller
 
     public static function saveAttachments(Request $request, ExamObject $object)
     {
-        //dd(get_class($object), method_exists($object, 'attachments'));
         foreach ($request->files as $file) {
             if (! is_iterable($file)) {
                 $file_id = FileController::saveFile($file);
