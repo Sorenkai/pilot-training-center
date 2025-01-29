@@ -216,6 +216,8 @@
                                         <i class="fas fa-check-square"></i>
                                     @elseif($activity->type == "COMMENT")
                                         <i class="fas fa-comment"></i>
+                                    @elseif ($activity->type == "EXAM")
+                                        <i class="fas fa-clipboard-check"></i>
                                     @endif
 
                                     @isset($activity->triggered_by_id)
@@ -261,6 +263,8 @@
                                         @if($activity->created_at != $activity->updated_at)
                                             <span class="text-muted">(edited)</span>
                                         @endif
+                                    @elseif ($activity->type == "EXAM")
+                                        {{ $activity->comment }}
                                     @endif
 
                                 </p>
@@ -325,9 +329,11 @@
                 <h6 class="m-0 fw-bold text-white">
                     Theory Results
                 </h6>
-                @can('create', \App\Models\Exam::class) 
-                    <a href="{{ route('exam.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Theory</a>
-                @endcan
+                @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                    @can('create', \App\Models\Exam::class) 
+                        <a href="{{ route('exam.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
+                    @endcan
+                @endif
             </div>
             <div class="card-body {{ $exams->where('type', 'THEORY')->count() == 0 ? '' : 'p-0' }}">
                 
@@ -372,9 +378,11 @@
                 <h6 class="m-0 fw-bold text-white">
                     Exam Results
                 </h6>
-                @can('create', \App\Models\Exam::class) 
-                    <a href="{{ route('exam.practical.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
-                @endcan
+                @if($training->status >= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                    @can('create', \App\Models\Exam::class) 
+                        <a href="{{ route('exam.practical.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
+                    @endcan
+                @endif
             </div>
             <div class="card-body {{ $exams->where('type', 'PRACTICAL')->count() == 0 ? '' : 'p-0' }}">
 
@@ -442,7 +450,7 @@
                 @if ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                     <div class="dropdown" style="display: inline;">
                         @can('create', \App\Models\PilotTrainingReport::class)
-                            <button class="btn btn-light icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-plus"></i> Create
                             </button>
                         @endcan

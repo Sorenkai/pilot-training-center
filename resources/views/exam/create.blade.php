@@ -74,7 +74,7 @@
                             name="score"
                             min="0"
                             max="100"
-                            step="0.01"
+                            step="1"
                             value="{{ old('score') }}">
 
                         @error('score')

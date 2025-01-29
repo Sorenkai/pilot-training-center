@@ -6,7 +6,9 @@ use App\Models\Exam;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
 use App\Models\User;
+use App\Notifications\ExamNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExamController extends Controller
 {
@@ -65,6 +67,12 @@ class ExamController extends Controller
             'issued_by' => \Auth::user()->id,
         ]);
 
+        if ($user->setting_notify_newreport) {
+            $user->notify(new ExamNotification($training, $exam));
+        }
+
+        PilotTrainingActivityController::create($training->id, 'EXAM', null, null, Auth::user()->id, 'Theory exam result added');
+
         return redirect()->intended(route('exam.create'))->withSuccess($user->name . "'s theory result saved");
     }
 
@@ -95,6 +103,12 @@ class ExamController extends Controller
         unset($data['files']);
 
         ExamObjectAttachmentController::saveAttachments($request, $exam);
+
+        if ($user->setting_notify_newreport) {
+            $user->notify(new ExamNotification($training, $exam));
+        }
+
+        PilotTrainingActivityController::create($training->id, 'EXAM', null, null, Auth::user()->id, 'Practical exam result added');
 
         return redirect()->intended(route('exam.practical.create'))->withSuccess($user->name . "'s exam result saved");
     }

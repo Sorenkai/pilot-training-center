@@ -272,7 +272,6 @@ class PilotTrainingController extends Controller
 
         $requestTypes = TaskController::getTypes();
         $exams = Exam::where('pilot_training_id', $training->id)->get();
-
         return view('pilot.training.show', compact('exams', 'training', 'instructors', 'statuses', 'experiences', 'activities', 'reports', 'requestTypes'));
     }
 
