@@ -32,6 +32,7 @@ class ExamObjectAttachmentController extends Controller
     public function show(ExamObjectAttachment $attachment)
     {
         $this->authorize('view', $attachment);
+
         return redirect(route('file.get', ['file' => $attachment->file]));
     }
 

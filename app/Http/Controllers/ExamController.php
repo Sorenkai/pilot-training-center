@@ -93,7 +93,6 @@ class ExamController extends Controller
         ]);
 
         unset($data['files']);
-        
 
         ExamObjectAttachmentController::saveAttachments($request, $exam);
 
