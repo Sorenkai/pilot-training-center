@@ -5,7 +5,7 @@
         {{-- Sidebar - Brand --}}
         <a class="sidebar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
             <div class="sidebar-brand-icon">
-                <img src="{{ asset('images/control-tower.svg') }}">
+                <img src="{{ asset('images/pilot.svg') }}">
             </div>
 
             <div class="sidebar-brand-text mx-3">{{ config('app.name') }}</div>

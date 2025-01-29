@@ -18,7 +18,7 @@
             </div>
             @endif
             
-            <div class="content-title"><img src="{{ asset('images/control-tower.svg') }}"> {{ config('app.name') }}</div>
+            <div class="content-title"><img src="{{ asset('images/pilot.svg') }}"> {{ config('app.name') }}</div>
             <div class="content-description">
                 @if(config('app.owner_code') == 'SCA')
                 Scandinavian Training Administration
