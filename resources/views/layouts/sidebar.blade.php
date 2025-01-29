@@ -100,16 +100,10 @@
 
             {{-- Nav Item - Pages Collapse Menu --}}
             <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
-                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMem" aria-expanded="true" aria-controls="collapseMem">
+                <a class="nav-link collapsed" href="{{route('users')}}">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span>
                 </a>
-                <div id="collapseMem" class="collapse" data-bs-parent=".sidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('users') }}">Member Overview</a>
-                    <a class="collapse-item" href="{{ route('users.other') }}">Other Users</a>
-                    </div>
-                </div>
             </li>
             
         @endif

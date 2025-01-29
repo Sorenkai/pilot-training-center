@@ -35,51 +35,8 @@ class UserController extends Controller
 
         $users = [];
 
-        if (config('vatsim.core_api_token')) {
-            $response = $this->fetchUsersFromVatsimCoreApi();
-            if ($response === false) {
-                return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM Core API. Check if your token is correct.');
-            }
-        } else {
-            return view('user.index', compact('users'))->withErrors('Enable VATSIM Core API Integration to enable this feature.');
-        }
-
         $apiUsers = [];
-        $ccUsers = User::pluck('id');
-        $ccUsersHours = AtcActivity::all();
-        $ccUsersActive = User::getActiveAtcMembers()->pluck('id');
-
-        if (config('vatsim.core_api_token')) {
-            foreach ($response as $data) {
-                $apiUsers[$data['id']] = $data;
-            }
-        } else {
-            // Only include users from the division and index by key
-            foreach ($response as $data) {
-                if ($data['subdivision'] == config('app.owner_code')) {
-                    $apiUsers[$data['id']] = $data;
-                }
-            }
-        }
-
-        // Merge the data sources
-        $users = [];
-        foreach ($apiUsers as $apiUser) {
-            $users[$apiUser['id']] = $apiUser;
-
-            if (in_array($apiUser['id'], $ccUsers->toArray())) {
-                $users[$apiUser['id']]['cc_data'] = true;
-                $users[$apiUser['id']]['active'] = false;
-
-                if (isset($ccUsersHours->where('user_id', $apiUser['id'])->first()->hours)) {
-                    $users[$apiUser['id']]['hours'] = $ccUsersHours->where('user_id', $apiUser['id'])->first()->hours;
-                }
-
-                if (in_array($apiUser['id'], $ccUsersActive->toArray())) {
-                    $users[$apiUser['id']]['active'] = true;
-                }
-            }
-        }
+        $users = User::with(['pilotTrainings'])->get();
 
         return view('user.index', compact('users'));
     }
