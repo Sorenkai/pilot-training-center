@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -93,7 +92,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Exam::class);
     }
-
 
     public function isInstructing(User $user)
     {

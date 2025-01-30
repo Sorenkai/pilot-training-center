@@ -4,8 +4,8 @@ namespace App\Notifications;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\PilotTrainingMail;
-use App\Models\PilotTraining;
 use App\Models\Exam;
+use App\Models\PilotTraining;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -15,6 +15,7 @@ class ExamNotification extends Notification implements ShouldQueue
     use Queueable;
 
     private $training;
+
     private $exam;
 
     /**
@@ -45,6 +46,7 @@ class ExamNotification extends Notification implements ShouldQueue
             'A new exam result has been added to your training.',
         ];
         $contactMail = Setting::get('ptmEmail');
+
         return (new PilotTrainingMail('Exam Result', $this->training, $textlines, $contactMail, null, null, route('pilot.training.show', $this->training->id), 'View Result'))
             ->to($this->training->user->notificationEmail, $this->training->user->name);
     }

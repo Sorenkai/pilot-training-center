@@ -15,5 +15,4 @@ class Area extends Model
     {
         return $this->belongsToMany(Group::class, 'permissions')->withPivot('area_id')->withTimestamps();
     }
-
 }
