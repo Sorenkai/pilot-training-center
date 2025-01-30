@@ -311,7 +311,7 @@
                             <table class="table table-bordered table-hover table-responsive w-100 d-block d-md-table">
                                 <thead>
                                     <tr>
-                                        <th>Area</th>
+                                        <th></th>
                                         @foreach($groups as $group)
                                             <th class="text-center">{{ $group->name }} <i class="fas fa-question-circle text-gray-400" title="{{ $group->description }}"></i></th>
                                         @endforeach

@@ -81,7 +81,7 @@ class DatabaseSeeder extends Seeder
                     $prating_id = 7;
                     $prating_short = 'CMEL';
                     $prating_long = 'Commercial Multi-Engine License';
-                    $group = 3;
+                    $group = 4;
                     break;
                 case 8:
                     $name_last = 'Eight';
@@ -89,7 +89,7 @@ class DatabaseSeeder extends Seeder
                     $prating_id = 7;
                     $prating_short = 'CMEL';
                     $prating_long = 'Commercial Multi-Engine License';
-                    $group = 3;
+                    $group = 4;
                     break;
                 case 9:
                     $name_last = 'Nine';
