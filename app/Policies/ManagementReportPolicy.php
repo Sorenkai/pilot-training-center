@@ -18,20 +18,10 @@ class ManagementReportPolicy
     public function accessTrainingReports(User $user, $filterArea)
     {
         if ($filterArea) {
-            return $user->isModeratorOrAbove(Area::find($filterArea));
+            return $user->isAdmin();
         }
 
         return $user->isAdmin();
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @return bool
-     */
-    public function viewMentors(User $user)
-    {
-        return $user->isModeratorOrAbove();
     }
 
     public function viewInstructors(User $user)

@@ -209,28 +209,12 @@ class UserController extends Controller
                 if ($value == true) {
                     $this->authorize('updateGroup', [$user, $group, $area]);
 
-                    // Call the division API to assign mentor
-                    if ($group->id == 3) {
-                        $response = DivisionApi::assignMentor($user, Auth::id());
-                        if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
-                        }
-                    }
-
                     // Attach the new permission
                     $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
                 }
             } else {
                 if ($value == false) {
                     $this->authorize('updateGroup', [$user, $group, $area]);
-
-                    // Call the division API to assign mentor
-                    if ($group->id == 3) {
-                        $response = DivisionApi::removeMentor($user, Auth::id());
-                        if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
-                        }
-                    }
 
                     // Detach the permission
                     $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();

@@ -158,7 +158,7 @@ class DatabaseSeeder extends Seeder
             $training->pilotRatings()->attach(PilotRating::where('vatsim_rating', '>', 0)->inRandomOrder()->first());
 
             self::assignCallsign($training);
-            // Give all non-queued trainings a mentor
+            // Give all non-queued trainings a instructor
             if ($training->status > TrainingStatus::IN_QUEUE->value) {
                 $training->instructors()->attach(
                     User::whereHas('groups', function ($query) {

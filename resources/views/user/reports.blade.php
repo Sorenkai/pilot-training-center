@@ -22,7 +22,7 @@
                         @foreach($reports as $reportModel)
                             @if(is_a($reportModel, '\App\Models\PilotTrainingReport'))
 
-                                @if(!$reportModel->draft || $reportModel->draft && \Auth::user()->isMentorOrAbove())
+                                @if(!$reportModel->draft || $reportModel->draft && \Auth::user()->isInstructorOrAbove())
 
                                     @php
                                         $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();

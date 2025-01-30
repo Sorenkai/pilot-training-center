@@ -46,7 +46,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     // Sidebar Navigation
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/content', [DashboardController::class, 'content'])->name('content');
-    Route::get('/mentor', [DashboardController::class, 'mentor'])->name('mentor');
     Route::get('/pilot/trainings', [PilotTrainingController::class, 'index'])->name('pilot.requests');
     Route::get('/pilot/trainings/history', [PilotTrainingController::class, 'history'])->name('pilot.requests.history');
     Route::get('/users', [UserController::class, 'index'])->name('users');
@@ -81,7 +80,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/reports/training/{id}', 'trainings')->name('reports.training.area');
         Route::get('/reports/activities', 'activities')->name('reports.activities');
         Route::get('/reports/activities/{id}', 'activities')->name('reports.activities.area');
-        Route::get('/reports/mentors', 'mentors')->name('reports.mentors');
         Route::get('/reports/instructors', 'instructors')->name('reports.instructors');
         Route::get('/reports/access', 'access')->name('reports.access');
         Route::get('/reports/feedback', 'feedback')->name('reports.feedback');
@@ -90,9 +88,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
     // Admin
     Route::get('/admin/settings', [GlobalSettingController::class, 'index'])->name('admin.settings');
     Route::post('/admin/settings', [GlobalSettingController::class, 'edit'])->name('admin.settings.store');
-    Route::get('/admin/templates', [NotificationController::class, 'index'])->name('admin.templates');
-    Route::get('/admin/templates/{id}', [NotificationController::class, 'index'])->name('admin.templates.area');
-    Route::post('/admin/templates/update', [NotificationController::class, 'update'])->name('admin.templates.update');
     Route::get('/admin/log', [ActivityLogController::class, 'index'])->name('admin.logs');
 
     // Pilot routes
@@ -145,20 +140,6 @@ Route::middleware(['auth', 'activity', 'suspended'])->group(function () {
         Route::get('/files/{file}', 'get')->name('file.get');
         Route::post('/files', 'store')->name('file.store');
         Route::delete('/files/{file}', 'destroy')->name('file.delete');
-    });
-
-    // Vote routes
-    Route::controller(VoteController::class)->group(function () {
-        Route::get('/votes', 'index')->name('vote.overview');
-        Route::get('/vote/create', 'create')->name('vote.create');
-        Route::post('/vote/store', 'store')->name('vote.store');
-        Route::patch('/vote/{id}', 'update')->name('vote.update');
-        Route::get('/vote/{id}', 'show')->name('vote.show');
-    });
-
-    Route::controller(FeedbackController::class)->group(function () {
-        Route::get('/feedback', 'create')->name('feedback');
-        Route::post('/feedback/store', 'store')->name('feedback.store');
     });
 
     Route::controller(TaskController::class)->group(function () {

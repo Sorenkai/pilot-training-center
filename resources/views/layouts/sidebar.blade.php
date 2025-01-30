@@ -158,7 +158,7 @@
         @if (\Auth::user()->isAdmin())
 
             {{-- Nav Item - Utilities Collapse Menu --}}
-            <li class="nav-item {{ Route::is('admin.settings') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
+            <li class="nav-item {{ Route::is('admin.settings') || Route::is('admin.logs') ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                 <i class="fas fa-fw fa-cogs"></i>
                 <span>Administration</span>
@@ -168,10 +168,6 @@
                 @if (\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
-                @endif
-
-                @if (\Auth::user()->isAdmin())
-                    <!-- <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a> -->
                 @endif
                 </div>
             </div>

@@ -104,31 +104,6 @@ class ReportController extends Controller
     }
 
     /**
-     * Show the mentors statistics view
-     *
-     * @return \Illuminate\View\View
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function mentors()
-    {
-        $this->authorize('viewMentors', ManagementReport::class);
-
-        if (auth()->user()->isAdmin()) {
-            $mentors = Group::find(3)->users()->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->get();
-        } else {
-            $mentors = Group::find(3)->users()->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->whereHas('groups', function (Builder $query) {
-                $query->whereIn('area_id', auth()->user()->groups()->pluck('area_id'));
-            })->get();
-        }
-
-        $mentors = $mentors->sortBy('name')->unique();
-        $statuses = TrainingController::$statuses;
-
-        return view('reports.mentors', compact('mentors', 'statuses'));
-    }
-
-    /**
      * Show the instructors statistics view
      *
      * @return \Illuminate\View\View

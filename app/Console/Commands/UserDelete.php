@@ -45,7 +45,7 @@ class UserDelete extends Command
             // Training should be closed
             $training->updateStatus(-4);
 
-            // Detach mentors
+            // Detach instructor
             foreach ($training->instructors as $instructor) {
                 $training->instructors()->detach($instructor);
             }
