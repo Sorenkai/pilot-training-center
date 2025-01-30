@@ -290,7 +290,7 @@ class UserController extends Controller
     {
         $this->authorize('viewReports', $user);
 
-        $reports = PilotTrainingReport::where('written_by_id', $user->id)->get();
+        $reports = PilotTrainingReport::where('written_by_id', $user->id)->with('lesson')->get();
 
         return view('user.reports', compact('user', 'reports'));
     }
