@@ -21,11 +21,6 @@ class Area extends Model
         return $this->belongsToMany(Endorsement::class);
     }
 
-    public function ratings()
-    {
-        return $this->belongsToMany(Rating::class)->withPivot('required_vatsim_rating', 'allow_bundling', 'hour_requirement', 'queue_length_low', 'queue_length_high');
-    }
-
     public function permissions()
     {
         return $this->belongsToMany(Group::class, 'permissions')->withPivot('area_id')->withTimestamps();

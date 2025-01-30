@@ -78,55 +78,9 @@ class UserController extends Controller
         $trainings = $user->pilotTrainings;
         $statuses = PilotTrainingController::$statuses;
 
-        // Get hours and grace per area
-        $atcActivityHours = [];
-        $totalHours = 0;
-        $atcActivites = AtcActivity::where('user_id', $user->id)->get();
-
-        foreach ($areas as $area) {
-            $activity = $atcActivites->firstWhere('area_id', $area->id);
-
-            if ($activity) {
-
-                $atcActivityHours[$area->id]['hours'] = $activity->hours;
-                $totalHours += $activity->hours;
-
-                if ($activity->start_of_grace_period) {
-                    $atcActivityHours[$area->id]['graced'] = $activity->start_of_grace_period->addMonths((int) Setting::get('atcActivityGracePeriod', 12))->gt(now());
-                } else {
-                    $atcActivityHours[$area->id]['graced'] = false;
-                }
-
-                $atcActivityHours[$area->id]['active'] = ($activity->atc_active) ? true : false;
-
-            } else {
-                $atcActivityHours[$area->id]['hours'] = 0;
-                $atcActivityHours[$area->id]['active'] = false;
-                $atcActivityHours[$area->id]['graced'] = false;
-            }
-        }
-
-        // Fetch division exams
-        /*
-        $divisionExams = collect();
-        $userExams = DivisionApi::getUserExams($user);
-        if ($userExams && $userExams->successful()) {
-
-            foreach ($userExams->json()['data'] as $category => $categories) {
-                foreach ($categories as $exam) {
-                    $exam['category'] = $category;
-                    $exam['rating'] = VatsimRating::from((int) $exam['flag_exam_type'] + 1)->name;
-                    $exam['created_at'] = Carbon::parse($exam['created_at'])->toEuropeanDate();
-                    $divisionExams->push($exam);
-                }
-            }
-
-            // Sort all entries by created_at
-            $divisionExams = $divisionExams->sortByDesc('created_at');
-        }*/
         $exams = $user->exams;
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'exams', 'totalHours'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'exams'));
     }
 
     /**
