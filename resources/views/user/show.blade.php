@@ -146,8 +146,9 @@
                                         <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>Rating</th>
-                                                    <th>Grade</th>
+                                                    <th>Exam</th>
+                                                    <th>Result</th>
+                                                    <th>Date</th>
                                                     <th>Link</th>
 
                                                 </tr>                                   
@@ -157,17 +158,19 @@
                                                     <tr>
                                                         <td>
                                                             @if ($exam->score >= 60)
-                                                                <i class="fas fa-circle-check text-success"></i>
+                                                                <i class="fas fa-circle-check text-success"></i> <a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}">{{$exam->pilotRating->name}}</a>
                                                             @elseif ($exam->score < 60)
-                                                                <i class="fas fa-circle-xmark text-danger"></i>
+                                                                <i class="fas fa-circle-xmark text-danger"></i> <a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}">{{$exam->pilotRating->name}}</a>
                                                             @endif
-                                                            {{ $exam->pilotRating->name }}
                                                         </td>
                                                         <td>
                                                             {{ $exam->score }}%
                                                         </td>
                                                         <td>
-                                                            <a href="{{ $exam->url }}">View</a>
+                                                            {{ $exam->created_at->toEuropeanDate() }}
+                                                        </td>
+                                                        <td>
+                                                            <a href="{{ $exam->url }}"><i class="fa fa-file"></i>&nbsp;View</a>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -222,7 +225,6 @@
                                                             {{ ucwords(strtolower($exam->result)) }}
                                                         </td>
                                                         <td>
-                                                            <!-- if exam type is theory then show score otherwise show pass, fail or partial pass -->
                                                             {{ $exam->created_at->toEuropeanDate() }}
                                                         </td>
                                                         <td>
