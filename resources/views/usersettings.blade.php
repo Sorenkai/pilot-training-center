@@ -21,7 +21,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="check0" name="setting_notify_newreport" {{ $user->setting_notify_newreport ? "checked" : "" }}>
                                 <label class="form-check-label" for="check0">
-                                    Send notification when my mentor publishes a new training report
+                                    Send notification when my instructor publishes a new training report
                                 </label>
                             </div>
                             
@@ -36,7 +36,7 @@
                             @if($user->isInstructorOrAbove())
                                 <hr>
 
-                                <h5>Mentor Notifications</h5>
+                                <h5>Instructor Notifications</h5>
 
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="check4" name="setting_notify_tasks" {{ $user->setting_notify_tasks ? "checked" : "" }}>
@@ -47,7 +47,7 @@
                                 
                             @endif
 
-                            @if($user->isInstructorOrAbove())
+                            @if($user->isAdmin())
                                 <hr>
 
                                 <h5>Moderator Notifications</h5>
@@ -62,12 +62,6 @@
                                     <input class="form-check-input" type="checkbox" id="check2" name="setting_notify_closedreq" {{ $user->setting_notify_closedreq ? "checked" : "" }}>
                                     <label class="form-check-label" for="check2">
                                         Send notification of closed training requests
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="check3" name="setting_notify_newexamreport" {{ $user->setting_notify_newexamreport ? "checked" : "" }}>
-                                    <label class="form-check-label" for="check3">
-                                        Send notification of new examination reports
                                     </label>
                                 </div>
                                 
