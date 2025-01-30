@@ -7,14 +7,12 @@ use App\Http\Controllers\EndorsementController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\GlobalSettingController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PilotTrainingActivityController;
 use App\Http\Controllers\PilotTrainingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RosterController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VoteController;
 
 /*
 |--------------------------------------------------------------------------

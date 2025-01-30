@@ -16,7 +16,6 @@ use App\Models\TrainingReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -65,7 +64,7 @@ class ReportController extends Controller
         $cardStats = $this->getCardStats($filterArea);
         $totalRequests = $this->getDailyRequestsStats($filterArea);
         [$newRequests, $completedRequests, $closedRequests, $passFailRequests, $allExamResults] = $this->getBiAnnualRequestsStats($filterArea);
-        //$queues = $this->getQueueStats($filterArea);
+        // $queues = $this->getQueueStats($filterArea);
 
         // Send it to the view
         ($filterArea) ? $filterName = Area::find($filterArea)->name : $filterName = 'All Areas';
@@ -390,5 +389,4 @@ class ReportController extends Controller
 
         return [$newRequests, $completedRequests, $closedRequests, $passFailRequests, $allExamResults];
     }
-
 }

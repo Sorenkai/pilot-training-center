@@ -6,7 +6,6 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Models\PilotTrainingReport;
 use App\Models\User;
-use App\Models\Vote;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
