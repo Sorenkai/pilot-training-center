@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->string('callsign', 30)->change();
+        Schema::create('exam_object_attachments', function (Blueprint $table) {
+            $table->uuid('id');
+            $table->morphs('object');
+            $table->string('file_id');
+            $table->boolean('hidden')->default(false);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->string('callsign', 11)->change();
-        });
+        Schema::dropIfExists('exam_object_attachments');
     }
 };

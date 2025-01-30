@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use anlutro\LaravelSettings\Facade as Setting;
 use App\Exceptions\PolicyMethodMissingException;
 use App\Exceptions\PolicyMissingException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -64,32 +63,6 @@ class User extends Authenticatable
         })->get();
     }
 
-    /**
-     * Find all users with queried group in the specified area
-     *
-     * @param  Area  $area  the area to check for
-     * @return Illuminate\Database\Eloquent\Collection
-     */
-    public static function allActiveInArea(Area $area)
-    {
-        if (Setting::get('atcActivityBasedOnTotalHours')) {
-            return User::whereHas('atcActivity', function ($query) use ($area) {
-                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
-                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
-                        ->orWhere('hours', '>=', 0);
-                });
-            })->with(['endorsements', 'atcActivity'])->get();
-        } else {
-            return User::whereHas('atcActivity', function ($query) use ($area) {
-                $query->where('atc_active', true)->where('area_id', $area->id)->where(function ($query) {
-                    $query->where('start_of_grace_period', '>', now()->subMonths(Setting::get('atcActivityGracePeriod', 12)))
-                        ->orWhere('hours', '>=', Setting::get('atcActivityRequirement', 10));
-                });
-            })->with(['endorsements', 'atcActivity'])->get();
-        }
-
-    }
-
     public function endorsements()
     {
         return $this->hasMany(Endorsement::class);
@@ -98,21 +71,6 @@ class User extends Authenticatable
     public function instructorEndorsements()
     {
         return $this->hasMany(InstructorEndorsement::class);
-    }
-
-    public function trainings()
-    {
-        return $this->hasMany(Training::class);
-    }
-
-    public function trainingActivities()
-    {
-        return $this->hasMany(TrainingActivity::class);
-    }
-
-    public function trainingReports()
-    {
-        return $this->hasMany(TrainingReport::class, 'written_by_id');
     }
 
     public function pilotTrainingReports()
@@ -135,17 +93,6 @@ class User extends Authenticatable
         return $this->hasMany(Exam::class);
     }
 
-    /**
-     * Check is this user is teaching the queried user
-     *
-     * @param  \App\Models\User  $user  to check for
-     * @return bool
-     */
-    public function isTeaching(User $user)
-    {
-        return $this->teaches->where('user_id', $user->id)->count() > 0;
-    }
-
     public function isInstructing(User $user)
     {
         return $this->instructs->where('user_id', $user->id)->count() > 0;
@@ -166,11 +113,6 @@ class User extends Authenticatable
         return $this->hasMany(Callsign::class);
     }
 
-    public function vote()
-    {
-        return $this->hasMany(Vote::class);
-    }
-
     public function tasks()
     {
         return $this->hasMany(Task::class, 'assignee_user_id');
@@ -179,16 +121,6 @@ class User extends Authenticatable
     public function getNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
-    }
-
-    public function submittedFeedback()
-    {
-        return $this->hasMany(Feedback::class, 'submitter_user_id');
-    }
-
-    public function receivedFeedback()
-    {
-        return $this->hasMany(Feedback::class, 'reference_user_id');
     }
 
     public function getNotificationEmailAttribute()
@@ -257,46 +189,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Return if user is visiting
-     *
-     * @return bool
-     */
-    public function isVisiting(?Area $area = null)
-    {
-        if ($area == null) {
-            return $this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->count();
-        }
-
-        // Check if the user has an active examiner endorsement for the area
-        if ($this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->first()) {
-            return $this->endorsements->where('type', 'VISITING')->where('revoked', false)->where('expired', false)->first()->areas()->wherePivot('area_id', $area->id)->count();
-        }
-
-        return false;
-    }
-
-    /**
-     * Return if user is a mentor
-     *
-     * @return bool
-     */
-    public function isMentor(?Area $area = null)
-    {
-        if ($area == null) {
-            return $this->groups->where('id', 3)->isNotEmpty();
-        }
-
-        // Check if user is mentor in the specified area
-        foreach ($this->groups->where('id', 3) as $group) {
-            if ($group->pivot->area_id == $area->id) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Return if user is a instructor
      *
      * @return bool
@@ -304,27 +196,6 @@ class User extends Authenticatable
     public function isInstructor()
     {
         return $this->groups->where('id', 4)->isNotEmpty();
-    }
-
-    /**
-     * Return if user is a mentor or above
-     *
-     * @return bool
-     */
-    public function isMentorOrAbove(?Area $area = null)
-    {
-        if ($area == null) {
-            return $this->groups->where('id', '<=', 3)->isNotEmpty();
-        }
-
-        // Check if user is mentor or above in the specified area
-        foreach ($this->groups->where('id', '<=', 3) as $group) {
-            if ($group->pivot->area_id == $area->id) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function isInstructorOrAbove()

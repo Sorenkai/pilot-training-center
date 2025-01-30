@@ -4,27 +4,27 @@ namespace App\Notifications;
 
 use anlutro\LaravelSettings\Facade as Setting;
 use App\Mail\PilotTrainingMail;
+use App\Models\Exam;
 use App\Models\PilotTraining;
-use App\Models\PilotTrainingReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class PilotTrainingReportNotification extends Notification implements ShouldQueue
+class ExamNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     private $training;
 
-    private $report;
+    private $exam;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(PilotTraining $training, PilotTrainingReport $report)
+    public function __construct(PilotTraining $training, Exam $exam)
     {
         $this->training = $training;
-        $this->report = $report;
+        $this->exam = $exam;
     }
 
     /**
@@ -42,12 +42,12 @@ class PilotTrainingReportNotification extends Notification implements ShouldQueu
      */
     public function toMail($notifiable)
     {
-        $textLines = [
-            'Your instructor ' . $this->report->author->name . ' has written a new report for your training.',
+        $textlines = [
+            'A new exam result has been added to your training.',
         ];
         $contactMail = Setting::get('ptmEmail');
 
-        return (new PilotTrainingMail('Training Report', $this->training, $textLines, $contactMail, null, null, route('pilot.training.show', $this->training->id), 'Read Report'))
+        return (new PilotTrainingMail('Exam Result', $this->training, $textlines, $contactMail, null, null, route('pilot.training.show', $this->training->id), 'View Result'))
             ->to($this->training->user->notificationEmail, $this->training->user->name);
     }
 
@@ -60,7 +60,7 @@ class PilotTrainingReportNotification extends Notification implements ShouldQueu
     {
         return [
             'training_id' => $this->training->id,
-            'training_report_id' => $this->report->id,
+            'exam_id' => $this->exam->id,
         ];
     }
 }

@@ -14,8 +14,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\CleanEndorsements::class,
-        Commands\UpdateMemberDetails::class,
     ];
 
     /**
@@ -25,30 +23,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Update training queue calculations
-        $schedule->command('update:queuecalculation')
-            ->daily();
-
-        // Update bookings, also deletes old bookings
-        $schedule->command('update:bookings')
-            ->everyFiveMinutes();
-
-        // Monitor who's online
-        $schedule->command('check:controllers')
-            ->everyTenMinutes();
-
-        // Delete old Sweatbox bookings
-        $schedule->command('clean:sweatbooks')
-            ->daily();
-
-        // Clean up expired solo endorsements
-        $schedule->command('clean:endorsements')
-            ->everyMinute();
-
-        // Close expired votes
-        $schedule->command('clean:votes')
-            ->everyMinute();
-
         // Clean IP addresses and user agent information from old logs and very old logs
         $schedule->command('clean:logs')
             ->daily();
@@ -60,14 +34,6 @@ class Kernel extends ConsoleKernel
         // Automaticaly clean memebers and trainings no longer eligble
         $schedule->command('update:member:details')
             ->dailyAt('05:00');
-
-        // Update ATC hours and active status
-        $schedule->command('update:atc:status')
-            ->dailyAt('06:00');
-
-        // Send our training interest e-mails
-        $schedule->command('send:traininginterest')
-            ->dailyAt('12:00');
 
         // Expire workmail addresses
         $schedule->command('update:workmails')

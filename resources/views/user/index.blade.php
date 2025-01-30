@@ -28,40 +28,25 @@
                                 <th data-field="id" data-sortable="true" data-filter-control="input" data-visible-search="true">Vatsim ID</th>
                                 <th data-field="firstname" data-sortable="true" data-filter-control="input">First Name</th>
                                 <th data-field="lastname" data-sortable="true" data-filter-control="input">Last Name</th>
-                                <th data-field="cc" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Registered in CC</th>
-                                <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">ATC Rating</th>
-                                <th data-field="atcactive" data-sortable="true" data-filter-control="select" data-filter-data-collector="tableFilterStripHtml" data-filter-strict-search="false">ATC Active</th>
-                                <th data-field="atchours" data-sortable="true">ATC Hours</th>
-                                <th>Last rating change</th>
+                                <th data-field="rating" data-sortable="true" data-filter-control="select" data-filter-strict-search="true">Pilot Rating</th>
+                                <th>Last Training</th>
                                 <th>Joined VATSIM</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($users as $user)
                                 <tr>
-
-                                    @if(isset($user['cc_data']))
                                         <td><a href="{{ route('user.show', $user['id']) }}">{{ $user['id'] }}</a></td>
-                                        <td>{{ $user['name_first'] }}</td>
-                                        <td>{{ $user['name_last'] }}</td>
-                                        <td>Yes</td>
-                                        <td>{{ App\Helpers\VatsimRating::from($user['rating'])->name }}</td>
-                                        <td><i class="fas fa-{{ $user['active'] ? 'check' : 'times' }}"></i> {{ $user['active'] ? 'Yes' : 'No' }}</td>
-                                        <td>{{ isset($user['hours']) ? round($user['hours']) : 'N/A' }}</td>
-                                        <td>{{ isset($user['lastratingchange']) ? Carbon\Carbon::create($user['lastratingchange'])->toEuropeanDate() : 'N/A' }}</td>
+                                        <td>{{ $user->first_name }}</td>
+                                        <td>{{ $user->last_name }}</td>
+                                        <td>{{ $user->pilotrating_long}}</td>
+                                        <td>
+                                            @php
+                                                $pilotTraining = $user->pilotTrainings()->first();
+                                            @endphp
+                                            {{ $pilotTraining ? $pilotTraining->updated_at->diffForHumans() : 'N/A' }}
+                                        </td>
                                         <td>{{ Carbon\Carbon::create($user['reg_date'])->toEuropeanDate() }}</td>
-                                    @else
-                                        <td>{{ $user['id'] }}</td>
-                                        <td>{{ $user['name_first'] }}</td>
-                                        <td>{{ $user['name_last'] }}</td>
-                                        <td>No</td>
-                                        <td>{{ App\Helpers\VatsimRating::from($user['rating'])->name }}</td>
-                                        <td>N/A</td>
-                                        <td>N/A</td>
-                                        <td>{{ isset($user['lastratingchange']) ? Carbon\Carbon::create($user['lastratingchange'])->toEuropeanDate() : 'N/A' }}</td>
-                                        <td>{{ Carbon\Carbon::create($user['reg_date'])->toEuropeanDate() }}</td>
-                                    @endif
-
                                 </tr>
                             @endforeach
                         </tbody>

@@ -23,11 +23,6 @@ class Group extends Model
         return static::where('id', 2)->first()->users;
     }
 
-    public static function mentors()
-    {
-        return static::where('id', 3)->first()->users;
-    }
-
     public static function instructors()
     {
         return static::where('id', 4)->first()->users;

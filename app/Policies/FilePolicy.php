@@ -29,7 +29,7 @@ class FilePolicy
      */
     public function create(User $user)
     {
-        return $user->isMentorOrAbove();
+        return $user->isInstructorOrAbove();
     }
 
     /**

@@ -12,12 +12,6 @@
 </div>
 @endif
 
-@if($activeVote)
-<div class="alert alert-info" role="alert">
-    <i class="fas fa-vote-yea"></i>&nbsp;&nbsp;Vote <i>"{{ $activeVote->question }}"</i> is available. Vote closes {{ \Carbon\Carbon::create($activeVote->end_at)->toEuropeanDateTime() }}. <a href="{{ route('vote.show', $activeVote) }}">Click here to vote</a>.
-</div>
-@endif
-
 @if($cronJobError)
 <div class="alert alert-danger" role="alert">
     <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;<b>Configuration Error:</b> Cronjob is not running! Are the cron jobs set up according to the manual?

@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Training;
+use App\Models\PilotTraining;
 use App\Models\User;
-use App\Notifications\TrainingClosedNotification;
+use App\Notifications\PilotTrainingClosedNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -40,20 +40,20 @@ class UserDelete extends Command
     private function closeUserTrainings($user)
     {
 
-        $trainings = Training::where('user_id', $user->id)->where('status', '>=', 0)->get();
+        $trainings = PilotTraining::where('user_id', $user->id)->where('status', '>=', 0)->get();
         foreach ($trainings as $training) {
             // Training should be closed
             $training->updateStatus(-4);
 
-            // Detach mentors
-            foreach ($training->mentors as $mentor) {
-                $training->mentors()->detach($mentor);
+            // Detach instructor
+            foreach ($training->instructors as $instructor) {
+                $training->instructors()->detach($instructor);
             }
 
             // Notify the student
             $training->closed_reason = 'Closed due to data deletion request.';
             $training->save();
-            $training->user->notify(new TrainingClosedNotification($training, -4, 'Closed due to data deletion request.'));
+            $training->user->notify(new PilotTrainingClosedNotification($training, -4, 'Closed due to data deletion request.'));
         }
     }
 
@@ -104,7 +104,7 @@ class UserDelete extends Command
 
                     $user->save();
 
-                    $this->comment($userInfo . ' has been pseudoymised in Control Center. This will be reverted IF they log into CC again.');
+                    $this->comment($userInfo . ' has been pseudoymised in Control Center. This will be reverted IF they log into PTC again.');
                 }
                 // PERMANENTLY DELETE
             } elseif ($choice == $choices[1]) {
@@ -116,7 +116,7 @@ class UserDelete extends Command
                     // Remove things from Control Center
                     $user->delete();
 
-                    $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Control Center!');
+                    $this->comment('All data related to ' . $userInfo . ' has been permanently deleted from Pilot Training Center!');
                 }
             }
         } else {

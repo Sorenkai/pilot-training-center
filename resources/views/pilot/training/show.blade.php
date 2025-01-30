@@ -216,6 +216,8 @@
                                         <i class="fas fa-check-square"></i>
                                     @elseif($activity->type == "COMMENT")
                                         <i class="fas fa-comment"></i>
+                                    @elseif ($activity->type == "EXAM")
+                                        <i class="fas fa-clipboard-check"></i>
                                     @endif
 
                                     @isset($activity->triggered_by_id)
@@ -261,6 +263,8 @@
                                         @if($activity->created_at != $activity->updated_at)
                                             <span class="text-muted">(edited)</span>
                                         @endif
+                                    @elseif ($activity->type == "EXAM")
+                                        {{ $activity->comment }}
                                     @endif
 
                                 </p>
@@ -323,11 +327,70 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
+                    Theory Results
+                </h6>
+                @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                    @can('create', \App\Models\Exam::class) 
+                        <a href="{{ route('exam.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
+                    @endcan
+                @endif
+            </div>
+            <div class="card-body {{ $exams->where('type', 'THEORY')->count() == 0 ? '' : 'p-0' }}">
+                
+                @if($exams->where('type', 'THEORY')->count() == 0)
+                    <p class="mb-0">No Theory history</p>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-sm table-leftpadded mb-0" width="100%" cellspacing="0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Exam</th>
+                                    <th>Result</th>
+                                    <th>Date</th>
+                                    <th>Link</th>
+
+                                </tr>                                   
+                            </thead>
+                            <tbody>
+                                @foreach($exams->where('type', 'THEORY') as $exam)
+                                    <tr>
+                                        <td>
+                                            @if ($exam->score >= 60)
+                                                <i class="fas fa-circle-check text-success"></i>
+                                            @elseif ($exam->score < 60)
+                                                <i class="fas fa-circle-xmark text-danger"></i>
+                                            @endif
+                                            {{ $exam->pilotRating->name }}
+                                        </td>
+                                        <td>
+                                            {{ $exam->score }}%
+                                        </td>
+                                        <td>
+                                            {{ $exam->created_at->toEuropeanDate() }}
+                                        </td>
+                                        <td>
+                                            <a href="{{ $exam->url }}"><i class="fa fa-file"></i>&nbsp;View</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
                     Exam Results
                 </h6>
-                @can('create', \App\Models\Exam::class) 
-                    <a href="{{ route('exam.practical.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
-                @endcan
+                @if($training->status >= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
+                    @can('create', \App\Models\Exam::class) 
+                        <a href="{{ route('exam.practical.create.id', ['id' => $training->user->id]) }}" class="btn btn-icon btn-light"><i class="fas fa-plus"></i> Add Exam</a>
+                    @endcan
+                @endif
             </div>
             <div class="card-body {{ $exams->where('type', 'PRACTICAL')->count() == 0 ? '' : 'p-0' }}">
 
@@ -341,6 +404,7 @@
                                     <th>Exam</th>
                                     <th>Result</th>
                                     <th>Date</th>
+                                    <th>Link</th>
 
                                 </tr>                                   
                             </thead>
@@ -349,11 +413,11 @@
                                     <tr>
                                         <td>   
                                             @if ($exam->result == 'PASS')
-                                                <i class="fas fa-circle-check text-success"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                                <i class="fas fa-circle-check text-success"></i> {{$exam->pilotRating->name}}
                                             @elseif ($exam->result == 'PARTIAL PASS')
-                                                <i class="fas fa-circle-minus text-warning"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                                <i class="fas fa-circle-minus text-warning"></i> {{$exam->pilotRating->name}}
                                             @elseif ($exam->result == 'FAIL')
-                                                <i class="fas fa-circle-xmark text-danger"></i><a class="dotted-underline" href="{{ $exam->pilotTraining->path() }}"> {{$exam->pilotRating->name}}</a>
+                                                <i class="fas fa-circle-xmark text-danger"></i> {{$exam->pilotRating->name}}
                                             @endif
                                             
                                         </td>
@@ -361,8 +425,20 @@
                                             {{ ucwords(strtolower($exam->result)) }}
                                         </td>
                                         <td>
-                                            <!-- if exam type is theory then show score otherwise show pass, fail or partial pass -->
                                             {{ $exam->created_at->toEuropeanDate() }}
+                                        </td>
+                                        <td>
+                                            @if($exam->attachments && $exam->attachments->count() > 0)
+                                                <div>
+                                                    <a href="{{ route('exam.object.attachment.show', ['attachment' => $exam->attachments]) }}" target="_blank">
+                                                        <i class="fa fa-file"></i>&nbsp;View
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <div>
+                                                    -
+                                                </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -372,7 +448,7 @@
                 @endif
 
             </div>
-        </div>
+        </div>        
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 @if($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
@@ -386,7 +462,7 @@
                 @if ($training->status >= \App\Helpers\TrainingStatus::PRE_TRAINING->value && $training->status <= \App\Helpers\TrainingStatus::AWAITING_EXAM->value)
                     <div class="dropdown" style="display: inline;">
                         @can('create', \App\Models\PilotTrainingReport::class)
-                            <button class="btn btn-light icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-light btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-plus"></i> Create
                             </button>
                         @endcan

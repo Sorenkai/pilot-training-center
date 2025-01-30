@@ -32,6 +32,11 @@ class File extends Model
         return count(PilotTrainingObjectAttachment::where('file_id', $this->id)->get()) != 0 ? PilotTrainingObjectAttachment::where('file_id', $this->id)->first() : null;
     }
 
+    public function getExamAttachmentAttribute()
+    {
+        return count(ExamObjectAttachment::where('file_id', $this->id)->get()) != 0 ? ExamObjectAttachment::where('file_id', $this->id)->first() : null;
+    }
+
     /**
      * Get the full server path.
      * Can simply be called as $file->full_path
