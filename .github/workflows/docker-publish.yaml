@@ -24,5 +24,12 @@ jobs:
       - name: Build and push Docker image
         run: |
           IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker build -t ${IMAGE_NAME}:latest .
-          docker push ${IMAGE_NAME}:latest
+          TAG=${{ github.ref_name }}
+
+          docker buildx create --use
+          docker buildx build \
+            --platform linux/amd64,linux/arm64,linux/arm/v7 \
+            --tag ${IMAGE_NAME}:${TAG} \
+            --cache-from=type=registry,ref=${IMAGE_NAME}:buildcache \
+            --cache-to=type=registry,ref=${IMAGE_NAME}:buildcache,mode=max \
+            --push .
