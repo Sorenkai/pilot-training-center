@@ -20,7 +20,7 @@
         "flatpickr": "^4.6.13",
         "laravel-vite-plugin": "^1.2.0",
         "moment": "^2.29.1",
-        "sass": "1.83.4",
+        "sass": "1.84.0",
         "vite": "^6.0.0",
         "vue": "^3.0"
     }
