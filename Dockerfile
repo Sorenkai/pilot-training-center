@@ -1,5 +1,5 @@
 # Intermediate build container for front-end resources
-FROM docker.io/library/node:22.13.1-alpine as frontend
+FROM docker.io/library/node:22.14.0-alpine as frontend
 # Easy to prune intermediary containers
 LABEL org.opencontainers.image.source=https://github.com/Sorenkai/pilot-training-center
 
