@@ -6,7 +6,6 @@ use anlutro\LaravelSettings\Facade as Setting;
 use App;
 use App\Models\PilotTrainingReport;
 use App\Models\User;
-use App\Models\Vote;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,9 +59,6 @@ class DashboardController extends Controller
 
         $workmailRenewal = (isset($user->setting_workmail_expire)) ? (Carbon::parse($user->setting_workmail_expire)->diffInDays(Carbon::now(), false) > -7) : false;
 
-        // Check if there's an active vote running to advertise
-        $activeVote = Vote::where('closed', 0)->first();
-
         $client = new \GuzzleHttp\Client();
         if (App::environment('production')) {
             $res = $client->request('GET', 'https://api.vatsim.net/api/ratings/' . $user->id . '/rating_times/');
@@ -87,7 +83,7 @@ class DashboardController extends Controller
         $ptmCIDWarning = $user->isAdmin() && Setting::get('ptmCID') == null;
         $ptmMailWarning = $user->isAdmin() && Setting::get('ptmEmail') == null;
 
-        return view('dashboard', compact('data', 'trainings', 'statuses', 'activeVote', 'pilotHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning', 'ptmCIDWarning', 'ptmMailWarning'));
+        return view('dashboard', compact('data', 'trainings', 'statuses', 'pilotHours', 'workmailRenewal', 'studentTrainings', 'cronJobError', 'oudatedVersionWarning', 'ptmCIDWarning', 'ptmMailWarning'));
     }
 
     /**

@@ -5,7 +5,7 @@
         {{-- Sidebar - Brand --}}
         <a class="sidebar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
             <div class="sidebar-brand-icon">
-                <img src="{{ asset('images/control-tower.svg') }}">
+                <img src="{{ asset('images/pilot.svg') }}">
             </div>
 
             <div class="sidebar-brand-text mx-3">{{ config('app.name') }}</div>
@@ -100,16 +100,10 @@
 
             {{-- Nav Item - Pages Collapse Menu --}}
             <li class="nav-item {{ Route::is('users') || Route::is('users.other') ? 'active' : '' }}">
-                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMem" aria-expanded="true" aria-controls="collapseMem">
+                <a class="nav-link collapsed" href="{{route('users')}}">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Users</span>
                 </a>
-                <div id="collapseMem" class="collapse" data-bs-parent=".sidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="{{ route('users') }}">Member Overview</a>
-                    <a class="collapse-item" href="{{ route('users.other') }}">Other Users</a>
-                    </div>
-                </div>
             </li>
             
         @endif
@@ -164,7 +158,7 @@
         @if (\Auth::user()->isAdmin())
 
             {{-- Nav Item - Utilities Collapse Menu --}}
-            <li class="nav-item {{ Route::is('admin.settings') || Route::is('vote.overview') || Route::is('admin.templates') || Route::is('admin.logs') ? 'active' : '' }}">
+            <li class="nav-item {{ Route::is('admin.settings') || Route::is('admin.logs') ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                 <i class="fas fa-fw fa-cogs"></i>
                 <span>Administration</span>
@@ -173,12 +167,7 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                 @if (\Auth::user()->isAdmin())
                     <a class="collapse-item" href="{{ route('admin.settings') }}">Settings</a>
-                    <a class="collapse-item" href="{{ route('vote.overview') }}">Votes</a>
                     <a class="collapse-item" href="{{ route('admin.logs') }}">Logs</a>
-                @endif
-
-                @if (\Auth::user()->isAdmin())
-                    <a class="collapse-item" href="{{ route('admin.templates') }}">Notification templates</a>
                 @endif
                 </div>
             </div>

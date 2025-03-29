@@ -16,7 +16,6 @@ use App\Models\TrainingReport;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -65,13 +64,13 @@ class ReportController extends Controller
         $cardStats = $this->getCardStats($filterArea);
         $totalRequests = $this->getDailyRequestsStats($filterArea);
         [$newRequests, $completedRequests, $closedRequests, $passFailRequests, $allExamResults] = $this->getBiAnnualRequestsStats($filterArea);
-        $queues = $this->getQueueStats($filterArea);
+        // $queues = $this->getQueueStats($filterArea);
 
         // Send it to the view
         ($filterArea) ? $filterName = Area::find($filterArea)->name : $filterName = 'All Areas';
         $areas = Area::all();
 
-        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'closedRequests', 'passFailRequests', 'allExamResults', 'queues'));
+        return view('reports.trainings', compact('filterName', 'areas', 'cardStats', 'totalRequests', 'newRequests', 'completedRequests', 'closedRequests', 'passFailRequests', 'allExamResults'));
     }
 
     /**
@@ -101,31 +100,6 @@ class ReportController extends Controller
         $areas = Area::all();
 
         return view('reports.activities', compact('trainingReports', 'statuses', 'areas', 'entries'));
-    }
-
-    /**
-     * Show the mentors statistics view
-     *
-     * @return \Illuminate\View\View
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function mentors()
-    {
-        $this->authorize('viewMentors', ManagementReport::class);
-
-        if (auth()->user()->isAdmin()) {
-            $mentors = Group::find(3)->users()->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->get();
-        } else {
-            $mentors = Group::find(3)->users()->with('trainingReports', 'teaches', 'teaches.reports', 'teaches.user')->whereHas('groups', function (Builder $query) {
-                $query->whereIn('area_id', auth()->user()->groups()->pluck('area_id'));
-            })->get();
-        }
-
-        $mentors = $mentors->sortBy('name')->unique();
-        $statuses = TrainingController::$statuses;
-
-        return view('reports.mentors', compact('mentors', 'statuses'));
     }
 
     /**
@@ -414,55 +388,5 @@ class ReportController extends Controller
         }
 
         return [$newRequests, $completedRequests, $closedRequests, $passFailRequests, $allExamResults];
-    }
-
-    /**
-     * Return the new/completed request statistics for 6 months
-     *
-     * @param  int  $areaFilter  areaId to filter by
-     * @return mixed
-     */
-    protected function getQueueStats($areaFilter)
-    {
-        $payload = [];
-        if ($areaFilter) {
-            foreach (Area::find($areaFilter)->ratings as $rating) {
-                if ($rating->pivot->queue_length_low && $rating->pivot->queue_length_high) {
-                    $payload[$rating->name] = [
-                        $rating->pivot->queue_length_low,
-                        $rating->pivot->queue_length_high,
-                    ];
-                }
-            }
-        } else {
-            $divideRating = [];
-            foreach (Area::all() as $area) {
-                // Loop through the ratings of this area to get queue length
-                foreach ($area->ratings as $rating) {
-                    // Only calculate if queue length is defined
-                    if ($rating->pivot->queue_length_low && $rating->pivot->queue_length_high) {
-                        if (isset($payload[$rating->name])) {
-                            $payload[$rating->name][0] = $payload[$rating->name][0] + $rating->pivot->queue_length_low;
-                            $payload[$rating->name][1] = $payload[$rating->name][1] + $rating->pivot->queue_length_high;
-                            $divideRating[$rating->name]++;
-                        } else {
-                            $payload[$rating->name] = [
-                                $rating->pivot->queue_length_low,
-                                $rating->pivot->queue_length_high,
-                            ];
-                            $divideRating[$rating->name] = 1;
-                        }
-                    }
-                }
-            }
-
-            // Divide the queue length appropriately to get an average across areas
-            foreach ($payload as $queue => $value) {
-                $payload[$queue][0] = $value[0] / $divideRating[$queue];
-                $payload[$queue][1] = $value[1] / $divideRating[$queue];
-            }
-        }
-
-        return $payload;
     }
 }

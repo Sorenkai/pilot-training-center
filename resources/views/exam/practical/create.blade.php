@@ -13,7 +13,7 @@
             </div>
 
             <div class="card-body" id="examselector">
-                <form action="{{ route('exam.practical.store') }}" method="POST">
+                <form action="{{ route('exam.practical.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     {{-- User --}}
@@ -64,7 +64,19 @@
                         @enderror
                     </div>
 
-                    <button class="btn btn-success mt-4">Save Result</button>
+                    <div class="mb-3">
+                        <label class="form-label" for="attachments">Attachments</label>
+                        <div>
+                            <input type="file" name="files[]" id="add-file" class="@error('file') is-invalid @enderror" accept=".pdf, .xls, .xlsx, .doc, .docx, .txt, .png, .jpg, .jpeg" multiple>
+                        </div>
+                        @error('files')
+                            <span class="text-danger">{{ $errors->first('files') }}</span>
+                        @enderror
+                    </div>
+
+                    <hr>
+
+                    <button type="submit" class="btn btn-success mt-4">Save Result</button>
                 </form>
             </div>
         </div>
@@ -104,6 +116,13 @@
 
                     }
                 }
+            }
+        });
+
+        var submitClicked = false
+        document.addEventListener("submit", function(event) {
+            if (event.target.tagName === "FORM") {
+                submitClicked = true;
             }
         });
 

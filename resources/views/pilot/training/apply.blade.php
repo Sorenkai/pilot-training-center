@@ -16,16 +16,13 @@
                     </div>
                     <div class="card-body">
                         <h5 class="card-title"><i class="fas fa-graduation-cap"></i>&nbsp;What is Pilot Training?</h5>
-                        <p class="card-text">Welcome to the Pilot Training Department of {{ Config::get('app.owner') }}. In order to be able to control on our network you will need to complete our training course. To achieve an Pilot rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by a mentor throughout the course. You will learn everything you need to know to be compliant with VATSIM Global Ratings Policy as well as about local procedures relevant to your area.</p>
+                        <p class="card-text">Welcome to the Pilot Training Department of VATSIM Scandinavia. To achieve an Pilot rating you have to go through both theoretical and practical training and exams. You will be given all the necessary training documentation and will receive guidance by an instructor throughout the course. You will learn everything you need to know to be compliant with VATSIM PTD Member Certification Standards as well as the local procedures relevant to your area.</p>
                         <hr>
                         <h5 class="card-title"><i class="fas fa-user"></i>&nbsp;What do we expect from you?</h5>
-                        <p class="card-text">First of all, we expect that you take the training seriously and for you to show up on time and prepared for your online training sessions. We also expect that you respect that everyone in the Training Department is doing this as a hobby in their spare time. You have to be able to study on your own as part of the training program is designed as a self-study. We are not getting paid to do this job, but we simply want to see our network grow and be a great community.</p>
+                        <p class="card-text">First of all, we expect that you take the training seriously and for you to show up on time and prepared for your online training sessions. We also expect that you respect that everyone in the Pilot Training Department is doing this as a hobby in their spare time. You have to be able to study on your own as part of the training program is designed as a self-study.</p>
                         <hr>
                         <h5 class="card-title"><i class="fas fa-chalkboard-teacher"></i>&nbsp;What should you expect from us?</h5>
-                        <p class="card-text">You should expect that we will help you as best as we can to prepare you for your practical exam. You will be assigned to a mentor that will guide you on the way, and you should expect him to take you and your time seriously and to adapt the training to your level of competence.</p>
-                        <hr>
-                        <h5 class="card-title"><i class="fas fa-hourglass-start"></i>&nbsp;How long is the training queue?</h5>
-                        <p class="card-text">{{ Setting::get('trainingQueue') }}</p>
+                        <p class="card-text">You should expect that we will help you as best as we can to prepare you for your skill test. You will be assigned to an instructor that will guide you on the way, and you should expect him to take you and your time seriously and to adapt the training to your level of competence.</p>
                     </div>
                 </div>
             </div>
@@ -61,13 +58,13 @@
             <div class="col-xl-12 col-md-12 mb-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 fw-bold text-primary">Standard Operating Procedures</h6>
+                        <h6 class="m-0 fw-bold text-primary">Operations Manual</h6>
                     </div>
                     <div class="card-body">
 
-                        <p>Please read through the standard operating procedures for students below, and accept the terms by continuing to the next step. If you can't see the document below, <a href="{{ Setting::get('trainingSOP') }}" target="_blank">click here</a>.</p>
+                        <p>Please familiarize yourself with the Operations Manual below, and accept the terms by continuing to the next step. If you can't see the document below, <a href="{{ asset('docs/OM.pdf') }}" target="_blank">click here</a>.</p>
 
-                        <embed src="{{ Setting::get('trainingSOP') }}" type="application/pdf" width="100%" height="800px">
+                        <embed src="{{ asset('docs/OM.pdf') }}" type="application/pdf" width="100%" height="800px">
 
                         <a class="btn btn-success"  href="#" v-on:click="next">I accept</a>
                     </div>

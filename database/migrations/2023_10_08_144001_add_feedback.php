@@ -24,7 +24,6 @@ return new class extends Migration
 
             $table->foreign('submitter_user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->foreign('reference_user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreign('reference_position_id')->references('id')->on('positions')->onUpdate('CASCADE')->onDelete('SET NULL');
         });
 
         Schema::table('settings', function (Blueprint $table) {

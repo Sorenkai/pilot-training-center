@@ -1,5 +1,5 @@
 # Intermediate build container for front-end resources
-FROM docker.io/library/node:22.9.0-alpine as frontend
+FROM docker.io/library/node:22.13.1-alpine as frontend
 # Easy to prune intermediary containers
 LABEL org.opencontainers.image.source=https://github.com/Sorenkai/pilot-training-center
 
@@ -10,7 +10,7 @@ RUN npm ci --omit dev && \
     npm run build
 
 # Setup container
-FROM docker.io/library/php:8.3.11-apache-bookworm
+FROM docker.io/library/php:8.4.3-apache-bookworm
 
 # Default container port for the apache configuration
 EXPOSE 80 443

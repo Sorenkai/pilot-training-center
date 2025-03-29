@@ -58,7 +58,7 @@ class PilotTrainingPolicy
     {
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
         $divisionName = config('app.owner_name_short');
-        /*
+        
         if (! in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) {
             $subdiv = 'none';
             if (isset($user->subdivision)) {
@@ -66,7 +66,7 @@ class PilotTrainingPolicy
             }
 
             return Response::deny("You must join {$divisionName} to apply for training. You currently belong to " . $subdiv);
-        }*/
+        }
 
         return ! $user->hasActivePilotTraining(true) ? Response::allow() : Response::deny('You have an active training request');
     }

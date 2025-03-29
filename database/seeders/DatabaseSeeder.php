@@ -6,6 +6,7 @@ use App\Helpers\FactoryHelper;
 use App\Helpers\TrainingStatus;
 use App\Models\Callsign;
 use App\Models\Endorsement;
+use App\Models\Exam;
 use App\Models\Group;
 use App\Models\PilotRating;
 use App\Models\PilotTraining;
@@ -80,7 +81,7 @@ class DatabaseSeeder extends Seeder
                     $prating_id = 7;
                     $prating_short = 'CMEL';
                     $prating_long = 'Commercial Multi-Engine License';
-                    $group = 3;
+                    $group = 4;
                     break;
                 case 8:
                     $name_last = 'Eight';
@@ -88,7 +89,7 @@ class DatabaseSeeder extends Seeder
                     $prating_id = 7;
                     $prating_short = 'CMEL';
                     $prating_long = 'Commercial Multi-Engine License';
-                    $group = 3;
+                    $group = 4;
                     break;
                 case 9:
                     $name_last = 'Nine';
@@ -157,7 +158,7 @@ class DatabaseSeeder extends Seeder
             $training->pilotRatings()->attach(PilotRating::where('vatsim_rating', '>', 0)->inRandomOrder()->first());
 
             self::assignCallsign($training);
-            // Give all non-queued trainings a mentor
+            // Give all non-queued trainings a instructor
             if ($training->status > TrainingStatus::IN_QUEUE->value) {
                 $training->instructors()->attach(
                     User::whereHas('groups', function ($query) {
@@ -169,6 +170,19 @@ class DatabaseSeeder extends Seeder
                     'pilot_training_id' => $training->id,
                     'written_by_id' => $training->instructors()->inRandomOrder()->first(),
                 ]);
+            }
+            $training->load('instructors');
+            if ($training->status == TrainingStatus::COMPLETED->value) {
+                if ($i % 3 == 0) {
+                    Exam::factory()->create([
+                        'pilot_training_id' => $training->id,
+                        'issued_by' => User::whereHas('groups', function ($query) {
+                            $query->where('id', 4);
+                        })->inRandomOrder()->first(),
+                        'user_id' => $training->user_id,
+                        'pilot_rating_id' => $training->pilotRatings()->first()->id,
+                    ]);
+                }
             }
 
             /*

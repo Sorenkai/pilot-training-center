@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Create Theory Result')
-@section ('content')
+@section('content')
 
 <div class="row" id="giveExamResult">
     <div class="col-xl-5 col-md-12 mb-12">
@@ -25,18 +25,14 @@
                             type="text"
                             name="user"
                             list="userList"
-                            v-model="user"
-                            v-bind:class="{'is-invalid': (validationError && user == null)}"
-                            value="{{ isset($prefillUserId) ? $prefillUserId : old('user') }}"
+                            v-model="selectedUserId"
+                            v-bind:class="{'is-invalid': (validationError && selectedUserId == null)}"
+                            @input="updateTrainings(selectedUserId)"
                             required>
 
                         <datalist id="userList">
                             @foreach ($users as $user)
-                                @browser('isFirefox')
-                                    <option>{{ $user->id }}</option>
-                                @else
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endbrowser
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
                             @endforeach
                         </datalist>
                         @error('user')
@@ -44,20 +40,20 @@
                         @enderror
                     </div>
 
-                    {{-- Rating --}}
-                    <div class="mb-3">
-                        <label class="form-label my-1 me-2" for="ratingSelect">Rating</label>
-                        <select id="ratingSelect" name="rating" class="form-select @error('ratings') is-invalid @enderror" size="5" required>
-                            <option v-for="rating in ratings" :value="rating.id"> @{{ rating.name }}</option>
+                    {{-- Training (only visible when a user is selected and has trainings) --}}
+                    <div class="mb-3" v-if="trainings.length > 0">
+                        <label class="form-label" for="trainingSelect">Training</label>
+                        <select id="trainingSelect" name="training" class="form-select @error('training') is-invalid @enderror" required>
+                            <option v-for="training in trainings" :value="training.id">@{{ selectedUser.first_name }}'s training for: @{{ training.pilot_ratings[0].name }}</option>
                         </select>
-                        @error('ratings')
-                            <span class="text-danger">{{ $errors->first('ratings') }}</span>
+                        @error('training')
+                            <span class="text-danger">{{ $errors->first('training') }}</span>
                         @enderror
                     </div>
 
                     {{-- URL --}}
                     <div class="mb-3">
-                        <label for="url" class="form-label my-1 me-3">Link to moodle result</label>
+                        <label for="url" class="form-label my-1 me-3">Link to result</label>
                         <input
                             id="url"
                             class="form-control @error('url') is-invalid @enderror"
@@ -78,7 +74,7 @@
                             name="score"
                             min="0"
                             max="100"
-                            step="0.01"
+                            step="1"
                             value="{{ old('score') }}">
 
                         @error('score')
@@ -100,23 +96,36 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        var payload = {!! json_encode($ratings, true) !!}
+        var users = {!! json_encode($users, true) !!};  // Ensure that users includes the pilotTrainings relation
+        var payload = {!! json_encode($ratings, true) !!}; // Make sure you also include ratings
+        console.log(users);
         const app = createApp({
-            data(){
+            data() {
                 return {
-                    ratings: payload,
-                }
+                    selectedUserId: null,
+                    selectedUser: null,  // Holds the selected user ID
+                    trainings: [],       // Holds the trainings for the selected user
+                    ratings: payload,    // Hold ratings from the server
+                };
             },
             methods: {
-                showTrainingLevels: function(event) {
-                    const selectedTrainingArea = event.srcElement.options[event.srcElement.selectedIndex];
-                    this.ratings = payload;
-                },
-            },
-        })
-        app.mount('#examselector');
+                updateTrainings(userId) {
+                    let user = users.find(u => u.id == userId);
+                    
+                    if (user && Array.isArray(user.pilot_trainings)) { // Check if pilotTrainings is an array
+                        this.trainings = user.pilot_trainings; // Populate trainings
+                        this.selectedUser = user;
 
+                    } else {
+                        this.trainings = []; // Reset if no trainings found
+                        this.selectedUser = null;
+
+                    }
+                }
+            }
+        });
+
+        app.mount('#examselector'); // Mount the Vue app
     });
 </script>
-
 @endsection

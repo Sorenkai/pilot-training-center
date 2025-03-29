@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('pilot_training_id');
             $table->unsignedBigInteger('triggered_by_id')->nullable();
-            $table->enum('type', ['STATUS', 'TYPE', 'INSTRUCTOR', 'PAUSE', 'ENDORSEMENT', 'COMMENT']);
+            $table->enum('type', ['STATUS', 'TYPE', 'INSTRUCTOR', 'PAUSE', 'ENDORSEMENT', 'COMMENT', 'EXAM']);
             $table->bigInteger('old_data')->nullable();
             $table->bigInteger('new_data')->nullable();
             $table->text('comment')->nullable();

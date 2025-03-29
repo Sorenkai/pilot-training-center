@@ -22,7 +22,7 @@
                         @foreach($reports as $reportModel)
                             @if(is_a($reportModel, '\App\Models\PilotTrainingReport'))
 
-                                @if(!$reportModel->draft || $reportModel->draft && \Auth::user()->isMentorOrAbove())
+                                @if(!$reportModel->draft || $reportModel->draft && \Auth::user()->isInstructorOrAbove())
 
                                     @php
                                         $uuid = "instance-".Ramsey\Uuid\Uuid::uuid4();
@@ -54,10 +54,10 @@
                                             <div class="card-body">
 
                                                 <small class="text-muted">
-                                                    @if(isset($reportModel->position))
-                                                        <i class="fas fa-map-marker-alt"></i> {{ $reportModel->position }}&emsp;
+                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->written_by_id)->name) ? \App\Models\User::find($reportModel->written_by_id)->name : "Unknown"  }}&emsp;
+                                                    @if (isset($reportModel->lesson_id))
+                                                        <i class="fas fa-scroll"></i> {{ $reportModel->lesson->name}}
                                                     @endif
-                                                    <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->written_by_id)->name) ? \App\Models\User::find($reportModel->written_by_id)->name : "Unknown"  }}
                                                     @can('view', [\App\Models\PilotTraining::class, $reportModel->pilotTraining])
                                                         <a class="float-end" href="{{ route('pilot.training.show', $reportModel->pilotTraining->id) }}"><i class="fa fa-eye"></i> View training</a>
                                                     @endcan
@@ -70,7 +70,7 @@
                                                 @if(isset($reportModel->contentimprove) && !empty($reportModel->contentimprove))
                                                     <hr>
                                                     <p class="fw-bold text-primary">
-                                                        <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
+                                                        <i class="fas fa-clipboard-list-check"></i>&nbsp;Report
                                                     </p>
                                                     <div id="markdown-improve">
                                                         @markdown($reportModel->contentimprove)
@@ -125,10 +125,10 @@
                                         <div class="card-body">
 
                                             <small class="text-muted">
-                                                @if(isset($reportModel->position))
-                                                    <i class="fas fa-map-marker-alt"></i> {{ \App\Models\Position::find($reportModel->position_id)->callsign }}&emsp;
+                                                <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->examiner_id)->name) ? \App\Models\User::find($reportModel->examiner_id)->name : "Unknown" }}&emsp;
+                                                @if (isset($reportModel->lesson_id))
+                                                    <i class="fas fa-scroll"></i> {{ $reportModel->lesson->name}}
                                                 @endif
-                                                <i class="fas fa-user-edit"></i> {{ isset(\App\Models\User::find($reportModel->examiner_id)->name) ? \App\Models\User::find($reportModel->examiner_id)->name : "Unknown" }}
                                                 @can('view', [\App\Models\PilotTraining::class, $reportModel->pilotTraining])
                                                     <a class="float-end" href="{{ route('pilot.training.show', $reportModel->pilotTraining->id) }}"><i class="fa fa-eye"></i> View training</a>
                                                 @endcan

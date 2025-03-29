@@ -53,9 +53,12 @@ class TaskNotification extends Notification
 
         if ($this->receivedTasks->count()) {
             $textLines[] = '## New tasks';
-
             foreach ($this->receivedTasks as $task) {
-                $textLines[] = '- **' . $task->type()->getName() . '** from ' . $task->creator->name . ' (' . $task->creator->id . ')';
+                if ($task->creator) {
+                    $textLines[] = '- **' . $task->type()->getName() . '** from ' . $task->creator->name . ' (' . $task->creator->id . ')';
+                } else {
+                    $textLines[] = '- **' . $task->type()->getName() . '** from System';
+                }
                 $task->assignee_notified = true;
                 $task->save();
             }

@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use anlutro\LaravelSettings\Facade as Setting;
-use App\Facades\DivisionApi;
 use App\Helpers\Vatsim;
-use App\Helpers\VatsimRating;
 use App\Models\Area;
-use App\Models\AtcActivity;
 use App\Models\Group;
 use App\Models\PilotTrainingReport;
 use App\Models\User;
@@ -35,51 +32,8 @@ class UserController extends Controller
 
         $users = [];
 
-        if (config('vatsim.core_api_token')) {
-            $response = $this->fetchUsersFromVatsimCoreApi();
-            if ($response === false) {
-                return view('user.index', compact('users'))->withErrors('Error fetching users from VATSIM Core API. Check if your token is correct.');
-            }
-        } else {
-            return view('user.index', compact('users'))->withErrors('Enable VATSIM Core API Integration to enable this feature.');
-        }
-
         $apiUsers = [];
-        $ccUsers = User::pluck('id');
-        $ccUsersHours = AtcActivity::all();
-        $ccUsersActive = User::getActiveAtcMembers()->pluck('id');
-
-        if (config('vatsim.core_api_token')) {
-            foreach ($response as $data) {
-                $apiUsers[$data['id']] = $data;
-            }
-        } else {
-            // Only include users from the division and index by key
-            foreach ($response as $data) {
-                if ($data['subdivision'] == config('app.owner_code')) {
-                    $apiUsers[$data['id']] = $data;
-                }
-            }
-        }
-
-        // Merge the data sources
-        $users = [];
-        foreach ($apiUsers as $apiUser) {
-            $users[$apiUser['id']] = $apiUser;
-
-            if (in_array($apiUser['id'], $ccUsers->toArray())) {
-                $users[$apiUser['id']]['cc_data'] = true;
-                $users[$apiUser['id']]['active'] = false;
-
-                if (isset($ccUsersHours->where('user_id', $apiUser['id'])->first()->hours)) {
-                    $users[$apiUser['id']]['hours'] = $ccUsersHours->where('user_id', $apiUser['id'])->first()->hours;
-                }
-
-                if (in_array($apiUser['id'], $ccUsersActive->toArray())) {
-                    $users[$apiUser['id']]['active'] = true;
-                }
-            }
-        }
+        $users = User::with(['pilotTrainings'])->get();
 
         return view('user.index', compact('users'));
     }
@@ -121,55 +75,9 @@ class UserController extends Controller
         $trainings = $user->pilotTrainings;
         $statuses = PilotTrainingController::$statuses;
 
-        // Get hours and grace per area
-        $atcActivityHours = [];
-        $totalHours = 0;
-        $atcActivites = AtcActivity::where('user_id', $user->id)->get();
-
-        foreach ($areas as $area) {
-            $activity = $atcActivites->firstWhere('area_id', $area->id);
-
-            if ($activity) {
-
-                $atcActivityHours[$area->id]['hours'] = $activity->hours;
-                $totalHours += $activity->hours;
-
-                if ($activity->start_of_grace_period) {
-                    $atcActivityHours[$area->id]['graced'] = $activity->start_of_grace_period->addMonths((int) Setting::get('atcActivityGracePeriod', 12))->gt(now());
-                } else {
-                    $atcActivityHours[$area->id]['graced'] = false;
-                }
-
-                $atcActivityHours[$area->id]['active'] = ($activity->atc_active) ? true : false;
-
-            } else {
-                $atcActivityHours[$area->id]['hours'] = 0;
-                $atcActivityHours[$area->id]['active'] = false;
-                $atcActivityHours[$area->id]['graced'] = false;
-            }
-        }
-
-        // Fetch division exams
-        /*
-        $divisionExams = collect();
-        $userExams = DivisionApi::getUserExams($user);
-        if ($userExams && $userExams->successful()) {
-
-            foreach ($userExams->json()['data'] as $category => $categories) {
-                foreach ($categories as $exam) {
-                    $exam['category'] = $category;
-                    $exam['rating'] = VatsimRating::from((int) $exam['flag_exam_type'] + 1)->name;
-                    $exam['created_at'] = Carbon::parse($exam['created_at'])->toEuropeanDate();
-                    $divisionExams->push($exam);
-                }
-            }
-
-            // Sort all entries by created_at
-            $divisionExams = $divisionExams->sortByDesc('created_at');
-        }*/
         $exams = $user->exams;
 
-        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'exams', 'totalHours'));
+        return view('user.show', compact('user', 'groups', 'areas', 'trainings', 'statuses', 'exams'));
     }
 
     /**
@@ -298,28 +206,12 @@ class UserController extends Controller
                 if ($value == true) {
                     $this->authorize('updateGroup', [$user, $group, $area]);
 
-                    // Call the division API to assign mentor
-                    if ($group->id == 3) {
-                        $response = DivisionApi::assignMentor($user, Auth::id());
-                        if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
-                        }
-                    }
-
                     // Attach the new permission
                     $user->groups()->attach($group, ['area_id' => $area->id, 'inserted_by' => Auth::id()]);
                 }
             } else {
                 if ($value == false) {
                     $this->authorize('updateGroup', [$user, $group, $area]);
-
-                    // Call the division API to assign mentor
-                    if ($group->id == 3) {
-                        $response = DivisionApi::removeMentor($user, Auth::id());
-                        if ($response && $response->failed()) {
-                            return back()->withErrors('Request failed due to error in ' . DivisionApi::getName() . ' API: ' . $response->json()['message']);
-                        }
-                    }
 
                     // Detach the permission
                     $user->groups()->wherePivot('area_id', $area->id)->wherePivot('group_id', $group->id)->detach();
@@ -395,7 +287,7 @@ class UserController extends Controller
     {
         $this->authorize('viewReports', $user);
 
-        $reports = PilotTrainingReport::where('written_by_id', $user->id)->get();
+        $reports = PilotTrainingReport::where('written_by_id', $user->id)->with('lesson')->get();
 
         return view('user.reports', compact('user', 'reports'));
     }

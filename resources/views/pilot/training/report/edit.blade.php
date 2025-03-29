@@ -70,7 +70,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="contentBox">Report</label>
+                        <label class="form-label" for="contentBox">Session Details</label>
                         <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ empty(old('content')) ? $report->content : old('content') }}</textarea>
                         @error('content')
                             <span class="text-danger">{{ $errors->first('content') }}</span>
@@ -78,7 +78,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="contentimprove">Areas to improve</label>
+                        <label class="form-label" for="contentimprove">Report</label>
                         <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?">{{ empty(old('contentimprove')) ? $report->contentimprove : old('contentimprove') }}</textarea>
                         @error('contentimprove')
                             <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
