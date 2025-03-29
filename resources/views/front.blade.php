@@ -21,9 +21,9 @@
             <div class="content-title"><img src="{{ asset('images/pilot.svg') }}"> {{ config('app.name') }}</div>
             <div class="content-description">
                 @if(config('app.owner_code') == 'SCA')
-                Scandinavian Training Administration
+                Scandinavian Pilot Training Administration
                 @else
-                Training Administration
+                Pilot Training Administration
                 @endif
             </div>
             <a href="{{ route('login') }}" class="btn btn-success">Login</a>

@@ -70,7 +70,7 @@
                                                 @if(isset($reportModel->contentimprove) && !empty($reportModel->contentimprove))
                                                     <hr>
                                                     <p class="fw-bold text-primary">
-                                                        <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
+                                                        <i class="fas fa-clipboard-list-check"></i>&nbsp;Report
                                                     </p>
                                                     <div id="markdown-improve">
                                                         @markdown($reportModel->contentimprove)

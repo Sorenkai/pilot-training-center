@@ -529,7 +529,7 @@
                                                     @if (isset($report->contentimprove) && !empty($report->contentimprove))
                                                         <hr>
                                                         <p class="fw-bold text-primary">
-                                                            <i class="fas fa-clipboard-list-check"></i>&nbsp;Areas to improve
+                                                            <i class="fas fa-clipboard-list-check"></i>&nbsp;Report
                                                         </p>
                                                         <div class="markdown-improve">
                                                             @markdown($report->contentimprove)

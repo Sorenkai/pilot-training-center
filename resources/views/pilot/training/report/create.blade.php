@@ -8,7 +8,7 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    New Training Report for {{ $training->user->first_name }}'s training for
+                    New Training Report for {{ $training->user->first_name }}'s training for {{ $training->pilotRatings[0]->name}}
                 </h6>
             </div>
             <div class="card-body">
@@ -64,16 +64,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="contentBox">Report</label>
-                        <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the report here.">{{ old('content') }}</textarea>
+                        <label class="form-label" for="contentBox">Session Details</label>
+                        <textarea class="form-control @error('content') is-invalid @enderror" name="content" id="contentBox" rows="8" placeholder="Write the session details here.">{{ old('content') }}</textarea>
                         @error('content')
                             <span class="text-danger">{{ $errors->first('content') }}</span>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="contentimprove">Areas to improve</label>
-                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="In which areas do the student need to improve?">{{ old('contentimprove') }}</textarea>
+                        <label class="form-label" for="contentimprove">Report</label>
+                        <textarea class="form-control @error('contentimprove') is-invalid @enderror" name="contentimprove" id="contentimprove" rows="4" placeholder="Write the training report and comments here.">{{ old('contentimprove') }}</textarea>
                         @error('contentimprove')
                             <span class="text-danger">{{ $errors->first('contentimprove') }}</span>
                         @enderror
