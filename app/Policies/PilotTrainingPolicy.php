@@ -58,7 +58,7 @@ class PilotTrainingPolicy
     {
         $allowedSubDivisions = explode(',', Setting::get('trainingSubDivisions'));
         $divisionName = config('app.owner_name_short');
-        
+
         if (! in_array($user->subdivision, $allowedSubDivisions) && $allowedSubDivisions != null) {
             $subdiv = 'none';
             if (isset($user->subdivision)) {
