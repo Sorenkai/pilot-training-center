@@ -16,10 +16,15 @@ class ExamController extends Controller
     {
         $this->authorize('create', Exam::class);
 
+        // Only show trainings that are in have AWAITING_EXAM status
         if ($prefillUserId) {
-            $users = User::where('id', $prefillUserId)->with(['pilotTrainings', 'pilotTrainings.pilotRatings'])->get();
+            $users = User::where('id', $prefillUserId)->with(['pilotTrainings' => function ($query) {
+                $query->where('status', 3);
+            }, 'pilotTrainings.pilotRatings'])->get();
         } else {
-            $users = User::with(['pilotTrainings', 'pilotTrainings.pilotRatings'])->get();
+            $users = User::with(['pilotTrainings' => function ($query) {
+                $query->where('status', 3);
+            }, 'pilotTrainings.pilotRatings'])->get();
         }
 
         $ratings = PilotRating::whereIn('vatsim_rating', [1, 3, 7, 15, 31])->get();
@@ -31,10 +36,15 @@ class ExamController extends Controller
     {
         $this->authorize('create', Exam::class);
 
+        // Only show trainings that are in have AWAITING_EXAM status
         if ($prefillUserId) {
-            $users = User::where('id', $prefillUserId)->with(['pilotTrainings', 'pilotTrainings.pilotRatings'])->get();
+            $users = User::where('id', $prefillUserId)->with(['pilotTrainings' => function ($query) {
+                $query->where('status', 3);
+            }, 'pilotTrainings.pilotRatings'])->get();
         } else {
-            $users = User::with(['pilotTrainings', 'pilotTrainings.pilotRatings'])->get();
+            $users = User::with(['pilotTrainings' => function ($query) {
+                $query->where('status', 3);
+            }, 'pilotTrainings.pilotRatings'])->get();
         }
 
         $ratings = PilotRating::whereIn('vatsim_rating', [1, 3, 7, 15, 31])->get();
@@ -73,7 +83,7 @@ class ExamController extends Controller
 
         PilotTrainingActivityController::create($training->id, 'EXAM', null, null, Auth::user()->id, 'Theory exam result added');
 
-        return redirect()->intended(route('exam.create'))->withSuccess($user->name . "'s theory result saved");
+        return redirect(route('pilot.training.show', $training->id))->withSuccess($user->name . "'s theory result saved");
     }
 
     public function storePractical(Request $request)
@@ -110,6 +120,6 @@ class ExamController extends Controller
 
         PilotTrainingActivityController::create($training->id, 'EXAM', null, null, Auth::user()->id, 'Practical exam result added');
 
-        return redirect()->intended(route('exam.practical.create'))->withSuccess($user->name . "'s exam result saved");
+        return redirect(route('pilot.training.show', $training->id))->withSuccess($user->name . "'s practical result saved");
     }
 }

@@ -1,0 +1,32 @@
+services:
+  web:
+    container_name: pilot-training-center
+    image: ptc
+    ports:
+      - 8080:80
+      - 8443:443
+    volumes:
+      - sessions:/var/www/html/storage/framework/sessions
+    environment:
+      # Please check the complete configure guide for all variables and their description
+      # You need to adjust this file to your needs
+      - APP_NAME=Pilot Training center
+      - APP_OWNER_NAME=VATSIM Scandinavia
+      - APP_OWNER_SHORT=SCA
+      - APP_OWNER_CODE=SCA
+      - APP_URL=http://localhost
+      - APP_ENV=local
+      - DB_HOST=localhost
+      - DB_DATABASE=control-center
+      - DB_USERNAME=control-center
+      - DB_PASSWORD=yourPASShere
+      - OAUTH_ID=972
+      - OAUTH_SECRET=NQzmsqkERBcLpbhXGS11BdL7GylzcktReKQnf4yw
+      - OAUTH_URL=https://auth-dev.vatsim.net
+      - MAIL_HOST=smtp.mailgun.org
+      - MAIL_PORT=587
+      - MAIL_USERNAME=yourUSERNAMEhere
+      - MAIL_PASSWORD=yourPASSWORDhere
+      - MAIL_FROM_ADDRESS=noreply@yourvacc.com
+volumes:
+  sessions:

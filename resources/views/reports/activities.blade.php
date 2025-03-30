@@ -40,6 +40,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            
                             @foreach($entries as $activity)
                                 <tr>
                                     <td>
@@ -150,6 +151,9 @@
                                                         Not completed
                                                     @endif
                                                 </span>
+                                            @elseif ($activity->type == "EXAM")
+                                                <i class="fas fa-graduation-cap"></i>
+                                                {{ $activity->comment }}
                                             @endif
 
                                         @elseif(is_a($activity, 'App\Models\PilotTrainingReport'))
