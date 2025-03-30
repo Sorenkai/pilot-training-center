@@ -3,6 +3,7 @@
   "baseBranches": ["chore/deps-updates"], 
   "branchPrefix": "deps/",
   "updateNotScheduled": false, 
+  "schedule": ["weekly"],
   "groupName": "all-minor-patches",
   "dependencyDashboard": true,
   "packageRules": [
